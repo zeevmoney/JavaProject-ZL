@@ -1,0 +1,19 @@
+view contains:
+1. 2048 game gui
+2. maze game gui
+3. public void displaydata (draw the 2D array) will be updated on every move.
+4. 
+4. 
+
+
+presenter contains:
+
+
+
+model contains:
+1. 2D array for representation
+2. public commands for changing the array.
+    2.1. change the STATE(point) inside the 2D array
+    2.2. each time a state is changed model will notify the presenter which will notify the View
+3. 
+
