@@ -1,4 +1,4 @@
-package game2084;
+package game2048;
 
 import java.util.Observable;
 

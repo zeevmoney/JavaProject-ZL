@@ -1,7 +1,7 @@
 package view;
 
-import game2084.Game2048Model;
-import game2084.Game2048View;
+import game2048.Game2048Model;
+import game2048.Game2048View;
 import controller.Presenter;
 
 public class Main {
