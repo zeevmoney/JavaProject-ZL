@@ -3,6 +3,7 @@ package game2048;
 import java.util.Observable;
 
 import model.Model;
+import model.State;
 
 public class Game2048Model extends Observable implements Model {
 
@@ -41,5 +42,7 @@ public class Game2048Model extends Observable implements Model {
 		// TODO Auto-generated method stub
 		return 0;
 	}
+
+	
 
 }
