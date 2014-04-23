@@ -16,8 +16,9 @@ public interface Model {
 	
 	void moveLeft();
 	
-	void moveRight();
+	void moveRight();	
 	
+	//
 	
 	int[][] getData();
 	

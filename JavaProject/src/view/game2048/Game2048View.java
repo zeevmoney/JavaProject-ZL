@@ -1,23 +1,24 @@
 package view.game2048;
 
 import java.util.Observable;
-
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-
 import view.View;
+
+/*
+ * Lital:
+ * Don't forget to add:
+ * setChanged & notifyObservers
+ */
 
 public class Game2048View extends Observable implements View, Runnable {
 	Display display;
 	Shell shell;
+	
 private void initComponents(){
 	display= new Display();
 	shell= new Shell(display);
-	
-	
-	
-	
-	
+		
 }
 @Override
 public void run() {

@@ -4,7 +4,15 @@ import java.util.Observable;
 
 import view.View;
 
-public class MazeGameGui extends Observable implements View, Runnable {
+
+
+/*
+ * Lital:
+ * Don't forget to add:
+ * setChanged & notifyObservers
+ */
+
+public class MazeGameView extends Observable implements View, Runnable {
 
 	@Override
 	public void run() {
