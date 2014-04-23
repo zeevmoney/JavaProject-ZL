@@ -6,7 +6,7 @@ import org.eclipse.swt.widgets.Shell;
 import view.View;
 
 /*
- * Lital:
+ * TODO: (Lital)
  * Don't forget to add:
  * setChanged & notifyObservers
  */
@@ -31,7 +31,7 @@ public void run() {
 	display.dispose();
 }
 @Override
-public void displayData(int[][] data) {
+public void displayBoard(int[][] data) {
 	// TODO Auto-generated method stub
 	
 }
@@ -39,5 +39,10 @@ public void displayData(int[][] data) {
 public int getUserCommand() {
 	// TODO Auto-generated method stub
 	return 0;
+}
+@Override
+public void displayScore() {
+	// TODO Auto-generated method stub
+	
 }
 }

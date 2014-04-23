@@ -16,6 +16,7 @@ import view.View;
 
 
 public class Presenter implements Observer {
+	//Both View & Model are injected using strategy pattern.
 	private View ui;
 	private Model model;
 	
@@ -50,6 +51,7 @@ public class Presenter implements Observer {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
+		//TODO (Zeev): //ui.displayData(model.getData());
 			
 	}
 }

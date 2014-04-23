@@ -21,7 +21,7 @@ public class MazeGameView extends Observable implements View, Runnable {
 	}
 
 	@Override
-	public void displayData(int[][] data) {
+	public void displayBoard(int[][] data) {
 		// TODO Auto-generated method stub
 
 	}
@@ -30,6 +30,12 @@ public class MazeGameView extends Observable implements View, Runnable {
 	public int getUserCommand() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	@Override
+	public void displayScore() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -35,7 +35,7 @@ public class Game2048Model extends Observable implements Model {
 	}
 
 	@Override
-	public int[][] getData() {
+	public int[][] getBoard() {
 		// TODO Auto-generated method stub
 		return null;
 	}
