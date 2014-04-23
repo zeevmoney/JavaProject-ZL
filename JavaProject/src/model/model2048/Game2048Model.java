@@ -1,18 +1,15 @@
 package model.model2048;
 
-import java.awt.Point;
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Stack;
-
 import model.Model;
 import model.algoirthms.GameState;
+import model.algoirthms.GameStateXML;
 
 
 /*
  * TODO (Zeev):
  * TODO: 1. Undo move queue (Singleton Pattern / Object / Static / Private Queue).
- * TODO: 2. Math probability calculations of every new state.
  * NOTE: 2048 Board is N*N
  */
 
@@ -21,67 +18,108 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state
 	Stack<GameState> gameStack; //stack of previous games
 	final int mEmpty = 0;
+	int boardSize;	
+	int win;
+	int lose;
 		
 	//Constructor
+	//TODO: make this run as a thread.
 	public Game2048Model(int boardSize) {
-		currentGame = new GameState(boardSize);
 		gameStack = new Stack<>();
-		
-		//TODO: new game?
+		this.boardSize=boardSize;
+		restartGame();
 	}
 	
-	//start a new game and init everything.
+
+	
 	@Override
-	public void newGame() {
-		boardInit(); //initialize the board
-		this.score = 0;
-		//TODO: finish this method.
+	public void run() {
+		// TODO Auto-generated method stub
 		
 	}
 	
-	//init all values on the game board.
+	//init all values on the game board & set score to 0.
 	private void boardInit() {
+		currentGame.setScore(0);
 		for (int i = 0; i < currentGame.getBoardSize(); i++)
 			for (int j = 0; j < currentGame.getBoardSize(); j++)
-				board[i][j] = mEmpty;
-		addNumber(); //add 2 random states (2 or 4)
-		addNumber();
+				currentGame.setXY(i, j, mEmpty); //set [x][y] = empty cell
+		//add 2 random numbers (2 or 4)
+		addNumber(); 
+		addNumber();		
 	}
 
-	//Adds a state at a random empty spot
-	private void addNumber() {
-		int x = (int) (Math.random() * currentGame.getBoardSize());
-		int y = (int) (Math.random() * currentGame.getBoardSize());
-		tempState.setState(new Point(x,y));
-		emptyTime.value = Math.random() < 0.9 ? 2 : 4;
-		}
-	}	
 	
-	//returns true if 
-	private boolean BoardIsEmpty (ArrayList<Point> availablePoints) {
-		return pointList.isEmpty();
-	}
-
-	//Available space. returns an ArrayList<State> of empty spaces.
-	private ArrayList<Point> availableSpace() {
-		ArrayList<Point> availablePoints = new ArrayList<>();
-		for (int i = 0; i < board.length; i++) {
-			for (int j = 0; j < board[0].length; j++) {
-				if (board[i][j] == 0)
-					availablePoints.add(new Point(i,j));				
+	//TODO: check if the board is full
+	//Adds a state at a random empty spot with 2(0.9) or 4(0.1)
+	private void addNumber() {
+		boolean flag = false;
+		while (!flag) {
+			//generate 2 random numbers (x and y coordinates)
+			int x = (int) (Math.random() * currentGame.getBoardSize());
+			int y = (int) (Math.random() * currentGame.getBoardSize());
+			if (!currentGame.validXY(x,y)) //if invalid x,y: continue..
+				continue;
+			if (currentGame.getXY(x,y) == mEmpty) //check if the cell is empty.
+			{
+				flag = true;
+				//probability of 2 is 0.9, 4 is 0.1
+				int tempNum = Math.random() < 0.9 ? 2 : 4;
+				currentGame.setXY(x, y, tempNum);
 			}			
 		}
-		return availablePoints;
+		setChanged();
+		notifyObservers();
 	}
-
-	//returns true if all states are used. 
-	private boolean isFull() {
-	    return availableSpace().size() == 0;
-	 }
 	
 	@Override
+	public void restartGame() {
+		win=0;
+		lose=0;
+		currentGame = new GameState(boardSize);
+		boardInit();
+		gameStack.clear();
+		gameStack.add(currentGame);
+		setChanged();
+		notifyObservers();	
+	}
+
+
+	@Override
+	public void saveGame() {
+		try {
+			GameStateXML gXML = new GameStateXML();
+			gXML.gameStateToXML(currentGame, "2048Save.xml");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+
+	@Override
+	public void loadGame() {
+		try {
+			GameStateXML gXML = new GameStateXML();
+			gXML.gameStateToXML(currentGame, "2048Save.xml");			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
+	
+	@Override
+	public void undoMove() {
+		currentGame=gameStack.pop();
+		setChanged();
+		notifyObservers();				
+	}
+		
+	@Override
 	public void moveUp() {
-		// TODO Auto-generated method stub		
+		for (int i = 0; i < boardSize; i++) {
+			
+		}
 	}
 
 	@Override
@@ -102,47 +140,36 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		
 	}
 
+	
 	@Override
 	public int[][] getBoard() {
-		return board;		
+		return currentGame.getBoard();		
 	}
 
 	@Override
 	public int getScore() {
-		// TODO Auto-generated method stub
-		return 0;
+		return currentGame.getScore();
 	}
 
 
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-
-	@Override
-	public void restartGame() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void saveGame() {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void loadGame() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	
-
+//	//Available space. returns an ArrayList<State> of empty spaces.
+//	private ArrayList<Point> availableSpace() {
+//		ArrayList<Point> availablePoints = new ArrayList<>();
+//		for (int i = 0; i < board.length; i++) {
+//			for (int j = 0; j < board[0].length; j++) {
+//				if (board[i][j] == 0)
+//					availablePoints.add(new Point(i,j));				
+//			}			
+//		}
+//		return availablePoints;
+//	}
+	
+//	//returns true if all states are used. 
+//	private boolean isFull() {
+//	    return false;
+//	 }
+	
+	
 }
