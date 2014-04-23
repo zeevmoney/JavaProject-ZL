@@ -2,6 +2,8 @@ package model.model2048;
 
 import java.util.Observable;
 import java.util.Stack;
+
+import controller.Presenter;
 import model.Model;
 import model.algoirthms.GameState;
 import model.algoirthms.GameStateXML;
@@ -20,7 +22,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	final int mEmpty = 0;
 	int boardSize;	
 	int win;
-	int lose;
+	int lose; //TODO: add to gameover
 		
 	//Constructor
 	//TODO: make this run as a thread.
@@ -114,32 +116,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		setChanged();
 		notifyObservers();				
 	}
-		
-	@Override
-	public void moveUp() {
-		for (int i = 0; i < boardSize; i++) {
-			
-		}
-	}
-
-	@Override
-	public void moveDown() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveLeft() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void moveRight() {
-		// TODO Auto-generated method stub
-		
-	}
-
+	
 	
 	@Override
 	public int[][] getBoard() {
@@ -150,26 +127,113 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	public int getScore() {
 		return currentGame.getScore();
 	}
+	
+	private void gameOver() {
+		// TODO Auto-generated method stub
+		
+	}
 
+	//returns True is the board is full
+	public boolean boardIsFull () {
+		int[][] board = currentGame.getBoard();
+		for (int i = 0; i < board.length; i++)
+			for (int j = 0; j < board[i].length; j++)
+				if (board[i][j]==0)
+					return true;
+		return false;		
+	}
 
+	
+	
+	/* ******************
+	 * Move up + MoveallUp
+	 * ****************** */
+	
+	//TODO: check if there was any movement at all
+	@Override
+	public void moveUp() {
+		moveAllup();
+		if (boardIsFull()) {
+			gameOver();
+			return;
+		}		
+		for (int i = 0; i < boardSize; i++) {
+			for (int j = 0; j < boardSize; j++) {
+					addNumber();					
+			}									
+		}
+		setChanged();
+		notifyObservers();
+	}
+	
+	private void moveAllup() {
+		int score = currentGame.getScore();
+		int[][] board = currentGame.getBoard();
+		for (int i = 1; i < boardSize; i++) { //first row remains unchanged (i=0)
+			for (int j = 0; j < boardSize; j++) {
+				/*
+				 * if upper cell is not empty & has the same value
+				 * add the lower cell value to the upper cell (on the same column) 
+				 */
+				if (board[i-1][j] != mEmpty && board[i-1][j] == board[i][j])
+				{
+					score += board[i][j]*2;
+					board[i-1][j] *=2;
+				/*
+				 * if the upper cell is empty add the lower cell value and change the lower to empty.
+				 * (if the upper cell has value and it doesn't match the lower cell don't need to do anything).
+				 */
+				} else if (board[i-1][j] == mEmpty) {
+					board[i-1][j] = board[i][j];
+					board[i][j] = mEmpty; //init the cell the was merged with the upper cell
+				}				
+			}			
+		}
+		currentGame.setBoard(board);
+		currentGame.setScore(score);
+	}
+	
+	
+	/* **********************
+	 * MoveDown + MoveallDown
+	 * ********************** */
+
+	@Override
+	public void moveDown() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	public void moveAllDown() {
+		
+	}
+	
+	/* **********************
+	 * MoveLeft + MoveallLeft
+	 * ********************** */
+
+	@Override
+	public void moveLeft() {
+
+	}
+	
+	public void moveAllLeft () {
+	}
 
 	
-//	//Available space. returns an ArrayList<State> of empty spaces.
-//	private ArrayList<Point> availableSpace() {
-//		ArrayList<Point> availablePoints = new ArrayList<>();
-//		for (int i = 0; i < board.length; i++) {
-//			for (int j = 0; j < board[0].length; j++) {
-//				if (board[i][j] == 0)
-//					availablePoints.add(new Point(i,j));				
-//			}			
-//		}
-//		return availablePoints;
-//	}
-	
-//	//returns true if all states are used. 
-//	private boolean isFull() {
-//	    return false;
-//	 }
 	
 	
+	/* *************************
+	 * MoveRight + MoveallRight
+	 * ************************* */
+	
+	@Override
+	public void moveRight() {
+		
+	}
+	
+	public void moveAllRight() {
+		
+	}
+
 }

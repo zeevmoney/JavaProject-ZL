@@ -39,7 +39,7 @@ public class GameState {
 		board[x][y] = value;
 	}
 	
-	//returns the cooridnates at a given x,y
+	//returns the value at a given x,y
 	public int getXY(int x,int y) {
 		return board[x][y];	
 	}
@@ -52,14 +52,7 @@ public class GameState {
 	}
 
 	
-	//returns True is the board is full
-	public boolean isFull () {
-		for (int i = 0; i < board.length; i++)
-			for (int j = 0; j < board[i].length; j++)
-				if (board[i][j]==0)
-					return true;
-		return false;		
-	}
+
 
 	
 	
