@@ -7,7 +7,7 @@ import view.View;
 
 
 /*
- * Lital:
+ * TODO: (Lital)
  * Don't forget to add:
  * setChanged & notifyObservers
  */
