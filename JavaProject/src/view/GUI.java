@@ -24,6 +24,9 @@ import org.eclipse.swt.widgets.Text;
 import controller.Presenter;
 
 //need to fix button1
+//set file
+//set edit
+//menu text
 
 public class GUI extends Thread {
 	
@@ -83,38 +86,83 @@ public class GUI extends Thread {
 
 //show the menu of the game- new game and exit game
 	private void setMenu(){
-		//Create the menu			
-		Menu menuBar = new Menu(shell, SWT.BAR);
-        shell.setMenuBar(menuBar);
-
-        MenuItem cascadeFileMenu = new MenuItem(menuBar, SWT.CASCADE);
-        cascadeFileMenu.setText("&Menu");
-
-        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
-        cascadeFileMenu.setMenu(fileMenu);
-        
-        newGameOption(fileMenu);// add	menu the option for start new game
-		exitGameOption(fileMenu);// add	menu the option for exit new game
+		
   	
 	}	
 	
 
-//	menu option for start new game
-	private void newGameOption(Menu fileMenu) {
+
+	//show the menu of edit label at the game- need to finish	
+	private void setEdit() {
+		//Create the menu			
+				Menu menuBar = new Menu(shell, SWT.BAR);
+		        shell.setMenuBar(menuBar);
+
+		        MenuItem aFileMenu = new MenuItem(menuBar, SWT.CASCADE);
+		        aFileMenu.setText("&File");
+
+		        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+		        aFileMenu.setMenu(fileMenu);
+		        loadGame(fileMenu);// add menu the option for load game
+		        saveGame(fileMenu);// add menu the option for save game
+		        saveAndExitGameOption(fileMenu);// add	menu the option for save and exit game
+				exitGameOption(fileMenu);// add	menu the option for exit new game
+		
+	}
+
+	
+	
+//	file option for save  game
+private void saveGame(Menu fileMenu) {
+	MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
+    newItem.setText("&save game");
+    
+    newItem.addSelectionListener(new SelectionAdapter() {
+
+        @Override
+        public void widgetSelected(SelectionEvent e) {
+            presenter.saveGame();           
+            
+        }
+    });
+		
+	}
+
+//file option for load  game
+private void loadGame(Menu fileMenu) {
+	MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
+    newItem.setText("&load game");
+    
+    newItem.addSelectionListener(new SelectionAdapter() {
+
+        @Override
+        public void widgetSelected(SelectionEvent e) {
+            presenter.loadGame();           
+            
+        }
+    });
+		
+	}
+
+	//	file option for save and exit game
+	private void saveAndExitGameOption(Menu fileMenu) {
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
-        newItem.setText("&new game");
+        newItem.setText("&save and exit");
         
         newItem.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                presenter.startNewGame();
+                presenter.saveGame();
+                shell.getDisplay().dispose();
+                System.exit(0);
+                
             }
         });
 		
 	}
 	
-//	menu option for exit the game	
+//	file text- for exit game	
 	private void exitGameOption(Menu fileMenu) {
 	 MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
         exitItem.setText("&Exit game");
@@ -130,23 +178,26 @@ public class GUI extends Thread {
 		
 	}
 
-	//show the menu of edit label at the game- need to finish	
-	private void setEdit() {
-		String[] items = "white screen, yellow screen".split(",");
-		Combo edit = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
-		edit.setItems(items);
-		
-	}
-
 	//show the menu of file label at the game- need to finish	
 	private void setFile() {
-		String[] items = "game rules, game tips".split(",");
-		Combo file = new Combo(shell, SWT.DROP_DOWN | SWT.READ_ONLY);
-		file.setItems(items);
+		Menu menuBar = new Menu(shell, SWT.BAR);
+        shell.setMenuBar(menuBar);
+
+        MenuItem aFileMenu = new MenuItem(menuBar, SWT.CASCADE);
+        aFileMenu.setText("&File");
+
+        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+        aFileMenu.setMenu(fileMenu);
+        loadGame(fileMenu);// add menu the option for load game
+        saveGame(fileMenu);// add menu the option for save game
+        saveAndExitGameOption(fileMenu);// add	menu the option for save and exit game
+		exitGameOption(fileMenu);// add	menu the option for exit new game
 		
 		
 	}
 
+	
+	//set all the right side buttons
 	private void setButtons() {
 		
 		setScoreButton();

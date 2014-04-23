@@ -79,8 +79,4 @@ public class Presenter implements Observer {
 		
 	}
 
-	public void startNewGame() {
-		// TODO (Zeev):// start new game
-		
-	}
 }
