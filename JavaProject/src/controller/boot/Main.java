@@ -1,9 +1,11 @@
-package view;
+package controller.boot;
 
-import game2048.Game2048Model;
-import game2048.Game2048View;
+import view.game2048.Game2048View;
+import model.model2048.Game2048Model;
 import controller.Presenter;
 
+
+//This class starts the game / games
 public class Main {
 
 	public static void main(String[] args) {

@@ -6,6 +6,12 @@ import java.util.Observer;
 import model.Model;
 import view.View;
 
+/*
+ * The presenter acts upon the model and the view. 
+ * It retrieves data from repositories (the model), 
+ * and formats it for display in the view.
+ */
+
 
 public class Presenter implements Observer {
 	

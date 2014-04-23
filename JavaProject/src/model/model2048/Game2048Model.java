@@ -1,9 +1,12 @@
-package game2048;
+package model.model2048;
+
+
 
 import java.util.Observable;
 
 import model.Model;
-import model.State;
+
+
 
 public class Game2048Model extends Observable implements Model {
 
