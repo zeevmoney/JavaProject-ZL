@@ -68,4 +68,14 @@ public class Presenter implements Observer {
 		// TODO (Zeev):// restart the game 
 		
 	}
+
+	public void loadGame() {
+		// TODO (Zeev):// load the last game
+		
+	}
+
+	public void saveGame() {
+		// TODO (Zeev):// delete the loaded game and save the current game
+		
+	}
 }

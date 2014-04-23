@@ -103,7 +103,7 @@ public class GUI extends Thread {
 				presenter.undoMove();
 			}
 		});
-		
+		//if this button pushed down the last move is undo and the the button pushed up back
 		restartGame.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -112,13 +112,34 @@ public class GUI extends Thread {
 			}
 			
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				
+			public void widgetDefaultSelected(SelectionEvent arg0) {	
 			}
 		});
-		
-		/*
+		//if this button pushed down you can load last game
+		loadGame.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				presenter.loadGame();		
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {	
+			}
+		});
+	//if this button pushed down you can save last game
+			saveGame.addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					presenter.saveGame();		
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent arg0) {	
+				}
+			});
+/*
 		Canvas canvas = new Canvas(shell, SWT.BORDER);
 		canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
 		canvas.setBackground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
@@ -145,6 +166,13 @@ public class GUI extends Thread {
 		shell.open();
 	*/	
 	}
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	public void run() {
