@@ -4,17 +4,17 @@ package model;
  * The model is an interface defining the data to be displayed.
  * or otherwise acted upon in the user interface.
  * 
- * Every class concrete that implements model must also extend Observable in order
+ * Every concrete class that implements model must also extend Observable in order
  * to notify the Presenter that something has changed.   
  */
 
 public interface Model {
 	
 	//Game control:
-	public void newGame (); 
 	public void restartGame();
-	public void saveGame(); //Save Game (INI / XML / Other)
-	public void loadGame(); //Load Game (INI / XML / Other)
+	public void saveGame(); //Save Game (XML)
+	public void loadGame(); //Load Game (XML)
+	public void undoMove();
 	
 	//Movement functions: will change the state on game board.
 	public void moveUp();
