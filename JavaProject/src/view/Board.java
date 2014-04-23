@@ -3,8 +3,6 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-
-
 public class Board extends Canvas{
 	int[][] boardData; // the data of the board
 	
@@ -26,6 +24,14 @@ public class Board extends Canvas{
 	//get board data
 	public int[][] getBoardData() {
 		return boardData;
+	}
+	
+	public void setColor(String string){
+		
+		
+		
+		
+		
 	}
 	//set board data
 	public void setBoardData(int[][] boardData) {

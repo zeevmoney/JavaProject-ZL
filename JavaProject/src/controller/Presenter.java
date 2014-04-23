@@ -78,4 +78,9 @@ public class Presenter implements Observer {
 		// TODO (Zeev):// delete the loaded game and save the current game
 		
 	}
+
+	public void startNewGame() {
+		// TODO (Zeev):// start new game
+		
+	}
 }
