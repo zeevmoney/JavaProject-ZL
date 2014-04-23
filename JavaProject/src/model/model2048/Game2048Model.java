@@ -3,9 +3,10 @@ package model.model2048;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Observable;
+import java.util.Stack;
 
 import model.Model;
-import model.algoirthms.State;
+import model.algoirthms.GameState;
 
 
 /*
@@ -17,21 +18,16 @@ import model.algoirthms.State;
 
 
 public class Game2048Model extends Observable implements Model,Runnable {
-	int[][] board; //the game board
-	State state; //single point(state) on the board
-	ArrayList<State> states; //all the current States on the board.
-	final int boardSize; //array size
+	GameState currentGame; //current game state
+	Stack<GameState> gameStack; //stack of previous games
 	final int mEmpty = 0;
-	int score;
-	
-	
+		
 	//Constructor
 	public Game2048Model(int boardSize) {
-		this.boardSize = boardSize;
-		System.out.println("[DEBUG] Board Size:" + boardSize);
-		this.board = new int[boardSize][boardSize]; //TODO: check if it's all zero.
-		this.states = new ArrayList<>();
-		this.score=0;
+		currentGame = new GameState(boardSize);
+		gameStack = new Stack<>();
+		
+		//TODO: new game?
 	}
 	
 	//start a new game and init everything.
@@ -42,22 +38,20 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		//TODO: finish this method.
 		
 	}
-
+	
 	//init all values on the game board.
 	private void boardInit() {
-		for (int i = 0; i < board.length; i++)
-			for (int j = 0; j < board[i].length; j++)
+		for (int i = 0; i < currentGame.getBoardSize(); i++)
+			for (int j = 0; j < currentGame.getBoardSize(); j++)
 				board[i][j] = mEmpty;
-		//add 2 random states (2 or 4)
-		addState();
-		addState();
+		addNumber(); //add 2 random states (2 or 4)
+		addNumber();
 	}
 
 	//Adds a state at a random empty spot
-	private void addState() {
-		State tempState = new State();
-		int x = (int) (Math.random() * board.length);
-		int y = (int) (Math.random() * board[0].length);
+	private void addNumber() {
+		int x = (int) (Math.random() * currentGame.getBoardSize());
+		int y = (int) (Math.random() * currentGame.getBoardSize());
 		tempState.setState(new Point(x,y));
 		emptyTime.value = Math.random() < 0.9 ? 2 : 4;
 		}
