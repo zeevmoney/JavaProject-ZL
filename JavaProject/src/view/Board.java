@@ -21,4 +21,12 @@ public class Board extends Canvas{
 		});
 		//...
 	} 
+	//get board data
+	public int[][] getBoardData() {
+		return boardData;
+	}
+	//set board data
+	public void setBoardData(int[][] boardData) {
+		this.boardData = boardData;
+	}
 }
