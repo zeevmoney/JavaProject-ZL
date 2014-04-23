@@ -1,32 +1,31 @@
 package view;
 
-import model.Model;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
+//import org.eclipse.swt.events.PaintEvent;
+//import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.Combo;
+//import org.eclipse.swt.widgets.Canvas;
+//import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Label;
+//import org.eclipse.swt.widgets.Event;
+//import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
+//import org.eclipse.swt.widgets.Text;
+
 
 import controller.Presenter;
 
 //need to fix button1
-//set file
-//set edit
-//menu text
+//need to see if needed horizontal line under menu
 
 public class GUI extends Thread {
 	
@@ -34,8 +33,8 @@ public class GUI extends Thread {
 	Shell shell;
 	Presenter presenter;
 	String gameName;
-    private MenuItem pinkScreen;
-    private MenuItem yellowScreen;
+ //   private MenuItem pinkScreen;
+ //   private MenuItem yellowScreen;
     
     //get the game name
 	public GUI(String string) {
@@ -46,47 +45,29 @@ public class GUI extends Thread {
 		display = new Display();//display = my screen
 		shell = new Shell(display);//shell = specific window
 		shell.setText(gameName);
-		setMenuToolsBar();
-		
-		setButtons();
-
+		setMenuToolsBar();//create the menu tools bar 
+		setButtons();//create the buttons on the left side
 		shell.setSize(300, 300);
 		shell.open();		
 	}
 	
-//change the screen color to pink	
-	 Listener pinkListener = new Listener() {
 
-	        public void handleEvent(Event event) {
-	            if (pinkScreen.getSelection()) {
-	 //               status.setVisible(true);
-	            } else {
-	 //               status.setVisible(false);
-	            }
-	        }
-	    };
-
- //change the screen color to yellow
-	    Listener yellowListener1 = new Listener() {
-
-	        public void handleEvent(Event event) {
-	            if (yellowScreen.getSelection()) {
-	  //              status.setVisible(true);
-	            } else {
-	 //               status.setVisible(false);
-	            }
-	        }
-	    };
 	    
 	private void setMenuToolsBar() {
-		setMenu();//create the menu tools bar
+		setMenu();//create the menu label
 		setFile();//create the file tools bar
 		setEdit();//create the edit tools bar		
 	}
 
-//show the menu of the game- new game and exit game
+//show the label menu on the left up side
 	private void setMenu(){
-		
+		//create menu label
+		Label label = new Label(shell, SWT.CENTER);
+	    label.setText("menu: ");
+	    label.setBounds(shell.getClientArea());
+	    //Create horizontal line
+	//    Label shadow_sep_h = new Label(shell, SWT.SEPARATOR | SWT.SHADOW_OUT | SWT.HORIZONTAL);
+	//	shadow_sep_h.;
   	
 	}	
 	
@@ -94,24 +75,54 @@ public class GUI extends Thread {
 
 	//show the menu of edit label at the game- need to finish	
 	private void setEdit() {
-		//Create the menu			
-				Menu menuBar = new Menu(shell, SWT.BAR);
-		        shell.setMenuBar(menuBar);
+	//Create the edit			
+			Menu menuBar = new Menu(shell, SWT.BAR);
+	        shell.setMenuBar(menuBar);
 
-		        MenuItem aFileMenu = new MenuItem(menuBar, SWT.CASCADE);
-		        aFileMenu.setText("&File");
+	        MenuItem aFileMenu = new MenuItem(menuBar, SWT.CASCADE);
+	        aFileMenu.setText("&Edit");
 
-		        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
-		        aFileMenu.setMenu(fileMenu);
-		        loadGame(fileMenu);// add menu the option for load game
-		        saveGame(fileMenu);// add menu the option for save game
-		        saveAndExitGameOption(fileMenu);// add	menu the option for save and exit game
-				exitGameOption(fileMenu);// add	menu the option for exit new game
-		
+	        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+	        aFileMenu.setMenu(fileMenu);
+	        restartGame(fileMenu);// add to edit label the option for restart game
+	        undoMove(fileMenu);//  add to edit label the option for undo last step
+	       
 	}
 
 	
-	
+
+//	edit option for restart  game
+private void restartGame(Menu fileMenu) {
+
+	MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
+    newItem.setText("&restart game");
+    
+    newItem.addSelectionListener(new SelectionAdapter() {
+
+        @Override
+        public void widgetSelected(SelectionEvent e) {
+            presenter.restartGame();            
+        }
+    });
+    
+	}
+
+//edit option for undo last move at  game	
+private void undoMove(Menu fileMenu) {
+
+	MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
+    newItem.setText("&undo move");
+    
+    newItem.addSelectionListener(new SelectionAdapter() {
+
+        @Override
+        public void widgetSelected(SelectionEvent e) {
+            presenter.undoMove();           
+            
+        }
+    });
+		
+	}
 //	file option for save  game
 private void saveGame(Menu fileMenu) {
 	MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
@@ -144,7 +155,7 @@ private void loadGame(Menu fileMenu) {
 		
 	}
 
-	//	file option for save and exit game
+//	file option for save and exit game
 	private void saveAndExitGameOption(Menu fileMenu) {
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
         newItem.setText("&save and exit");
@@ -178,7 +189,7 @@ private void loadGame(Menu fileMenu) {
 		
 	}
 
-	//show the menu of file label at the game- need to finish	
+//show the menu of file label at the game- need to finish	
 	private void setFile() {
 		Menu menuBar = new Menu(shell, SWT.BAR);
         shell.setMenuBar(menuBar);
@@ -197,7 +208,7 @@ private void loadGame(Menu fileMenu) {
 	}
 
 	
-	//set all the right side buttons
+//set all the right side buttons
 	private void setButtons() {
 		
 		setScoreButton();
@@ -371,4 +382,27 @@ canvas.addPaintListener(new PaintListener() {
 //text needs to fill the whole row
 //canvas.
 */		
+/*//change the screen color to pink	
+Listener pinkListener = new Listener() {
 
+       public void handleEvent(Event event) {
+           if (pinkScreen.getSelection()) {
+//               status.setVisible(true);
+           } else {
+//               status.setVisible(false);
+           }
+       }
+   };
+
+//change the screen color to yellow
+   Listener yellowListener1 = new Listener() {
+
+       public void handleEvent(Event event) {
+           if (yellowScreen.getSelection()) {
+ //              status.setVisible(true);
+           } else {
+//               status.setVisible(false);
+           }
+       }
+};	
+*/
