@@ -1,4 +1,6 @@
 package view;
+import java.awt.Graphics;
+
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.widgets.Canvas;
@@ -8,33 +10,27 @@ public class Board extends Canvas{
 	
 	public Board(Composite parent, int style) {
 		super(parent, style);  // call canvas Ctor
-		// add the paint listener
-		addPaintListener(new PaintListener() {
-			
-			@Override
-			public void paintControl(PaintEvent e) {
-				// paint the board...
-				if(boardData!=null){
-					//...
-				}
-			}
-		});
-		//...
+//		// add the paint listener
+//		addPaintListener(new PaintListener() {
+//			
+//			@Override
+//			public void paintControl(PaintEvent e) {
+//				// paint the board...
+//				if(boardData!=null){
+//					//...
+//				}
+//			}
+//		});
+//		//...
 	} 
 	//get board data
 	public int[][] getBoardData() {
 		return boardData;
 	}
 	
-	public void setColor(String string){
-		
-		
-		
-		
-		
-	}
 	//set board data
 	public void setBoardData(int[][] boardData) {
 		this.boardData = boardData;
 	}
+	
 }
