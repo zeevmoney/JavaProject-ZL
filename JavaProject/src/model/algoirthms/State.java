@@ -1,7 +1,7 @@
-package model.alogirthms;
+package model.algoirthms;
 
-
-/* State is used to describe the current state of the algorithm (the graph Vertex/Node).
+/* 
+ * State is used to describe the current state of the algorithm (the graph Vertex/Node).
  * State is comparable in order to keep the priority queue sorted.
 */
 

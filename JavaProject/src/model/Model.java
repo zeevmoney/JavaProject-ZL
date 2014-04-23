@@ -10,22 +10,22 @@ package model;
 
 public interface Model {
 	
-	/*
-	 * Movement functions: will change the state on game board.
-	 */
-	void moveUp();
+	//Game control:
+	public void newGame (); 
+	public void restartGame();
+	public void saveGame(); //Save Game (INI / XML / Other)
+	public void loadGame(); //Load Game (INI / XML / Other)
 	
-	void moveDown();
-	
-	void moveLeft();
-	
-	void moveRight();	
-	
+	//Movement functions: will change the state on game board.
+	public void moveUp();
+	public void moveDown();
+	public void moveLeft();
+	public void moveRight();	
 	
 	//returns the current 2D array as represented in the Model.
-	int[][] getBoard();
+	public int[][] getBoard();
 	
 	//returns the current user score.
-	int getScore();
+	public int getScore();
 	
 }

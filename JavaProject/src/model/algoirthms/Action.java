@@ -1,4 +1,4 @@
-package model.alogirthms;
+package model.algoirthms;
 
 /* 
  * Action interface for implementing different types of actions in order to inject into the Astar class.
