@@ -53,4 +53,19 @@ public class Presenter implements Observer {
 		//TODO (Zeev): //ui.displayData(model.getData());
 			
 	}
+// need to update method for gui
+	public void undoMove() {
+		// TODO (Zeev):// undo the last move
+		
+	}
+
+	public int getScore() {
+		// TODO (Zeev):// return game current score
+		return 0;
+	}
+
+	public void restartGame() {
+		// TODO (Zeev):// restart the game 
+		
+	}
 }
