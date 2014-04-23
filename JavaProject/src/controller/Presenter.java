@@ -14,7 +14,6 @@ import view.View;
  * changes in View and Model Interfaces.
  */
 
-
 public class Presenter implements Observer {
 	//Both View & Model are injected using strategy pattern.
 	private View ui;

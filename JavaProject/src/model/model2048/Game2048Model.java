@@ -2,9 +2,12 @@ package model.model2048;
 
 
 
+import java.util.ArrayList;
 import java.util.Observable;
 
 import model.Model;
+
+import org.eclipse.swt.graphics.Point;
 
 /*
  * TODO (Zeev):
@@ -14,17 +17,26 @@ import model.Model;
  * TODO: 4. Load Game (INI / XML / Other)
  * TODO: 5. Save Game (INI / XML / Other)
  * TODO: 6. Math probability calculations of every new state.
- * 
- * NOTE: 6. Board is N*N
+ * NOTE: 2048 Board is N*N
  */
 
 
-public class Game2048Model extends Observable implements Model {
 
+public class Game2048Model extends Observable implements Model,Runnable {
+	private int[][] board;
+	Point state; //single point on the board
+	ArrayList<Point> states; //all the points on the board.
+	
+	//Constructor
+	public Game2048Model() {
+		board = new int[4][4];
+		states = new ArrayList<Point>();		
+	}
+
+	
 	@Override
 	public void moveUp() {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 
 	@Override
@@ -47,14 +59,20 @@ public class Game2048Model extends Observable implements Model {
 
 	@Override
 	public int[][] getBoard() {
-		// TODO Auto-generated method stub
-		return null;
+		return board;		
 	}
 
 	@Override
 	public int getScore() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	
