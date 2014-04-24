@@ -12,46 +12,50 @@ public class Board extends Canvas{
 	public Canvas canvas;
 	double mX;
 	double mY;
-	public Board(Composite parent, int style, int[][] data) {
+	int rows;
+	int colums;
+	public Board(Composite parent, int style, final int[][] data) {
 		super(parent, style);  // call canvas Ctor
-		
-// add the paint listener
+		// add the paint listener
 		addPaintListener(new PaintListener() {
 			
 			@Override
 			public void paintControl(PaintEvent e) {
-				// paint the board...
+					// paint the board...
 				if(boardData!=null){
-		double maxX = canvas.getSize().x;
-		double maxY = canvas.getSize().y;
-		mX= data.length/(maxX+2);
-		my= data[0].length/(maxY+2);
-					//...
+					double maxX = canvas.getSize().x;
+					double maxY = canvas.getSize().y;
+					rows=data.length;//calculate the number of rows
+					colums=data[0].length;//calculate the number of columns
+					mX= rows/(maxX+2);//calculate the cell high
+					mY= colums/(maxY+2);//calculate the cell width
+								//...
 				}
 			}
 		});
 		//...
-	} 
-	//get board data
-	public int[][] getBoardData() {
-		return boardData;
 	}
 	
-	//set board data
-	public void setBoardData(int[][] data) {
-		GC gc = new GC(canvas);
-		
+//get board data
+public int[][] getBoardData() {
+	return boardData;
+}
 
-		for (int i = 0; i < data.length; i++) {
-			for (int j = 0; j < data[i].length; j++){
-				gc.drawRectangle(5,5,90,45); 	
-			}
-				
+//set board data
+public void setBoardData(int[][] data) {
+	GC gc = new GC(canvas);
 	
-		gc.drawRectangle(5,5,90,45); 
-		this.boardData = boardData;}
 
-	}
+	for (int x = 0; x < rows; x++) {
+		for (int y = 0; y < colums; y++){
+			//gc.drawRectangle(get(x),get(y),getDown(x),getDown(y)); 	
+		}
+			
+
+//	gc.drawRectangle(5,5,90,45); 
+//	this.boardData = boardData;}
+
+}
 
 
 
@@ -72,8 +76,8 @@ private void setColor(int x, int y) {
 	e.gc.fillRectangle(get(x),get(y),getDown(x),getDown(y));
 }
 //get start point of Rectangle
-private Object getDown(int x) {
-	return (;
+private double getDown(int x) {
+	return (x*mx+
 }
 
 //get end point of Rectangle
