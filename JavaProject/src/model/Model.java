@@ -15,6 +15,7 @@ public interface Model {
 	public void saveGame(); //Save Game (XML)
 	public void loadGame(); //Load Game (XML)
 	public void undoMove();
+
 	
 	//Movement functions: will change the state on game board.
 	public void moveUp();
@@ -28,4 +29,9 @@ public interface Model {
 	//returns the current user score.
 	public int getScore();
 	
+	//returns true if won the game.
+	public boolean getWin();
+	
+	//returns true if lost the game.
+	public boolean getLose(); 
 }

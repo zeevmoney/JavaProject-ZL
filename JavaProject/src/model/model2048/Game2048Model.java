@@ -14,7 +14,8 @@ import model.algoirthms.GameStateXML;
 public class Game2048Model extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state
 	Stack<GameState> gameStack; //stack of previous games
-	final int mEmpty = 0;
+	final int emptyCell = 0;
+	final int winScore = 2048;
 	int boardSize;	
 	boolean win;
 	boolean lose;
@@ -37,10 +38,12 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 	//init all values on the game board & set score to 0.
 	private void boardInit() {
+		win=false;
+		lose=false;
 		currentGame.setScore(0);
-		for (int i = 0; i < currentGame.getBoardSize(); i++)
-			for (int j = 0; j < currentGame.getBoardSize(); j++)
-				currentGame.setXY(i, j, mEmpty); //set [x][y] = empty cell
+		for (int i = 0; i < boardSize; i++)
+			for (int j = 0; j < boardSize; j++)
+				currentGame.setXY(i, j, emptyCell); 
 		//add 2 random numbers (2 or 4)
 		addNumber(); 
 		addNumber();		
@@ -58,7 +61,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			int y = (int) (Math.random() * currentGame.getBoardSize());
 			if (!currentGame.validXY(x,y)) //if invalid x,y: continue..
 				continue;
-			if (currentGame.getXY(x,y) == mEmpty) //check if the cell is empty.
+			if (currentGame.getXY(x,y) == emptyCell) //check if the cell is empty.
 			{
 				flag = true;
 				//probability of 2 is 0.9, 4 is 0.1
@@ -73,8 +76,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 	@Override
 	public void newGame() {
-		win=false;
-		lose=false;
 		currentGame = new GameState(boardSize);
 		boardInit();
 		gameStack.clear();
@@ -92,7 +93,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	@Override
@@ -125,9 +125,14 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		return currentGame.getScore();
 	}
 	
-	private void gameOver() {
-		// TODO Auto-generated method stub
-		
+	@Override
+	public boolean getWin() {
+		return win;
+	}
+
+	@Override
+	public boolean getLose() {
+		return lose;
 	}
 
 	//returns True if any movement is available.
@@ -136,7 +141,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			for (int j = 0; j < boardSize; j++) {
 				if (!currentGame.validXY(i+1, j) || !currentGame.validXY(i, j+1)) //invalid index 
 					continue;					
-				if (currentGame.getXY(i, j) == mEmpty || currentGame.getXY(i, j) == currentGame.getXY(i+1, j) 
+				if (currentGame.getXY(i, j) == emptyCell || currentGame.getXY(i, j) == currentGame.getXY(i+1, j) 
 					|| currentGame.getXY(i, j) == currentGame.getXY(i, j+1)) {
 					//empty / right cell equals / bottom cell equals
 					return true;
@@ -175,9 +180,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		//remove all spaces (consolidate everything)
 		for (int i = 0; i < boardSize-1; i++) { //i+1 = out of the array
 			for (int j = 0; j < boardSize-1; j++) {
-				if (board[i][j] == mEmpty) {
+				if (board[i][j] == emptyCell) {
 					board[i][j] = board[i+1][j];
-					board [i+1][j] = mEmpty;
+					board [i+1][j] = emptyCell;
 					movement = true;
 				}						
 			}			
@@ -188,7 +193,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i+1][j]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					board [i+1][j] = mEmpty; //set the lower cell to 0
+					if (board[i][j] == winScore)
+						win = true;
+					board [i+1][j] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
 			}			
@@ -197,9 +204,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
 			for (int i = 0; i < boardSize-1; i++) { //i+1 = out of the array
 				for (int j = 0; j < boardSize-1; j++) {
-					if (board[i][j] == mEmpty) {
+					if (board[i][j] == emptyCell) {
 						board[i][j] = board[i+1][j];
-						board [i+1][j] = mEmpty;
+						board [i+1][j] = emptyCell;
 						movement = true;
 					}						
 				}			
@@ -241,9 +248,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		//remove all spaces (consolidate everything)
 		for (int i = boardSize-1; i > 0; i--) { //i-1 = out of the array
 			for (int j = 0; j < boardSize-1; j++) {
-				if (board[i][j] == mEmpty) {
+				if (board[i][j] == emptyCell) {
 					board[i][j] = board[i-1][j];
-					board [i-1][j] = mEmpty;
+					board [i-1][j] = emptyCell;
 					movement = true;
 				}						
 			}			
@@ -254,7 +261,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i-1][j]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					board [i-1][j] = mEmpty; //set the lower cell to 0
+					if (board[i][j] == winScore)
+						win = true;
+					board [i-1][j] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
 			}			
@@ -263,9 +272,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
 			for (int i = boardSize-1; i > 0; i--) { //i-1 = out of the array
 				for (int j = 0; j < boardSize-1; j++) {
-					if (board[i][j] == mEmpty) {
+					if (board[i][j] == emptyCell) {
 						board[i][j] = board[i-1][j];
-						board [i-1][j] = mEmpty;
+						board [i-1][j] = emptyCell;
 						movement = true;
 					}						
 				}			
@@ -307,9 +316,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		//remove all spaces (consolidate everything)
 		for (int i = 0; i < boardSize-1; i++) { 
 			for (int j = 0; j < boardSize-1; j++) {
-				if (board[i][j] == mEmpty) {
+				if (board[i][j] == emptyCell) {
 					board[i][j] = board[i][j+1];
-					board [i][j+1] = mEmpty;
+					board [i][j+1] = emptyCell;
 					movement = true;
 				}						
 			}			
@@ -320,7 +329,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i][j+1]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					board [i][j+1] = mEmpty; //set the lower cell to 0
+					if (board[i][j] == winScore)
+						win = true;
+					board [i][j+1] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
 			}			
@@ -329,9 +340,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
 			for (int i = 0; i < boardSize-1; i++) { 
 				for (int j = 0; j < boardSize-1; j++) {
-					if (board[i][j] == mEmpty) {
+					if (board[i][j] == emptyCell) {
 						board[i][j] = board[i][j+1];
-						board [i][j+1] = mEmpty;
+						board [i][j+1] = emptyCell;
 						movement = true;
 					}						
 				}			
@@ -346,9 +357,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		return (merge || movement); //returns true if there was a merge or any movement		
 	}
 
-	
-	
-	
 	/* *************************
 	 * MoveRight + MoveallRight
 	 * ************************* */
@@ -376,9 +384,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		//remove all spaces (consolidate everything)
 		for (int i = 0; i < boardSize-1; i++) { 
 			for (int j = boardSize-1; j > 0; j--) {
-				if (board[i][j] == mEmpty) {
+				if (board[i][j] == emptyCell) {
 					board[i][j] = board[i][j-1];
-					board [i][j-1] = mEmpty;
+					board [i][j-1] = emptyCell;
 					movement = true;
 				}						
 			}			
@@ -389,7 +397,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i][j-1]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					board [i][j-1] = mEmpty; //set the lower cell to 0
+					if (board[i][j] == winScore)
+						win = true;
+					board [i][j-1] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
 			}			
@@ -398,9 +408,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
 			for (int i = 0; i < boardSize-1; i++) { 
 				for (int j = boardSize-1; j > 0; j--) {
-					if (board[i][j] == mEmpty) {
+					if (board[i][j] == emptyCell) {
 						board[i][j] = board[i][j-1];
-						board [i][j-1] = mEmpty;
+						board [i][j-1] = emptyCell;
 						movement = true;
 					}						
 				}			
@@ -415,5 +425,10 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		return (merge || movement); //returns true if there was a merge or any movement		
 		
 	}
+
+
+	
+	
+
 
 }
