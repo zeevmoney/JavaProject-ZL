@@ -19,7 +19,7 @@ public enum UserCommand {
 	UndoMove(12);
 
 	//default constructor
-	private final int command;
+	private int command;
 	private UserCommand(int command) {
 		this.command = command;
 	}
