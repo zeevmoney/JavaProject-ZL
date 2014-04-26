@@ -22,7 +22,9 @@ import org.eclipse.swt.widgets.Shell;
 //import org.eclipse.swt.widgets.Text;
 
 
+
 import controller.Presenter;
+import controller.UserCommand;
 
 //need to fix button1
 //need to see if needed horizontal line under menu
@@ -33,6 +35,7 @@ public class GUI extends Thread {
 	Shell shell;
 	Presenter presenter;
 	String gameName;
+	UserCommand ui;
  //   private MenuItem pinkScreen;
  //   private MenuItem yellowScreen;
     
@@ -102,7 +105,7 @@ private void restartGame(Menu fileMenu) {
 
         @Override
         public void widgetSelected(SelectionEvent e) {
-            presenter.restartGame();            
+        	ui.setCommand(15);           
         }
     });
     
@@ -118,7 +121,7 @@ private void undoMove(Menu fileMenu) {
 
         @Override
         public void widgetSelected(SelectionEvent e) {
-            presenter.undoMove();           
+        	ui.setCommand(12);               
             
         }
     });
@@ -133,7 +136,7 @@ private void saveGame(Menu fileMenu) {
 
         @Override
         public void widgetSelected(SelectionEvent e) {
-            presenter.saveGame();           
+        	ui.setCommand(10);                
             
         }
     });
@@ -149,7 +152,7 @@ private void loadGame(Menu fileMenu) {
 
         @Override
         public void widgetSelected(SelectionEvent e) {
-            presenter.loadGame();           
+        	ui.setCommand(11);               
             
         }
     });
@@ -165,7 +168,7 @@ private void loadGame(Menu fileMenu) {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-                presenter.saveGame();
+            	ui.setCommand(10);     
                 shell.getDisplay().dispose();
                 System.exit(0);
                 
@@ -236,12 +239,12 @@ private void loadGame(Menu fileMenu) {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				presenter.undoMove();		
+				ui.setCommand(12);     		
 			}
 			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {				
-				presenter.undoMove();
+				ui.setCommand(12);     
 			}
 		});
 	}
@@ -288,7 +291,7 @@ private void loadGame(Menu fileMenu) {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				presenter.restartGame();		
+				ui.setCommand(15);     		
 			}
 			
 			@Override
@@ -310,7 +313,7 @@ private void loadGame(Menu fileMenu) {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				presenter.loadGame();		
+				ui.setCommand(11);     		
 			}
 			
 			@Override
@@ -334,7 +337,7 @@ private void loadGame(Menu fileMenu) {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				presenter.saveGame();		
+				ui.setCommand(10);     	
 			}
 			
 			@Override
