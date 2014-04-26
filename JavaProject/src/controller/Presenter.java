@@ -20,63 +20,57 @@ public class Presenter implements Observer {
 	private Model model;
 	
 	public Presenter(Model m, View ui2){
-		setModel(m);
-		setUi(ui2);
+		this.model = m;
+		this.ui = ui2;
 	}
 
-	public View getUi() {
-		return ui;
-	}
-
-	public void setUi(View ui) {
-		this.ui = ui;
-	}
-
-	public Model getModel() {
-		return model;
-	}
-
-	public void setModel(Model model) {
-		this.model = model;
-	}
-
-	
 	/*
 	 * update method:
 	 * This is invoked upon any change to objects "view" and "model"
 	 * we can actively get the state of this objects.
-	 * TODO: must make it recognize what object sent the data. 
 	 */
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		//TODO (Zeev): //ui.displayData(model.getData());
+		 if (arg0 == model) {
+			 ui.displayBoard(model.getBoard());
+		 }
+		 if (arg0 == ui) {
+			 int input = ui.getUserCommand();
+			 switch (input) {
+			case 8: 
+				model.moveUp();
+				break;
+			case 2:
+				model.moveDown();
+				break;
+			case 4:
+				model.moveDown();
+				break;
+			case 6:
+				model.moveRight();
+				break;
+			}
+		 }
+		 
+		 
 			
 	}
-// need to update method for gui
-	public void undoMove() {
-		// TODO (Zeev):// undo the last move
 		
-	}
-
+	
 	public int getScore() {
 		// TODO (Zeev):// return game current score
 		return 0;
 	}
 
-	public void restartGame() {
-		// TODO (Zeev):// restart the game 
-		
-	}
 
-	public void loadGame() {
-		// TODO (Zeev):// load the last game
-		
-	}
 
-	public void saveGame() {
-		// TODO (Zeev):// delete the loaded game and save the current game
-		
-	}
+	
 
 }
+
+
+
+
+
+
