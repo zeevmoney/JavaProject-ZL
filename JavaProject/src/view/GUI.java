@@ -39,6 +39,7 @@ public class GUI extends Thread {
     //get the game name
 	public GUI(String string) {
 		gameName=string;
+		
 	}
 		
 	private void initComponents () {

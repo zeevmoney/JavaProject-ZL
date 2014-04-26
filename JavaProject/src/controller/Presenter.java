@@ -42,7 +42,7 @@ public class Presenter implements Observer {
 				ui.setLose(model.getLose());
 		}
 		if (arg0 == ui) {		
-		cmd.setCommand(ui.getUserCommand());
+		cmd = ui.getUserCommand();
 		switch (cmd) {
 			case Up: 
 				model.moveUp();
