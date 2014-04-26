@@ -1,46 +1,62 @@
 package view;
 
-import java.awt.Color;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontMetrics;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
 
-//class for colored tile
-public class Tile {
+public class Tile extends Canvas{
+  	
+ private int value;
+	    
+   public Tile(Composite parent, int style){
+	   super(parent,style);
+	   value=0;
+	   
+	   Font f= getFont();
+	   Font nf= new Font(getDisplay(), f.getFontData()[0].getName(),16,SWT.BOLD);
+	   setFont(nf);
+	   addPaintListener(new PaintListener() {
+		
+		@Override
+		public void paintControl(PaintEvent e) {
+			FontMetrics fm= e.gc.getFontMetrics();
+			int width=fm.getAverageCharWidth();
+			int mx=getSize().x/2- (""+value).length()*width/2;
+			int my=getSize().y/2- fm.getHeight()/2-fm.getDescent();
+			if(value>0)
+				e.gc.drawString(" "+value, mx, my);			
+			}
+		});
+		   
+	   }
+    	
+public void setValue(int value) {
+				this.value=value;
+				changeBackgroundColor();
+				redraw();		
+			}    	
 
-    int value;
-//Default tile
-    public Tile() {
-      this(0);
-    }
-//if we have number at tile
-    public Tile(int num) {
-      value = num;
-    }
-
-    public boolean isEmpty() {
-      return value == 0;
-    }
-
-    public Color getForeground() {
-    	if(value == 0)
-    		return  new Color(0x776e65);
-    	else return new Color(0xf9f6f2);
-    }
-
-    public Color getBackground() {
-      switch (value) {
-      	case -1:   return new Color(0xf9f6f2);	
-        case 2:    return new Color(0xeee4da);
-        case 4:    return new Color(0xede0c8);
-        case 8:    return new Color(0xf2b179);
-        case 16:   return new Color(0xf59563);
-        case 32:   return new Color(0xf67c5f);
-        case 64:   return new Color(0xf65e3b);
-        case 128:  return new Color(0xedcf72);
-        case 256:  return new Color(0xedcc61);
-        case 512:  return new Color(0xedc850);
-        case 1024: return new Color(0xedc53f);
-        case 2048: return new Color(0xedc22e);
+private void changeBackgroundColor(){
+	switch (value) {
+		case -1:   setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));break;
+		case 0:    setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));break;
+	    case 2:    setBackground(getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY));break;
+	    case 4:    setBackground(getDisplay().getSystemColor(SWT.COLOR_GRAY));break;
+	    case 8:    setBackground(getDisplay().getSystemColor(SWT.COLOR_RED));break;
+	    case 16:   setBackground(getDisplay().getSystemColor(SWT.COLOR_RED));break;
+	    case 32:   setBackground(getDisplay().getSystemColor(SWT.COLOR_RED));break;
+	    case 64:   setBackground(getDisplay().getSystemColor(SWT.COLOR_RED));break;
+        case 128:  setBackground(getDisplay().getSystemColor(SWT.COLOR_YELLOW));break;
+	    case 256:  setBackground(getDisplay().getSystemColor(SWT.COLOR_YELLOW));break;
+	    case 512:  setBackground(getDisplay().getSystemColor(SWT.COLOR_YELLOW));break;
+	    case 1024: setBackground(getDisplay().getSystemColor(SWT.COLOR_YELLOW));break;
+	    case 2048: setBackground(getDisplay().getSystemColor(SWT.COLOR_YELLOW));break;
       }
-      return new Color(0xcdc1b4);
-    }
+		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
+    	}
   }
 
