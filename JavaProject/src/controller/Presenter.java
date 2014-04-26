@@ -70,7 +70,7 @@ public class Presenter implements Observer {
 				model.moveDown();
 				model.moveRight();
 				break;
-			case GameLose:
+			case GetLose:
 				model.getLose();
 				break;
 			case GetWin:
@@ -88,6 +88,8 @@ public class Presenter implements Observer {
 			case UndoMove:
 				model.undoMove();
 				break;
+			case RestartGame:
+				model.newGame();
 			default:
 				break;				
 			}

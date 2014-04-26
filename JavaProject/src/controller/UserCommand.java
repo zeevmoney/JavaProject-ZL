@@ -25,7 +25,8 @@ public enum UserCommand {
 	LoadGame(11),
 	UndoMove(12),
 	GetWin(13),
-	GameLose(14);	
+	GetLose(14),
+	RestartGame(15);	
 
 	//default constructor
 	private int command;
