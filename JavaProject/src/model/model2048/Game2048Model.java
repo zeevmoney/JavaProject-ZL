@@ -197,8 +197,11 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i+1][j]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore)
+					if (board[i][j] == winScore) {
 						win = true;
+						setChanged();
+						notifyObservers("Win");
+					}
 					board [i+1][j] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
@@ -264,8 +267,12 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i-1][j]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore)
+					if (board[i][j] == winScore) {
 						win = true;
+						setChanged();
+						notifyObservers("Win");
+					}
+						
 					board [i-1][j] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
@@ -331,8 +338,11 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i][j+1]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore)
+					if (board[i][j] == winScore) {
 						win = true;
+						setChanged();
+						notifyObservers("Win");
+					}
 					board [i][j+1] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
@@ -398,8 +408,11 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i][j-1]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore)
+					if (board[i][j] == winScore) {
 						win = true;
+						setChanged();
+						notifyObservers("Win");
+					}
 					board [i][j-1] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
