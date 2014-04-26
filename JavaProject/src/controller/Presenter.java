@@ -36,7 +36,7 @@ public class Presenter implements Observer {
 			 ui.displayBoard(model.getBoard());
 		 }
 		 if (arg0 == ui) {
-			 int input = ui.getUserCommand();
+			UserCommand = ui.getUserCommand();
 			 switch (input) {
 			case 8: 
 				model.moveUp();

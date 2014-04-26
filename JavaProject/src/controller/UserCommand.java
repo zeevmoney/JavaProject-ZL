@@ -1,6 +1,6 @@
 package controller;
 
-public enum UserCommands {
+public enum UserCommand {
 	/*
 	 * the movement keys are like the Numpad on the keyboard
 	 * new game = 5, all other are 10...n
@@ -18,9 +18,9 @@ public enum UserCommands {
 	LoadGame(11),
 	UndoMove(12);
 
-	
+	//default constructor
 	private final int command;
-	private UserCommands(int command) {
+	private UserCommand(int command) {
 		this.command = command;
 	}
 	
