@@ -1,12 +1,14 @@
 package view.game2048;
 
-import java.awt.Color;
+
 import java.util.Observable;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import controller.UserCommand;
 import view.Board;
+import view.GUI;
 import view.View;
 
 /*
@@ -18,11 +20,15 @@ import view.View;
 public class Game2048View extends Observable implements View, Runnable {
 	Display display;
 	Shell shell;
+	GUI gui;
 	Board board;
 	
 private void initComponents(){
-	display= new Display();
-	shell= new Shell(display);
+	gui= new GUI("my 2048 game");
+	board= new Board(board, 0, null);
+	display= gui.getDisplay();
+	shell= gui.getShell();
+	
 		
 }
 @Override
@@ -35,34 +41,34 @@ public void run() {
 	}
 	display.dispose();
 }
-
-
-//display the board
 @Override
 public void displayBoard(int[][] data) {
-	
-	
-}
-@Override
-public int getUserCommand() {
 	// TODO Auto-generated method stub
-	return 0;
+	
 }
 @Override
-public void displayScore() {
+public UserCommand getUserCommand() {
+	// TODO Auto-generated method stub
+	return null;
+}
+@Override
+public void displayScore(int score) {
+	// TODO Auto-generated method stub
+	
+}
+@Override
+public void setLose(boolean lose) {
+	// TODO Auto-generated method stub
+	
+}
+@Override
+public void setWin(boolean win) {
 	// TODO Auto-generated method stub
 	
 }
 
 
-//set the tablet at board color
-private void setColor(Color background) {
-	// TODO Auto-generated method stub
-	
-}
-//get the background color each cell
-public Color getBackground(int value) {
-    
-  }
+
+
 }
 

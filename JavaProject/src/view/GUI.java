@@ -29,6 +29,7 @@ import controller.UserCommand;
 //need to fix button1
 //need to see if needed horizontal line under menu
 
+
 public class GUI extends Thread {
 	
 	Display display;
@@ -41,10 +42,17 @@ public class GUI extends Thread {
     
     //get the game name
 	public GUI(String string) {
-		gameName=string;
-		
+		gameName=string;		
+		initComponents();		
 	}
-		
+
+	public Display getDisplay(){
+		return this.display;
+	}
+	
+	public Shell getShell(){
+		return this.shell;
+	}
 	private void initComponents () {
 		display = new Display();//display = my screen
 		shell = new Shell(display);//shell = specific window
@@ -78,20 +86,20 @@ public class GUI extends Thread {
 
 
 	//show the menu of edit label at the game- need to finish	
-	private void setEdit() {
-	//Create the edit			
-			Menu menuBar = new Menu(shell, SWT.BAR);
-	        shell.setMenuBar(menuBar);
+private void setEdit() {
+//Create the edit			
+		Menu menuBar = new Menu(shell, SWT.BAR);
+        shell.setMenuBar(menuBar);
 
-	        MenuItem aFileMenu = new MenuItem(menuBar, SWT.CASCADE);
-	        aFileMenu.setText("&Edit");
+        MenuItem aFileMenu = new MenuItem(menuBar, SWT.CASCADE);
+        aFileMenu.setText("&Edit");
 
-	        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
-	        aFileMenu.setMenu(fileMenu);
-	        restartGame(fileMenu);// add to edit label the option for restart game
-	        undoMove(fileMenu);//  add to edit label the option for undo last step
-	       
-	}
+        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+        aFileMenu.setMenu(fileMenu);
+        restartGame(fileMenu);// add to edit label the option for restart game
+        undoMove(fileMenu);//  add to edit label the option for undo last step
+       
+}
 
 	
 
@@ -369,44 +377,3 @@ private void loadGame(Menu fileMenu) {
 }
 
 
-/*
-Canvas canvas = new Canvas(shell, SWT.BORDER);
-canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
-canvas.setBackground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
-canvas.addPaintListener(new PaintListener() {
-	
-	@Override
-	public void paintControl(PaintEvent e) {
-		
-		
-	}
-});
-
-//button + button2 need to fill the whole row
-//text needs to fill the whole row
-//canvas.
-*/		
-/*//change the screen color to pink	
-Listener pinkListener = new Listener() {
-
-       public void handleEvent(Event event) {
-           if (pinkScreen.getSelection()) {
-//               status.setVisible(true);
-           } else {
-//               status.setVisible(false);
-           }
-       }
-   };
-
-//change the screen color to yellow
-   Listener yellowListener1 = new Listener() {
-
-       public void handleEvent(Event event) {
-           if (yellowScreen.getSelection()) {
- //              status.setVisible(true);
-           } else {
-//               status.setVisible(false);
-           }
-       }
-};	
-*/
