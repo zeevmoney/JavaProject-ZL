@@ -7,7 +7,7 @@ package model.algoirthms;
 
 public class GameState {
 	int[][] board; //the game board
-	final int boardSize; //final since every board can't be changed while playing.
+	int boardSize; //board size
 	int score; //current game score
 	
 	//Constructor: creates a new board with a score of 0.
@@ -17,6 +17,9 @@ public class GameState {
 		this.score = 0;
 	}
 	
+	public GameState() {
+	}
+
 	//Getters & Setters:
 	public int[][] getBoard() {
 		return board;
@@ -49,6 +52,15 @@ public class GameState {
 		if (x<0 || y<0 || x>=board.length || y>=board[x].length)
 			return false;			
 		return true;
+	}
+	
+	//GameState object copy
+	public GameState Copy() {
+		GameState tempState = new GameState();
+		int[][] board = this.board.clone();
+		tempState.setBoard(board);
+		tempState.setScore(this.score);
+		return tempState;		
 	}
 
 	

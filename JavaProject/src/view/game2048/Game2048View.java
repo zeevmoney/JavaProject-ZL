@@ -1,7 +1,6 @@
 package view.game2048;
 
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.Observable;
 
 import org.eclipse.swt.widgets.Display;

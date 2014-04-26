@@ -11,7 +11,7 @@ package model;
 public interface Model {
 	
 	//Game control:
-	public void restartGame();
+	public void newGame();
 	public void saveGame(); //Save Game (XML)
 	public void loadGame(); //Load Game (XML)
 	public void undoMove();

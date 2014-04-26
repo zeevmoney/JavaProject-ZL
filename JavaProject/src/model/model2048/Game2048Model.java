@@ -2,37 +2,32 @@ package model.model2048;
 
 import java.util.Observable;
 import java.util.Stack;
-
-import controller.Presenter;
 import model.Model;
 import model.algoirthms.GameState;
 import model.algoirthms.GameStateXML;
 
-
 /*
- * TODO (Zeev):
- * TODO: 1. Undo move queue (Singleton Pattern / Object / Static / Private Queue).
- * NOTE: 2048 Board is N*N
+ * 2048GameModel Class, responsible for all the game logic. 
+ * TODO: add to gameover
  */
-
 
 public class Game2048Model extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state
 	Stack<GameState> gameStack; //stack of previous games
 	final int mEmpty = 0;
 	int boardSize;	
-	int win;
-	int lose; //TODO: add to gameover
+	boolean win;
+	boolean lose;
+	
 		
 	//Constructor
 	//TODO: make this run as a thread.
 	public Game2048Model(int boardSize) {
 		gameStack = new Stack<>();
 		this.boardSize=boardSize;
-		restartGame();
+		newGame();
 	}
 	
-
 	
 	@Override
 	public void run() {
@@ -52,9 +47,10 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	}
 
 	
-	//TODO: check if the board is full
-	//Adds a state at a random empty spot with 2(0.9) or 4(0.1)
-	private void addNumber() {
+
+	//returns false if the board is full, else adds a number (2 or 4) to a random cell.
+	//TODO: change to void.
+	private boolean addNumber() {
 		boolean flag = false;
 		while (!flag) {
 			//generate 2 random numbers (x and y coordinates)
@@ -72,12 +68,13 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		}
 		setChanged();
 		notifyObservers();
+		return flag;
 	}
 	
 	@Override
-	public void restartGame() {
-		win=0;
-		lose=0;
+	public void newGame() {
+		win=false;
+		lose=false;
 		currentGame = new GameState(boardSize);
 		boardInit();
 		gameStack.clear();
@@ -85,8 +82,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		setChanged();
 		notifyObservers();	
 	}
-
-
+	
+	
 	@Override
 	public void saveGame() {
 		try {
@@ -133,66 +130,89 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		
 	}
 
-	//returns True is the board is full
-	public boolean boardIsFull () {
-		int[][] board = currentGame.getBoard();
-		for (int i = 0; i < board.length; i++)
-			for (int j = 0; j < board[i].length; j++)
-				if (board[i][j]==0)
+	//returns True if any movement is available.
+	public boolean canMove () {
+		for (int i = 0; i < boardSize; i++) {
+			for (int j = 0; j < boardSize; j++) {
+				if (!currentGame.validXY(i+1, j) || !currentGame.validXY(i, j+1)) //invalid index 
+					continue;					
+				if (currentGame.getXY(i, j) == mEmpty || currentGame.getXY(i, j) == currentGame.getXY(i+1, j) 
+					|| currentGame.getXY(i, j) == currentGame.getXY(i, j+1)) {
+					//empty / right cell equals / bottom cell equals
 					return true;
+				}
+			}
+		}
 		return false;		
 	}
 
 	
 	
-	/* ******************
+	/* *******************
 	 * Move up + MoveallUp
-	 * ****************** */
+	 * ******************* */
 	
-	//TODO: check if there was any movement at all
 	@Override
 	public void moveUp() {
-		moveAllup();
-		if (boardIsFull()) {
-			gameOver();
-			return;
-		}		
-		for (int i = 0; i < boardSize; i++) {
-			for (int j = 0; j < boardSize; j++) {
-					addNumber();					
-			}									
-		}
-		setChanged();
-		notifyObservers();
+		boolean change = moveAllUp();
+		if (change) { //if there was a change it means that there is an empty space.
+			addNumber();
+			gameStack.add(currentGame.Copy());
+			setChanged();
+			notifyObservers();	
+		} else if (!change && !canMove()) { //no change & can't move = lost the game.
+			lose = true;
+			//gameOver();
+		}	
 	}
 	
-	private void moveAllup() {
+	private boolean moveAllUp() {
+		boolean movement=false; //flag to check if there was any movement
+		boolean merge=false; //flag to check if there was a merge
 		int score = currentGame.getScore();
 		int[][] board = currentGame.getBoard();
-		for (int i = 1; i < boardSize; i++) { //first row remains unchanged (i=0)
-			for (int j = 0; j < boardSize; j++) {
-				/*
-				 * if upper cell is not empty & has the same value
-				 * add the lower cell value to the upper cell (on the same column) 
-				 */
-				if (board[i-1][j] != mEmpty && board[i-1][j] == board[i][j])
-				{
-					score += board[i][j]*2;
-					board[i-1][j] *=2;
-				/*
-				 * if the upper cell is empty add the lower cell value and change the lower to empty.
-				 * (if the upper cell has value and it doesn't match the lower cell don't need to do anything).
-				 */
-				} else if (board[i-1][j] == mEmpty) {
-					board[i-1][j] = board[i][j];
-					board[i][j] = mEmpty; //init the cell the was merged with the upper cell
-				}				
+		//2,2,2,2 / 2,2,0,2
+		//remove all spaces (consolidate everything)
+		for (int i = 0; i < boardSize-1; i++) { //i+1 = out of the array
+			for (int j = 0; j < boardSize-1; j++) {
+				if (board[i][j] == mEmpty) {
+					board[i][j] = board[i+1][j];
+					board [i+1][j] = mEmpty;
+					movement = true;
+				}						
 			}			
+		}
+		//scan for all equal cells
+		for (int i = 0; i < boardSize-1; i++) { //i+1 = out of the array
+			for (int j = 0; j < boardSize-1; j++) {
+				if (board[i][j] == board[i+1][j]) {
+					score += board[i][j]*2; //add the value to the score
+					board[i][j] *=2; //double the current cell value
+					board [i+1][j] = mEmpty; //set the lower cell to 0
+					merge = true;
+				}						
+			}			
+		}
+		if (merge) { //if there was any merge
+			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
+			for (int i = 0; i < boardSize-1; i++) { //i+1 = out of the array
+				for (int j = 0; j < boardSize-1; j++) {
+					if (board[i][j] == mEmpty) {
+						board[i][j] = board[i+1][j];
+						board [i+1][j] = mEmpty;
+						movement = true;
+					}						
+				}			
+			}
 		}
 		currentGame.setBoard(board);
 		currentGame.setScore(score);
+		if (merge || movement) {
+			setChanged();
+			notifyObservers();
+		}
+		return (merge || movement); //returns true if there was a merge or any movement
 	}
-	
 	
 	/* **********************
 	 * MoveDown + MoveallDown
@@ -200,12 +220,64 @@ public class Game2048Model extends Observable implements Model,Runnable {
 
 	@Override
 	public void moveDown() {
-		// TODO Auto-generated method stub
-		
+		boolean change = moveAllDown();
+		if (change) { //if there was a change it means that there is an empty space.
+			addNumber();
+			gameStack.add(currentGame.Copy());
+			setChanged();
+			notifyObservers();	
+		} else if (!change && !canMove()) { //no change & can't move = lost the game.
+			lose = true;
+			//gameOver()
+		}	
 	}
 	
-	public void moveAllDown() {
-		
+	private boolean moveAllDown() {
+		boolean movement=false; //flag to check if there was any movement
+		boolean merge=false; //flag to check if there was a merge
+		int score = currentGame.getScore();
+		int[][] board = currentGame.getBoard();
+		//2,2,2,2 / 2,2,0,2
+		//remove all spaces (consolidate everything)
+		for (int i = boardSize-1; i > 0; i--) { //i-1 = out of the array
+			for (int j = 0; j < boardSize-1; j++) {
+				if (board[i][j] == mEmpty) {
+					board[i][j] = board[i-1][j];
+					board [i-1][j] = mEmpty;
+					movement = true;
+				}						
+			}			
+		}
+		//scan for all equal cells
+		for (int i = boardSize-1; i > 0; i--) { //i-1 = out of the array
+			for (int j = 0; j < boardSize-1; j++) {
+				if (board[i][j] == board[i-1][j]) {
+					score += board[i][j]*2; //add the value to the score
+					board[i][j] *=2; //double the current cell value
+					board [i-1][j] = mEmpty; //set the lower cell to 0
+					merge = true;
+				}						
+			}			
+		}
+		if (merge) { //if there was any merge
+			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
+			for (int i = boardSize-1; i > 0; i--) { //i-1 = out of the array
+				for (int j = 0; j < boardSize-1; j++) {
+					if (board[i][j] == mEmpty) {
+						board[i][j] = board[i-1][j];
+						board [i-1][j] = mEmpty;
+						movement = true;
+					}						
+				}			
+			}
+		}
+		currentGame.setBoard(board);
+		currentGame.setScore(score);
+		if (merge || movement) {
+			setChanged();
+			notifyObservers();
+		}
+		return (merge || movement); //returns true if there was a merge or any movement		
 	}
 	
 	/* **********************
@@ -214,10 +286,64 @@ public class Game2048Model extends Observable implements Model,Runnable {
 
 	@Override
 	public void moveLeft() {
-
+		boolean change = moveAllLeft();
+		if (change) { //if there was a change it means that there is an empty space.
+			addNumber();
+			gameStack.add(currentGame.Copy());
+			setChanged();
+			notifyObservers();	
+		} else if (!change && !canMove()) { //no change & can't move = lost the game.
+			lose = true;
+			//gameOver()
+		}	
 	}
-	
-	public void moveAllLeft () {
+
+	private boolean moveAllLeft() {
+		boolean movement=false; //flag to check if there was any movement
+		boolean merge=false; //flag to check if there was a merge
+		int score = currentGame.getScore();
+		int[][] board = currentGame.getBoard();
+		//2,2,2,2 / 2,2,0,2
+		//remove all spaces (consolidate everything)
+		for (int i = 0; i < boardSize-1; i++) { 
+			for (int j = 0; j < boardSize-1; j++) {
+				if (board[i][j] == mEmpty) {
+					board[i][j] = board[i][j+1];
+					board [i][j+1] = mEmpty;
+					movement = true;
+				}						
+			}			
+		}
+		//scan for all equal cells
+		for (int i = 0; i < boardSize-1; i++) { 
+			for (int j = 0; j < boardSize-1; j++) {
+				if (board[i][j] == board[i][j+1]) {
+					score += board[i][j]*2; //add the value to the score
+					board[i][j] *=2; //double the current cell value
+					board [i][j+1] = mEmpty; //set the lower cell to 0
+					merge = true;
+				}						
+			}			
+		}
+		if (merge) { //if there was any merge
+			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
+			for (int i = 0; i < boardSize-1; i++) { 
+				for (int j = 0; j < boardSize-1; j++) {
+					if (board[i][j] == mEmpty) {
+						board[i][j] = board[i][j+1];
+						board [i][j+1] = mEmpty;
+						movement = true;
+					}						
+				}			
+			}
+		}
+		currentGame.setBoard(board);
+		currentGame.setScore(score);
+		if (merge || movement) {
+			setChanged();
+			notifyObservers();
+		}
+		return (merge || movement); //returns true if there was a merge or any movement		
 	}
 
 	
@@ -229,10 +355,64 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 	@Override
 	public void moveRight() {
-		
+		boolean change = moveAllRight();
+		if (change) { //if there was a change it means that there is an empty space.
+			addNumber();
+			gameStack.add(currentGame.Copy());
+			setChanged();
+			notifyObservers();	
+		} else if (!change && !canMove()) { //no change & can't move = lost the game.
+			lose = true;
+			//gameOver()
+		}				
 	}
 	
-	public void moveAllRight() {
+	private boolean moveAllRight() {
+		boolean movement=false; //flag to check if there was any movement
+		boolean merge=false; //flag to check if there was a merge
+		int score = currentGame.getScore();
+		int[][] board = currentGame.getBoard();
+		//2,2,2,2 / 2,2,0,2
+		//remove all spaces (consolidate everything)
+		for (int i = 0; i < boardSize-1; i++) { 
+			for (int j = boardSize-1; j > 0; j--) {
+				if (board[i][j] == mEmpty) {
+					board[i][j] = board[i][j-1];
+					board [i][j-1] = mEmpty;
+					movement = true;
+				}						
+			}			
+		}
+		//scan for all equal cells
+		for (int i = 0; i < boardSize-1; i++) { 
+			for (int j = boardSize-1; j > 0; j--) {
+				if (board[i][j] == board[i][j-1]) {
+					score += board[i][j]*2; //add the value to the score
+					board[i][j] *=2; //double the current cell value
+					board [i][j-1] = mEmpty; //set the lower cell to 0
+					merge = true;
+				}						
+			}			
+		}
+		if (merge) { //if there was any merge
+			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
+			for (int i = 0; i < boardSize-1; i++) { 
+				for (int j = boardSize-1; j > 0; j--) {
+					if (board[i][j] == mEmpty) {
+						board[i][j] = board[i][j-1];
+						board [i][j-1] = mEmpty;
+						movement = true;
+					}						
+				}			
+			}
+		}
+		currentGame.setBoard(board);
+		currentGame.setScore(score);
+		if (merge || movement) {
+			setChanged();
+			notifyObservers();
+		}
+		return (merge || movement); //returns true if there was a merge or any movement		
 		
 	}
 
