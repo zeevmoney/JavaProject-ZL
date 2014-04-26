@@ -1,5 +1,11 @@
 package controller;
 
+
+/*
+ * Enum to represent every user command
+ */
+
+
 public enum UserCommand {
 	/*
 	 * the movement keys are like the Numpad on the keyboard
@@ -16,16 +22,22 @@ public enum UserCommand {
 	NewGame(5),
 	SaveGame(10),
 	LoadGame(11),
-	UndoMove(12);
+	UndoMove(12),
+	GetWin(13),
+	GameLose(14);
+	
 
 	//default constructor
 	private int command;
 	private UserCommand(int command) {
 		this.command = command;
 	}
-	
 	public int getCommand() {
 		return command;
 	}
+	public void setCommand(int command) {
+		this.command = command;
+	}
+
 	
 }

@@ -22,8 +22,8 @@ public interface View  {
 	 * 2 = move straight down
 	 * 1 = move left & down (diagonal)
 	 */	
-	//TODO: (Lital) make it like the keypad on the keyboard (on the right of the keyboard)
-	//then we won't need to think what every key represents.
+	
+	//TODO: (Lital) Use UserCommand ENUM
 	public int getUserCommand();
 	
 	//Displays user score

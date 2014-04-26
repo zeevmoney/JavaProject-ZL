@@ -32,32 +32,60 @@ public class Presenter implements Observer {
 
 	@Override
 	public void update(Observable arg0, Object arg1) {
-		 if (arg0 == model) {
-			 ui.displayBoard(model.getBoard());
-		 }
-		 if (arg0 == ui) {
-			UserCommand cmd = ui.getUserCommand();
-			 switch (cmd)) {
-			case 8: 
+		if (arg0 == model) {
+			ui.displayBoard(model.getBoard());
+		}
+		if (arg0 == ui) {
+		UserCommand cmd;
+		cmd.setCommand(ui.getUserCommand());
+		switch (cmd) {
+			case Up: 
 				model.moveUp();
 				break;
-			case 2:
+			case Down:
 				model.moveDown();
 				break;
-			case 4:
+			case Left:
 				model.moveDown();
 				break;
-			case 6:
+			case Right:
 				model.moveRight();
 				break;
+			case UpLeft:
+				model.moveUp();
+				model.moveLeft();
+				break;
+			case UpRight:
+				model.moveUp();
+				model.moveRight();
+				break;
+			case DownLeft:
+				model.moveDown();
+				model.moveLeft();
+				break;
+			case DownRight:
+				model.moveDown();
+				model.moveRight();
+				break;
+			case GameLose:
+				model.getLose();
+			case GetWin:
+				model.getWin();
+			case LoadGame:
+				model.loadGame();
+			case NewGame:
+				model.newGame();
+			case SaveGame:
+				model.saveGame();
+			case UndoMove:
+				model.undoMove();
+			default:
+				break;				
 			}
-		 }
-		 
-		 
-			
-	}
-		
-	
+		}
+}
+ 
+ 
 	public int getScore() {
 		// TODO (Zeev):// return game current score
 		return 0;
