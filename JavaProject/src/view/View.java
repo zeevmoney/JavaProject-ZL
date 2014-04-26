@@ -27,6 +27,12 @@ public interface View  {
 	public int getUserCommand();
 	
 	//Displays user score
-	public void displayScore();
+	public void displayScore(int score);
+
+	//will get true if game was lost.
+	public void setLose(boolean lose);
+	
+	//will get true if game was won.
+	public void setWin(boolean win);
 	
 }

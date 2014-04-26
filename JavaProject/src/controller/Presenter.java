@@ -18,10 +18,12 @@ public class Presenter implements Observer {
 	//Both View & Model are injected using strategy pattern.
 	private View ui;
 	private Model model;
+	UserCommand cmd;
 	
 	public Presenter(Model m, View ui2){
 		this.model = m;
 		this.ui = ui2;
+		cmd = UserCommand.Default;
 	}
 
 	/*
@@ -29,14 +31,15 @@ public class Presenter implements Observer {
 	 * This is invoked upon any change to objects "view" and "model"
 	 * we can actively get the state of this objects.
 	 */
-
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 == model) {
 			ui.displayBoard(model.getBoard());
+			ui.displayScore(model.getScore());
+			ui.setWin(model.getWin());
+			ui.setLose(model.getLose());
 		}
-		if (arg0 == ui) {
-		UserCommand cmd;
+		if (arg0 == ui) {		
 		cmd.setCommand(ui.getUserCommand());
 		switch (cmd) {
 			case Up: 
@@ -69,32 +72,28 @@ public class Presenter implements Observer {
 				break;
 			case GameLose:
 				model.getLose();
+				break;
 			case GetWin:
 				model.getWin();
+				break;
 			case LoadGame:
 				model.loadGame();
+				break;
 			case NewGame:
 				model.newGame();
+				break;
 			case SaveGame:
 				model.saveGame();
+				break;
 			case UndoMove:
 				model.undoMove();
+				break;
 			default:
 				break;				
 			}
 		}
-}
- 
- 
-	public int getScore() {
-		// TODO (Zeev):// return game current score
-		return 0;
 	}
-
-
-
-	
-
+ 
 }
 
 

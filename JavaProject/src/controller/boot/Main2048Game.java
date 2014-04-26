@@ -4,7 +4,7 @@ import model.model2048.Game2048Model;
 import view.game2048.Game2048View;
 import controller.Presenter;
 
-//This class starts the game / games
+//starts the game
 public class Main2048Game {
 	
 	public static void main(String[] args) {
@@ -13,7 +13,6 @@ public class Main2048Game {
 		Presenter p= new Presenter(m,ui);
 		m.addObserver(p);
 		ui.addObserver(p);		
-
 	}
 
 }

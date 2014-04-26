@@ -7,8 +7,13 @@ import model.algoirthms.GameState;
 import model.algoirthms.GameStateXML;
 
 /*
- * 2048GameModel Class, responsible for all the game logic. 
- * TODO: add to gameover
+ * 2048GameModel Class, responsible for all the game logic.
+ *  
+ * setChanged(): Marks this Observable object as having been changed
+ * 
+ * notifyObservers(): If this object has changed, as indicated by the hasChanged method, 
+ * then notify all of its observers and then call the clearChanged method to indicate 
+ * that this object has no longer changed.
  */
 
 public class Game2048Model extends Observable implements Model,Runnable {
@@ -167,7 +172,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			notifyObservers();	
 		} else if (!change && !canMove()) { //no change & can't move = lost the game.
 			lose = true;
-			//gameOver();
 		}	
 	}
 	
@@ -235,7 +239,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			notifyObservers();	
 		} else if (!change && !canMove()) { //no change & can't move = lost the game.
 			lose = true;
-			//gameOver()
 		}	
 	}
 	
@@ -303,7 +306,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			notifyObservers();	
 		} else if (!change && !canMove()) { //no change & can't move = lost the game.
 			lose = true;
-			//gameOver()
 		}	
 	}
 
@@ -371,7 +373,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			notifyObservers();	
 		} else if (!change && !canMove()) { //no change & can't move = lost the game.
 			lose = true;
-			//gameOver()
 		}				
 	}
 	

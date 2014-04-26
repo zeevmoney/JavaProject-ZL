@@ -11,6 +11,7 @@ public enum UserCommand {
 	 * the movement keys are like the Numpad on the keyboard
 	 * new game = 5, all other are 10...n
 	 */
+	Default(0),
 	Up (8),
 	Down(2),
 	Left(4),
@@ -24,8 +25,7 @@ public enum UserCommand {
 	LoadGame(11),
 	UndoMove(12),
 	GetWin(13),
-	GameLose(14);
-	
+	GameLose(14);	
 
 	//default constructor
 	private int command;
