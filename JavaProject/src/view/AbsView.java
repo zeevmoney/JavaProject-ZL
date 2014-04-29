@@ -47,7 +47,9 @@ public abstract class AbsView extends Observable implements View {
 		shell = new Shell(display);//shell = specific window
 		shell.setText(gameName);
 		setMenuToolsBar();//create the menu tools bar 
-		setButtons();//create the buttons on the left side		
+		setButtons();//create the buttons on the left side
+		shell.setSize(300, 300);
+		shell.open();
 	}
 
 	public Display getDisplay(){
@@ -351,24 +353,7 @@ private void loadGame(Menu fileMenu) {
 		
 	}	
 	
-	
-	public void run() {
-		//the GUI and main loop thread should be in the same THREAD.
-		
-		//while shell is alive
-		while (!shell.isDisposed()) {
-			//while there are no events (this is the event handler)
-			if(!display.readAndDispatch()) {
-				//the OS will wake the display on EVENT (mouse, keyboard, etc).
-				display.sleep();				
-			}
-		}		
-		
-		
-		display.dispose();
-		
-		
-	}
+
 
 	@Override
 	public abstract void displayBoard(int[][] data);

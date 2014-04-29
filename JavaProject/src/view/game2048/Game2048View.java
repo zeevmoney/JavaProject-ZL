@@ -25,7 +25,11 @@ public class Game2048View extends AbsView implements Runnable {
 	boolean flag= false;
 	
 	public Game2048View(String string) {
-		super(string);		
+		super(string);
+		display= getDisplay();
+		shell= getShell();
+		int [][] data = {{2}};
+		displayBoard(data);
 	}
 
 	
@@ -35,24 +39,10 @@ public class Game2048View extends AbsView implements Runnable {
  */
 	
 private void initComponents(int[][] data){
-	display= getDisplay();
-	shell= getShell();
-	shell.setSize(300, 300);
-	shell.open();
-	board = new Board(shell, SWT.BORDER, data);		
+	board = new Board(shell, SWT.BORDER, data);
 }
 
 
-@Override
-public void run() {
-	
-	while(!shell.isDisposed()){
-		if(!display.readAndDispatch()){
-			display.sleep();
-		}
-	}
-	display.dispose();
-}
 
 
 //display the board
@@ -63,9 +53,9 @@ public void displayBoard(int[][] data) {
 		initComponents(data);
 	}
 	else 
-		board= new Board(shell, SWT.BORDER, data);
-	
+		board= new Board(shell, SWT.BORDER, data);	
 }
+
 @Override
 public UserCommand getUserCommand() {
 	// TODO Auto-generated method stub
@@ -88,5 +78,24 @@ public void setWin(boolean win) {
 	// TODO Auto-generated method stub
 	
 }
+
+@Override
+public void run() {
+	//the GUI and main loop thread should be in the same THREAD.
+	
+	//while shell is alive
+	while (!shell.isDisposed()) {
+		//while there are no events (this is the event handler)
+		if(!display.readAndDispatch()) {
+			//the OS will wake the display on EVENT (mouse, keyboard, etc).
+			display.sleep();				
+		}
+	}		
+	display.dispose();		
+	
+}
+
+
+
 }
 

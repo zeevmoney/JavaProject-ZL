@@ -12,7 +12,9 @@ public class Main2048Game {
 		Game2048View ui = new Game2048View("My 2048 Game");
 		Presenter p= new Presenter(m,ui);
 		m.addObserver(p);
-		ui.addObserver(p);		
+		ui.addObserver(p);
+		ui.run();
+		////new Thread(ui).start();
 	}
 
 }
