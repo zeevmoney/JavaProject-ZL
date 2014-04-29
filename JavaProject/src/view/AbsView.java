@@ -31,20 +31,18 @@ import controller.UserCommand;
 
 //need to fix button1
 //need to see if needed horizontal line under menu
-//TODO: delete the menu+set win+losse
+//TODO: delete the menu+set win+loose
 
 public abstract class AbsView extends Observable implements View {
 	Display display;
 	Shell shell;
 	Presenter presenter;
-	String gameName;
 	UserCommand ui;
  //   private MenuItem pinkScreen;
  //   private MenuItem yellowScreen;
     
     //get the game name
-	public AbsView(String string) {
-		gameName=string;
+	public AbsView(String gameName) {
 		display = new Display();//display = my screen
 		shell = new Shell(display);//shell = specific window
 		shell.setText(gameName);
