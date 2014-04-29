@@ -62,8 +62,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		boolean flag = false;
 		while (!flag) {
 			//generate 2 random numbers (x and y coordinates)
-			int x = (int) (Math.random() * currentGame.getBoardSize());
-			int y = (int) (Math.random() * currentGame.getBoardSize());
+			int x = (int) (Math.random() * boardSize);
+			int y = (int) (Math.random() * boardSize);
 			if (!currentGame.validXY(x,y)) //if invalid x,y: continue..
 				continue;
 			if (currentGame.getXY(x,y) == emptyCell) //check if the cell is empty.
@@ -81,7 +81,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 	@Override
 	public void newGame() {
-		currentGame = new GameState(boardSize);
+		currentGame = new GameState(boardSize,boardSize);
 		boardInit();
 		gameStack.clear();
 		gameStack.add(currentGame);

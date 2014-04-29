@@ -1,6 +1,8 @@
 package view;
 
 
+import java.util.Observable;
+
 import org.eclipse.swt.SWT;
 //import org.eclipse.swt.events.PaintEvent;
 //import org.eclipse.swt.events.PaintListener;
@@ -23,14 +25,15 @@ import org.eclipse.swt.widgets.Shell;
 
 
 
+
 import controller.Presenter;
 import controller.UserCommand;
 
 //need to fix button1
 //need to see if needed horizontal line under menu
+//TODO: delete the menu+set win+losse
 
-public class GUI extends Thread {
-	
+public abstract class AbsView extends Observable implements View {
 	Display display;
 	Shell shell;
 	Presenter presenter;
@@ -40,22 +43,22 @@ public class GUI extends Thread {
  //   private MenuItem yellowScreen;
     
     //get the game name
-	public GUI(String string) {
+	public AbsView(String string) {
 		gameName=string;
-		
-	}
-		
-	private void initComponents () {
 		display = new Display();//display = my screen
 		shell = new Shell(display);//shell = specific window
 		shell.setText(gameName);
 		setMenuToolsBar();//create the menu tools bar 
-		setButtons();//create the buttons on the left side
-		shell.setSize(300, 300);
-		shell.open();		
+		setButtons();//create the buttons on the left side		
+	}
+
+	public Display getDisplay(){
+		return display;
 	}
 	
-
+	public Shell getShell(){
+		return shell;
+	}
 	    
 	private void setMenuToolsBar() {
 		setMenu();//create the menu label
@@ -105,7 +108,9 @@ private void restartGame(Menu fileMenu) {
 
         @Override
         public void widgetSelected(SelectionEvent e) {
-        	ui.setCommand(15);           
+        	ui = UserCommand.RestartGame;
+			setChanged();
+			notifyObservers();
         }
     });
     
@@ -267,7 +272,7 @@ private void loadGame(Menu fileMenu) {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				gameScore.setText("score" +presenter.getScore());		
+				
 				
 			}
 			
@@ -351,7 +356,7 @@ private void loadGame(Menu fileMenu) {
 	
 	public void run() {
 		//the GUI and main loop thread should be in the same THREAD.
-		initComponents();
+		
 		//while shell is alive
 		while (!shell.isDisposed()) {
 			//while there are no events (this is the event handler)
@@ -366,47 +371,33 @@ private void loadGame(Menu fileMenu) {
 		
 		
 	}
+
+	@Override
+	public abstract void displayBoard(int[][] data);
+
+	@Override
+	public UserCommand getUserCommand() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void displayScore(int score) {
+		// TODO Auto-generated method stub
+		
+	}
+//open new window msg
+	@Override
+	public void setLose(boolean lose) {
+		// TODO Auto-generated method stub
+		
+	}
+//open new window msg
+	@Override
+	public void setWin(boolean win) {
+		// TODO Auto-generated method stub
+		
+	}
 }
 
 
-/*
-Canvas canvas = new Canvas(shell, SWT.BORDER);
-canvas.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 2, 1));
-canvas.setBackground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
-canvas.addPaintListener(new PaintListener() {
-	
-	@Override
-	public void paintControl(PaintEvent e) {
-		
-		
-	}
-});
-
-//button + button2 need to fill the whole row
-//text needs to fill the whole row
-//canvas.
-*/		
-/*//change the screen color to pink	
-Listener pinkListener = new Listener() {
-
-       public void handleEvent(Event event) {
-           if (pinkScreen.getSelection()) {
-//               status.setVisible(true);
-           } else {
-//               status.setVisible(false);
-           }
-       }
-   };
-
-//change the screen color to yellow
-   Listener yellowListener1 = new Listener() {
-
-       public void handleEvent(Event event) {
-           if (yellowScreen.getSelection()) {
- //              status.setVisible(true);
-           } else {
-//               status.setVisible(false);
-           }
-       }
-};	
-*/

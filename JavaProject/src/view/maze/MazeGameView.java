@@ -2,6 +2,7 @@ package view.maze;
 
 import java.util.Observable;
 
+import controller.UserCommand;
 import view.View;
 
 
@@ -26,16 +27,31 @@ public class MazeGameView extends Observable implements View, Runnable {
 
 	}
 
+
+
+
 	@Override
-	public int getUserCommand() {
+	public void displayScore(int score) {
 		// TODO Auto-generated method stub
-		return 0;
+		
 	}
 
 	@Override
-	public void displayScore() {
+	public void setLose(boolean lose) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void setWin(boolean win) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public UserCommand getUserCommand() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

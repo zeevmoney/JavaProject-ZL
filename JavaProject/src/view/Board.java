@@ -6,8 +6,6 @@ import org.eclipse.swt.layout.GridData;
 import view.Tile;
 
 public class Board extends Composite{
-	
-
 	int[][] boardData; // the data of the board	
 	int rows;
 	int colums;

@@ -5,7 +5,6 @@ package controller;
  * Enum to represent every user command
  */
 
-
 public enum UserCommand {
 	/*
 	 * the movement keys are like the Numpad on the keyboard

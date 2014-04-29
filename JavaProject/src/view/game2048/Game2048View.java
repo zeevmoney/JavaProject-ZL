@@ -1,13 +1,16 @@
 package view.game2048;
 
-import java.awt.Color;
-import java.util.Observable;
 
+//import java.util.Observable;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
+import controller.UserCommand;
+import view.AbsView;
 import view.Board;
-import view.View;
+//import view.View;
 
 /*
  * TODO: (Lital)
@@ -15,19 +18,34 @@ import view.View;
  * setChanged & notifyObservers
  */
 
-public class Game2048View extends Observable implements View, Runnable {
+public class Game2048View extends AbsView implements Runnable {
 	Display display;
 	Shell shell;
 	Board board;
+	boolean flag= false;
 	
-private void initComponents(){
-	display= new Display();
-	shell= new Shell(display);
-		
+	public Game2048View(String string) {
+		super(string);		
+	}
+
+	
+/*
+ * 
+ * comment
+ */
+	
+private void initComponents(int[][] data){
+	display= getDisplay();
+	shell= getShell();
+	shell.setSize(300, 300);
+	shell.open();
+	board = new Board(shell, SWT.BORDER, data);		
 }
+
+
 @Override
 public void run() {
-	initComponents();
+	
 	while(!shell.isDisposed()){
 		if(!display.readAndDispatch()){
 			display.sleep();
@@ -40,29 +58,35 @@ public void run() {
 //display the board
 @Override
 public void displayBoard(int[][] data) {
-	
+	if(flag==false){
+		flag=true;
+		initComponents(data);
+	}
+	else 
+		board= new Board(shell, SWT.BORDER, data);
 	
 }
 @Override
-public int getUserCommand() {
+public UserCommand getUserCommand() {
 	// TODO Auto-generated method stub
-	return 0;
+	return null;
+}
+
+
+@Override
+public void displayScore(int score) {
+	// TODO Auto-generated method stub
+	
 }
 @Override
-public void displayScore() {
+public void setLose(boolean lose) {
 	// TODO Auto-generated method stub
 	
 }
-
-
-//set the tablet at board color
-private void setColor(Color background) {
+@Override
+public void setWin(boolean win) {
 	// TODO Auto-generated method stub
 	
 }
-//get the background color each cell
-public Color getBackground(int value) {
-    
-  }
 }
 

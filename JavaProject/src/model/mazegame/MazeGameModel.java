@@ -3,11 +3,46 @@ package model.mazegame;
 //http://www.jonathanzong.com/blog/2012/11/06/maze-generation-with-prims-algorithm
 
 import java.util.Observable;
+import java.util.Stack;
 
 import model.Model;
+import model.algoirthms.GameState;
+import model.algoirthms.GameStateXML;
 
 public class MazeGameModel extends Observable implements Model,Runnable {
-
+	GameState currentGame; //current game state
+	Stack<GameState> gameStack; //stack of previous games
+	private final int mMouse = 1;
+	private final int mWall = -1;
+	private final int mCheese = 2;
+	private final int mEmpty = 0;
+	int rows;
+	int cols;
+	boolean win;
+	boolean lose;
+	
+	//init all values on the game board & set score to 0.
+	//TODO: (Zeev): random generated maze.
+	private void boardInit() {
+		win=false;
+		lose=false;
+		currentGame.setScore(0);
+		int [][] bigMaze = new int [rows][cols];
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				if (i==0 && j==0)
+					bigMaze[i][j] = mCheese;
+				else if (i==rows-1 && j==cols-1)
+					bigMaze[i][j] = mMouse;
+				else if (i==1 && (j>0 && j<cols-1) || i>0 && j==1)
+					bigMaze[i][j] = mWall;	
+				else bigMaze[i][j] = mEmpty;
+			}
+		}
+		currentGame.setBoard(bigMaze);		
+	}
+	
+	
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
@@ -16,25 +51,42 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 
 	@Override
 	public void newGame() {
-		// TODO Auto-generated method stub
-		
+		currentGame = new GameState(rows,cols);
+		boardInit();
+		gameStack.clear();
+		gameStack.add(currentGame);
+		setChanged();
+		notifyObservers();	
 	}
 
 	@Override
 	public void saveGame() {
-		// TODO Auto-generated method stub
+		try {
+			GameStateXML gXML = new GameStateXML();
+			gXML.gameStateToXML(currentGame, "MazeSave.xml");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 
 	@Override
 	public void loadGame() {
-		// TODO Auto-generated method stub
-		
+		try {
+			GameStateXML gXML = new GameStateXML();
+			gXML.gameStateToXML(currentGame, "MazeSave.xml");			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();		
 	}
 
 	@Override
 	public void undoMove() {
-		// TODO Auto-generated method stub
+		currentGame=gameStack.pop();
+		setChanged();
+		notifyObservers();	
 		
 	}
 
@@ -64,26 +116,22 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 
 	@Override
 	public int[][] getBoard() {
-		// TODO Auto-generated method stub
-		return null;
+		return currentGame.getBoard();	
 	}
 
 	@Override
 	public int getScore() {
-		// TODO Auto-generated method stub
-		return 0;
+		return currentGame.getScore();
 	}
 
 	@Override
 	public boolean getWin() {
-		// TODO Auto-generated method stub
-		return false;
+		return win;
 	}
 
 	@Override
 	public boolean getLose() {
-		// TODO Auto-generated method stub
-		return false;
+		return lose;
 	}
 	
 	
