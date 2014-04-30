@@ -21,7 +21,11 @@ public interface Model {
 	public void moveUp();
 	public void moveDown();
 	public void moveLeft();
-	public void moveRight();	
+	public void moveRight();
+	public void UpRight();
+	public void UpLeft();
+	public void DownRight();
+	public void DownLeft();
 	
 	//returns the current 2D array as represented in the Model.
 	public int[][] getBoard();

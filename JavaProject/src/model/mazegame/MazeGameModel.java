@@ -2,20 +2,25 @@ package model.mazegame;
 
 //http://www.jonathanzong.com/blog/2012/11/06/maze-generation-with-prims-algorithm
 
+import java.awt.Point;
 import java.util.Observable;
 import java.util.Stack;
 
 import model.Model;
 import model.algoirthms.GameState;
 import model.algoirthms.GameStateXML;
+import controller.UserCommand;
 
 public class MazeGameModel extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state
 	Stack<GameState> gameStack; //stack of previous games
+	UserCommand cmd;
 	private final int mMouse = 1;
 	private final int mWall = -1;
 	private final int mCheese = 2;
 	private final int mEmpty = 0;
+	private final int mStaright = 10;
+	private final int mDiagonal = 15;
 	int rows;
 	int cols;
 	boolean win;
@@ -89,30 +94,77 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 		notifyObservers();	
 		
 	}
+	
+	private void moveHanlde(int moveX, int moveY,UserCommand cmd) {
+			//x and y are sent by the moveX function.
+			int score=mStaright;
+			int x = currentGame.getPlayer().x + moveX;
+			int y = currentGame.getPlayer().y + moveY;
+			if (!currentGame.validXY(x, y)) return;  //check if index is valid
+			if (currentGame.getXY(x, y) == -1) return; //check if it's a wall.
+			if (Math.abs(x) == Math.abs(y)) score = mDiagonal; //if it's a diagonal move
+			currentGame.setScore(currentGame.getScore()+score);
+			currentGame.setPlayer(new Point (x,y));
+			gameStack.add(currentGame.Copy());
+			setChanged();
+			if (currentGame.getPlayer().equals(currentGame.getEnd())) {
+				notifyObservers("Win");
+				return;
+			}
+			gameStack.add(currentGame.Copy());			
+			notifyObservers();			
+	}
+	
+	
+	/*
+	 * "-1,-1"	"-1,0"	"-1,1"
+	 * "0,-1"	"0,0"	"0,1"
+	 * "1,-1"	"1,0"	"1,1"
+
+	 */
+	
 
 	@Override
 	public void moveUp() {
-		// TODO Auto-generated method stub
-		
+		moveHanlde(-1,0, UserCommand.Up);
 	}
 
 	@Override
 	public void moveDown() {
-		// TODO Auto-generated method stub
-		
+		moveHanlde(1, 0, UserCommand.Down);
 	}
 
 	@Override
 	public void moveLeft() {
-		// TODO Auto-generated method stub
-		
+		moveHanlde(0, -1, UserCommand.Left);
 	}
-
+	
 	@Override
 	public void moveRight() {
-		// TODO Auto-generated method stub
-		
+		moveHanlde(0, 1, UserCommand.Right);
 	}
+	
+	@Override
+	public void UpRight() {
+		moveHanlde(-1, 1, UserCommand.UpRight);
+	}
+	
+	@Override
+	public void UpLeft() {
+		moveHanlde(-1, -1, UserCommand.UpLeft);
+	}
+
+
+	@Override
+	public void DownRight() {
+		moveHanlde(1, 1, UserCommand.DownRight);
+	}
+
+
+	@Override
+	public void DownLeft() {
+		moveHanlde(1, -1, UserCommand.DownLeft);
+	}	
 
 	@Override
 	public int[][] getBoard() {
@@ -133,6 +185,9 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	public boolean getLose() {
 		return lose;
 	}
+
+
+
 	
 	
 	
@@ -247,5 +302,22 @@ public class Prim {
 	 * 
 	 * 
 	 */
-
+//	switch (cmd) {
+//	case Up:
+//		x--;
+//		break;
+//	case Down:
+//		x++;
+//		break;
+//	case Left:
+//		y--;
+//		break;
+//	case Right:
+//		y++;
+//		break;
+//	case UpRight:
+//		
+//	default:
+//		break;
+//}
 }
