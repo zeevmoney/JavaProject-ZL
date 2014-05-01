@@ -62,8 +62,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		boolean flag = false;
 		while (!flag) {
 			//generate 2 random numbers (x and y coordinates)
-			int x = (int) (Math.random() * currentGame.getBoardSize());
-			int y = (int) (Math.random() * currentGame.getBoardSize());
+			int x = (int) (Math.random() * boardSize);
+			int y = (int) (Math.random() * boardSize);
 			if (!currentGame.validXY(x,y)) //if invalid x,y: continue..
 				continue;
 			if (currentGame.getXY(x,y) == emptyCell) //check if the cell is empty.
@@ -81,7 +81,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 	@Override
 	public void newGame() {
-		currentGame = new GameState(boardSize);
+		currentGame = new GameState(boardSize,boardSize);
 		boardInit();
 		gameStack.clear();
 		gameStack.add(currentGame);
@@ -157,6 +157,24 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	}
 
 	
+	private void moveHanlde(boolean change) {
+		if (change) { //if there was a change it means that there is an empty space.
+			setChanged(); //changed in any case
+			if (win) {
+				notifyObservers("Win");
+				return;
+			}
+			addNumber();
+			gameStack.add(currentGame.Copy());			
+			notifyObservers();	
+		} else if (!change && !canMove()) { //no change & can't move = lost the game.
+			lose = true;
+			setChanged();
+			notifyObservers("Lose");
+		}		
+	}
+	
+	
 	
 	/* *******************
 	 * Move up + MoveallUp
@@ -165,16 +183,12 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	@Override
 	public void moveUp() {
 		boolean change = moveAllUp();
-		if (change) { //if there was a change it means that there is an empty space.
-			addNumber();
-			gameStack.add(currentGame.Copy());
-			setChanged();
-			notifyObservers();	
-		} else if (!change && !canMove()) { //no change & can't move = lost the game.
-			lose = true;
-		}	
+		moveHanlde(change);
 	}
 	
+
+
+
 	private boolean moveAllUp() {
 		boolean movement=false; //flag to check if there was any movement
 		boolean merge=false; //flag to check if there was a merge
@@ -197,11 +211,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i+1][j]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore) {
+					if (board[i][j] == winScore)
 						win = true;
-						setChanged();
-						notifyObservers("Win");
-					}
 					board [i+1][j] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
@@ -235,14 +246,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	@Override
 	public void moveDown() {
 		boolean change = moveAllDown();
-		if (change) { //if there was a change it means that there is an empty space.
-			addNumber();
-			gameStack.add(currentGame.Copy());
-			setChanged();
-			notifyObservers();	
-		} else if (!change && !canMove()) { //no change & can't move = lost the game.
-			lose = true;
-		}	
+		moveHanlde(change);
 	}
 	
 	private boolean moveAllDown() {
@@ -267,12 +271,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i-1][j]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore) {
-						win = true;
-						setChanged();
-						notifyObservers("Win");
-					}
-						
+					if (board[i][j] == winScore)
+						win = true;					
 					board [i-1][j] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
@@ -306,14 +306,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	@Override
 	public void moveLeft() {
 		boolean change = moveAllLeft();
-		if (change) { //if there was a change it means that there is an empty space.
-			addNumber();
-			gameStack.add(currentGame.Copy());
-			setChanged();
-			notifyObservers();	
-		} else if (!change && !canMove()) { //no change & can't move = lost the game.
-			lose = true;
-		}	
+		moveHanlde(change);
 	}
 
 	private boolean moveAllLeft() {
@@ -338,11 +331,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i][j+1]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore) {
+					if (board[i][j] == winScore)
 						win = true;
-						setChanged();
-						notifyObservers("Win");
-					}
 					board [i][j+1] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						
@@ -376,14 +366,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	@Override
 	public void moveRight() {
 		boolean change = moveAllRight();
-		if (change) { //if there was a change it means that there is an empty space.
-			addNumber();
-			gameStack.add(currentGame.Copy());
-			setChanged();
-			notifyObservers();	
-		} else if (!change && !canMove()) { //no change & can't move = lost the game.
-			lose = true;
-		}				
+		moveHanlde(change);			
 	}
 	
 	private boolean moveAllRight() {
@@ -408,11 +391,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				if (board[i][j] == board[i][j-1]) {
 					score += board[i][j]*2; //add the value to the score
 					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore) {
+					if (board[i][j] == winScore)
 						win = true;
-						setChanged();
-						notifyObservers("Win");
-					}
 					board [i][j-1] = emptyCell; //set the lower cell to 0
 					merge = true;
 				}						

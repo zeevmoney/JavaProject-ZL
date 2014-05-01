@@ -7,13 +7,15 @@ package model.algoirthms;
 
 public class GameState {
 	int[][] board; //the game board
-	int boardSize; //board size
+	int rows; //board rows
+	int cols; //board columns
 	int score; //current game score
-	
+		
 	//Constructor: creates a new board with a score of 0.
-	public GameState(int boardSize) {
-		this.boardSize = boardSize;
-		this.board = new int[boardSize][boardSize];		
+	public GameState(int rows,int cols) {
+		this.rows = rows;
+		this.cols = cols;
+		this.board = new int[rows][cols];		
 		this.score = 0;
 	}
 	
@@ -33,8 +35,12 @@ public class GameState {
 	public void setScore(int score) {
 		this.score = score;
 	}
-	public int getBoardSize() {
-		return boardSize;
+	public int getBoardRows() {
+		return rows;
+	}
+	
+	public int getBoardCols() {
+		return cols;
 	}
 	
 	//sets an [x][y] coordinate with <value>
