@@ -5,6 +5,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import controller.UserCommand;
@@ -47,36 +48,38 @@ public Game2048View(String string) {
 	setMenuToolsBar();//create the menu tools bar 
 	
 	setButtons();//create the buttons on the left side
-	shell.setSize(300, 300);
+	//displayBoard(data);
+	shell.setSize(600, 600);
 	shell.open();
-	board= new Board(board, 0, data);
-	board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,2));
+	
+	//board= new Board(board, SWT.BORDER, data);
+//	board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,2));
 	int i=0;
 	
 }
 
 	
 	
-private void initComponents(){
-	
-
-	String string="my 2048 game";
-	board= new Board(board, 0, null);
-	
-	display = new Display();//display = my screen
-	shell = new Shell(display);//shell = specific window
-	shell.setText(string);
-	setMenuToolsBar();//create the menu tools bar 
-	setButtons();//create the buttons on the left side
-	shell.setSize(300, 300);
-	shell.open();
-	int i=0;
-	
-	
-//	display= getDisplay();
-//	shell= getShell();	
-		
-}
+//private void initComponents(){
+//	
+//
+//	String string="my 2048 game";
+//	board= new Board(board, 0, null);
+//	
+//	display = new Display();//display = my screen
+//	shell = new Shell(display);//shell = specific window
+//	shell.setText(string);
+//	setMenuToolsBar();//create the menu tools bar 
+//	setButtons();//create the buttons on the left side
+//	shell.setSize(300, 300);
+//	shell.open();
+//	int i=0;
+//	
+//	
+////	display= getDisplay();
+////	shell= getShell();	
+//		
+//}
 //@Override
 //public void run() {
 //	initComponents();

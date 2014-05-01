@@ -239,7 +239,7 @@ private void loadGame(Menu fileMenu) {
 		gridLayout.numColumns = 1;
 		
 		group.setLayout(gridLayout);
-	//	group.setLocation(5, 5);
+		group.setLocation(0, 0);
 
 	     scoreLabel = new Label ( group, SWT.NONE ) ; 
 	     scoreLabel.setText ("score"); 	     

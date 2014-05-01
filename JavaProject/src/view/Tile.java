@@ -12,7 +12,7 @@ import org.eclipse.swt.widgets.Composite;
 public class Tile extends Canvas{
   	
  private int value;
- private Color color;
+ //private Color color;
 	    
    public Tile(Composite parent, int style){
 	   super(parent,style);
