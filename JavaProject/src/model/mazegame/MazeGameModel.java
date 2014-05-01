@@ -15,12 +15,12 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state
 	Stack<GameState> gameStack; //stack of previous games
 	UserCommand cmd;
-	private final int mMouse = 1;
-	private final int mWall = -1;
-	private final int mCheese = 2;
-	private final int mEmpty = 0;
-	private final int mStaright = 10;
-	private final int mDiagonal = 15;
+	private final int Start = 1;
+	private final int Wall = -1;
+	private final int End = 2;
+	private final int Empty = 0;
+	private final int Horizontal = 10;
+	private final int Diagonal = 15;
 	int rows;
 	int cols;
 	boolean win;
@@ -35,13 +35,15 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 		int [][] bigMaze = new int [rows][cols];
 		for (int i = 0; i < rows; i++) {
 			for (int j = 0; j < cols; j++) {
-				if (i==0 && j==0)
-					bigMaze[i][j] = mCheese;
-				else if (i==rows-1 && j==cols-1)
-					bigMaze[i][j] = mMouse;
-				else if (i==1 && (j>0 && j<cols-1) || i>0 && j==1)
-					bigMaze[i][j] = mWall;	
-				else bigMaze[i][j] = mEmpty;
+				if (i==0 && j==0) {
+					bigMaze[i][j] = End;
+					currentGame.setEnd(new Point (i,j));
+				} else if (i==rows-1 && j==cols-1) {
+					bigMaze[i][j] = Start;
+					currentGame.setStart(new Point (i,j));
+				} else if (i==1 && (j>0 && j<cols-1) || i>0 && j==1)
+					bigMaze[i][j] = Wall;	
+				else bigMaze[i][j] = Empty;
 			}
 		}
 		currentGame.setBoard(bigMaze);		
@@ -58,10 +60,12 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	public void newGame() {
 		currentGame = new GameState(rows,cols);
 		boardInit();
+	
 		gameStack.clear();
 		gameStack.add(currentGame);
+		
 		setChanged();
-		notifyObservers();	
+		notifyObservers();
 	}
 
 	@Override
@@ -97,12 +101,12 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	
 	private void moveHanlde(int moveX, int moveY,UserCommand cmd) {
 			//x and y are sent by the moveX function.
-			int score=mStaright;
+			int score=Horizontal;
 			int x = currentGame.getPlayer().x + moveX;
 			int y = currentGame.getPlayer().y + moveY;
 			if (!currentGame.validXY(x, y)) return;  //check if index is valid
 			if (currentGame.getXY(x, y) == -1) return; //check if it's a wall.
-			if (Math.abs(x) == Math.abs(y)) score = mDiagonal; //if it's a diagonal move
+			if (Math.abs(x) == Math.abs(y)) score = Diagonal; //if it's a diagonal move
 			currentGame.setScore(currentGame.getScore()+score);
 			currentGame.setPlayer(new Point (x,y));
 			gameStack.add(currentGame.Copy());
