@@ -160,12 +160,12 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	private void moveHanlde(boolean change) {
 		if (change) { //if there was a change it means that there is an empty space.
 			setChanged(); //changed in any case
+			gameStack.add(currentGame.Copy());	
 			if (win) {
 				notifyObservers("Win");
 				return;
 			}
-			addNumber();
-			gameStack.add(currentGame.Copy());			
+			addNumber();					
 			notifyObservers();	
 		} else if (!change && !canMove()) { //no change & can't move = lost the game.
 			lose = true;
@@ -421,8 +421,20 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	}
 
 
-	
-	
+	@Override
+	public void UpRight() {}
+
+
+	@Override
+	public void UpLeft() {}
+
+
+	@Override
+	public void DownRight() {}
+
+
+	@Override
+	public void DownLeft() {}	
 
 
 }

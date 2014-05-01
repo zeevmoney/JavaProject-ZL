@@ -1,5 +1,7 @@
 package model.algoirthms;
 
+import java.awt.Point;
+
 /* 
  * GameState is used to describe the current Game state
  * of any game with a 2D array.
@@ -10,6 +12,11 @@ public class GameState {
 	int rows; //board rows
 	int cols; //board columns
 	int score; //current game score
+	Point player;
+	Point start;
+	Point end;
+	
+	
 		
 	//Constructor: creates a new board with a score of 0.
 	public GameState(int rows,int cols) {
@@ -17,6 +24,7 @@ public class GameState {
 		this.cols = cols;
 		this.board = new int[rows][cols];		
 		this.score = 0;
+		this.player = new Point();
 	}
 	
 	public GameState() {
@@ -41,6 +49,30 @@ public class GameState {
 	
 	public int getBoardCols() {
 		return cols;
+	}
+	
+	public Point getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(Point player) {
+		this.player = player;
+	}
+	
+	public Point getStart() {
+		return start;
+	}
+
+	public void setStart(Point start) {
+		this.start = start;
+	}
+
+	public Point getEnd() {
+		return end;
+	}
+
+	public void setEnd(Point end) {
+		this.end = end;
 	}
 	
 	//sets an [x][y] coordinate with <value>
@@ -68,6 +100,12 @@ public class GameState {
 		tempState.setScore(this.score);
 		return tempState;		
 	}
+
+
+
+
+
+
 
 	
 

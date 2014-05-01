@@ -37,64 +37,64 @@ public class Presenter implements Observer {
 			ui.displayBoard(model.getBoard());
 			ui.displayScore(model.getScore());
 			if (arg1 != null && arg1.toString() == "Win")
-				ui.setWin(model.getWin());
+				ui.setWin(true);
 			if (arg1 != null && arg1.toString() == "Lose")
-				ui.setLose(model.getLose());
+				ui.setLose(true);
 		}
 		if (arg0 == ui) {		
-		cmd = ui.getUserCommand();
-		switch (cmd) {
-			case Up: 
-				model.moveUp();
-				break;
-			case Down:
-				model.moveDown();
-				break;
-			case Left:
-				model.moveDown();
-				break;
-			case Right:
-				model.moveRight();
-				break;
-			case UpLeft:
-				model.moveUp();
-				model.moveLeft();
-				break;
-			case UpRight:
-				model.moveUp();
-				model.moveRight();
-				break;
-			case DownLeft:
-				model.moveDown();
-				model.moveLeft();
-				break;
-			case DownRight:
-				model.moveDown();
-				model.moveRight();
-				break;
-			case GetLose:
-				model.getLose();
-				break;
-			case GetWin:
-				model.getWin();
-				break;
-			case LoadGame:
-				model.loadGame();
-				break;
-			case NewGame:
-				model.newGame();
-				break;
-			case SaveGame:
-				model.saveGame();
-				break;
-			case UndoMove:
-				model.undoMove();
-				break;
-			case RestartGame:
-				model.newGame();
-			default:
-				break;				
-			}
+			cmd = ui.getUserCommand();
+			switch (cmd) {
+				case Up: 
+					model.moveUp();
+					break;
+				case Down:
+					model.moveDown();
+					break;
+				case Left:
+					model.moveDown();
+					break;
+				case Right:
+					model.moveRight();
+					break;
+				case UpLeft:
+					model.moveUp();
+					model.moveLeft();
+					break;
+				case UpRight:
+					model.moveUp();
+					model.moveRight();
+					break;
+				case DownLeft:
+					model.moveDown();
+					model.moveLeft();
+					break;
+				case DownRight:
+					model.moveDown();
+					model.moveRight();
+					break;
+				case GetLose:
+					model.getLose();
+					break;
+				case GetWin:
+					model.getWin();
+					break;
+				case LoadGame:
+					model.loadGame();
+					break;
+				case NewGame:
+					model.newGame();
+					break;
+				case SaveGame:
+					model.saveGame();
+					break;
+				case UndoMove:
+					model.undoMove();
+					break;
+				case RestartGame:
+					model.newGame();
+				default:
+					break;				
+				}
 		}
 	}
  
