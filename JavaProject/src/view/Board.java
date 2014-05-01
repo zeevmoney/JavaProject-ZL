@@ -29,6 +29,7 @@ public class Board extends Composite{
 				tiles[x][y].setValue(data[x][y]);
 			}
 		}
+		
 	}
 
 }

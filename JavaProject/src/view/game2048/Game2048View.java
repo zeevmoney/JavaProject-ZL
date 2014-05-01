@@ -70,6 +70,7 @@ private void initComponents(){
 	setButtons();//create the buttons on the left side
 	shell.setSize(300, 300);
 	shell.open();
+	int i=0;
 	
 	
 //	display= getDisplay();
@@ -164,29 +165,29 @@ public UserCommand getUserCommand() {
 
 
 
-//@Override
-//public void run() {
-//	//the GUI and main loop thread should be in the same THREAD.
-//	
-//	//while shell is alive
-//	while (!shell.isDisposed()) {
-//		//while there are no events (this is the event handler)
-//		if(!display.readAndDispatch()) {
-//			//the OS will wake the display on EVENT (mouse, keyboard, etc).
-//		}
-//	}		
-//	display.dispose();		
-//	
-//}
-
-
-
-
-
 @Override
 public void run() {
-	// TODO Auto-generated method stub
+	//the GUI and main loop thread should be in the same THREAD.
+	
+	//while shell is alive
+	while (!shell.isDisposed()) {
+		//while there are no events (this is the event handler)
+		if(!display.readAndDispatch()) {
+			//the OS will wake the display on EVENT (mouse, keyboard, etc).
+		}
+	}		
+	display.dispose();		
 	
 }
+
+
+
+
+
+//@Override
+//public void run() {
+//	// TODO Auto-generated method stub
+//	
+//}
 
 }
