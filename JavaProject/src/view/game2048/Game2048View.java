@@ -38,9 +38,12 @@ public Game2048View(String string) {
 	
 	int [][] data = {{2,16},{2,16}};
 	displayBoard(data);
+	board.updateBoard(data);
 	super.setDisplay(display);
 	super.setShell(shell);
 	
+	int [][] data2 = {{4,4},{2,16}};
+	board.updateBoard(data2);
 	
 	//display = new Display();//display = my screen
 //	shell = new Shell(display);//shell = specific window
@@ -117,8 +120,7 @@ public void displayBoard(int[][] data) {
 		initComponents(data);
 	}
 	else {
-		board= new Board(shell, SWT.BORDER, data);
-		board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,2));}
+		board.updateBoard(data);}
 }
 
 
