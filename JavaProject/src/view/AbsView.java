@@ -28,7 +28,7 @@ public abstract class AbsView extends Observable implements View {
 	public  Display display;
 	public Shell shell;
 	Presenter presenter;
-	UserCommand ui;
+	public UserCommand ui;
 	Menu menuBar;
 	Group group;
 	GridLayout gridLayout;

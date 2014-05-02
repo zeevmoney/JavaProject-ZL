@@ -4,7 +4,10 @@ package view.game2048;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+
 import controller.UserCommand;
 import view.AbsView;
 import view.Board;
@@ -18,6 +21,7 @@ import view.Board;
  * need to add the data for new board of the new game
  * need add key+mouse listener
  * setChanged & notifyObservers
+ * need to change place for the buttons on the screen
  * active user command
  */
 
@@ -43,6 +47,34 @@ public Game2048View(String string) {
 	shell.setText(string);//set the game name
 	setMenuToolsBar();//create the menu tools bar from AbsView	
 	setButtons();//create the buttons  from AbsView
+	
+	
+	display.addFilter(SWT.KeyUp, new Listener() {		
+		@Override
+		public void handleEvent(Event e) {  
+			switch (e.keyCode){
+			case SWT.ARROW_DOWN:
+				ui = UserCommand.Down;
+			    board.setFocus();
+			    break;
+			case SWT.ARROW_LEFT:
+				ui = UserCommand.Left;
+				board.setFocus();
+				break;
+			case SWT.ARROW_RIGHT:
+				ui = UserCommand.Right;
+				board.setFocus();
+				break;
+			case SWT.ARROW_UP:
+				ui = UserCommand.Up;
+				board.setFocus();
+				break;				     
+			}			
+			setChanged();
+			notifyObservers();
+		}
+	});
+ 	
 	
 	shell.setSize(600, 600);
 	shell.open();	
