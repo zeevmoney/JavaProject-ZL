@@ -8,11 +8,12 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-//change font size+add colors
+
+
+//need to change font size- not urgent
 public class Tile extends Canvas{
   	
- private int value;
- //private Color color;
+ private int value; 
 	    
    public Tile(Composite parent, int style){
 	   super(parent,style);
@@ -35,30 +36,32 @@ public class Tile extends Canvas{
 		});
 		   
 	   }
-    	
+ //change the number+color of tile   	
 public void setValue(int value) {
 				this.value=value;
 				changeBackgroundColor();
 				redraw();		
-			}    	
+			}   
 
+//change the Tile back ground color
 private void changeBackgroundColor(){
+	//Create color item and set with default color;
 	Color tileColor=new Color(getDisplay(), 204, 192, 179);
 	switch (value) {
 		
-		case -1:   setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));break;
+		case -1:   tileColor= new Color(getDisplay(), 255, 255, 255);break;
 		case 0:    tileColor= new Color(getDisplay(), 204, 192, 179);break;
 	    case 2:    tileColor= new Color(getDisplay(), 238, 228, 218);break;
 	    case 4:    tileColor= new Color(getDisplay(), 237, 224, 200);break;
-	    case 8:    tileColor= new Color(getDisplay(), 237, 194, 147);break;
-	    case 16:   tileColor= new Color(getDisplay(), 220, 117, 75);break;
-	    case 32:   tileColor= new Color(getDisplay(), 220, 83, 53);break;
-	    case 64:   setBackground(getDisplay().getSystemColor(SWT.COLOR_RED));break;
-        case 128:  setBackground(getDisplay().getSystemColor(SWT.COLOR_YELLOW));break;
-	    case 256:  setBackground(getDisplay().getSystemColor(SWT.COLOR_YELLOW));break;
-	    case 512:  setBackground(getDisplay().getSystemColor(SWT.COLOR_YELLOW));break;
-	    case 1024: setBackground(getDisplay().getSystemColor(SWT.COLOR_YELLOW));break;
-	    case 2048: setBackground(getDisplay().getSystemColor(SWT.COLOR_YELLOW));break;
+	    case 8:    tileColor= new Color(getDisplay(), 242, 176, 120);break;
+	    case 16:   tileColor= new Color(getDisplay(), 245, 151, 99);break;
+	    case 32:   tileColor= new Color(getDisplay(), 245, 125, 95);break;
+	    case 64:   tileColor= new Color(getDisplay(), 246, 95, 59);break;
+        case 128:  tileColor= new Color(getDisplay(), 237, 206, 113);break;
+	    case 256:  tileColor= new Color(getDisplay(), 237, 204, 97);break;
+	    case 512:  tileColor= new Color(getDisplay(), 237, 200, 80);break;
+	    case 1024: tileColor= new Color(getDisplay(), 237, 197, 63);break;
+	    case 2048: tileColor= new Color(getDisplay(), 237, 194, 46);break;
 	    default:	tileColor= new Color(getDisplay(), 220, 186, 49);break;
       }
 	setBackground(tileColor);

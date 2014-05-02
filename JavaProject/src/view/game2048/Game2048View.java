@@ -3,21 +3,20 @@ package view.game2048;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-
 import controller.UserCommand;
 import view.AbsView;
 import view.Board;
 
 
-//import view.View;
+
 
 /*
  * TODO: (Lital)
  * Don't forget to add:
+ * need to add the data for new board of the new game
+ * need add key+mouse listener
  * setChanged & notifyObservers
  * active user command
  */
@@ -30,141 +29,55 @@ public class Game2048View extends AbsView implements Runnable {
 	
 public Game2048View(String string) {
 	super(string);
-	display= getDisplay();
-	shell= getShell();
+	display= getDisplay();//get from AbsView
+	shell= getShell();//get from AbsView
 	
-	//getShell().setLayout(new GridLayout(2, false));
+	//need to add the data for new board	
 	
-	
-	int [][] data = {{2,16},{2,16}};
-	displayBoard(data);
+	int [][] data = {{2,16},{2,16}};//just for check, need to change it to start board
+	displayBoard(data);//display the new board
 	board.updateBoard(data);
 	super.setDisplay(display);
-	super.setShell(shell);
+	super.setShell(shell);	
+		
+	shell.setText(string);//set the game name
+	setMenuToolsBar();//create the menu tools bar from AbsView	
+	setButtons();//create the buttons  from AbsView
 	
-	int [][] data2 = {{4,4},{2,16}};
-	board.updateBoard(data2);
-	
-	//display = new Display();//display = my screen
-//	shell = new Shell(display);//shell = specific window
-	shell.setText(string);
-	setMenuToolsBar();//create the menu tools bar 
-	
-	setButtons();//create the buttons on the left side
-	//displayBoard(data);
 	shell.setSize(600, 600);
-	shell.open();
-	
-	//board= new Board(board, SWT.BORDER, data);
-//	board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,2));
-	int i=0;
-	
+	shell.open();	
 }
 
 	
-	
-//private void initComponents(){
-//	
-//
-//	String string="my 2048 game";
-//	board= new Board(board, 0, null);
-//	
-//	display = new Display();//display = my screen
-//	shell = new Shell(display);//shell = specific window
-//	shell.setText(string);
-//	setMenuToolsBar();//create the menu tools bar 
-//	setButtons();//create the buttons on the left side
-//	shell.setSize(300, 300);
-//	shell.open();
-//	int i=0;
-//	
-//	
-////	display= getDisplay();
-////	shell= getShell();	
-//		
-//}
-//@Override
-//public void run() {
-//	initComponents();
-//	while(!shell.isDisposed()){
-//		if(!display.readAndDispatch()){
-//			display.sleep();
-//			
-//		}
-
-
-	
-/*
- * 
- * comment
- */
-	
-private void initComponents(int[][] data){
-	board = new Board(shell, SWT.BORDER, data);
-	board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,2));
-}
-
-
-
 
 
 //display the board
-
 @Override
 public void displayBoard(int[][] data) {
-
+	//display the board for the first time after create the board otherwise update board
 	if(flag==false){
 		flag=true;
 		display=new Display();
 		shell=new Shell(display);	
-		initComponents(data);
+		board = new Board(shell, SWT.BORDER, data);
+		board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,2));
 	}
 	else {
 		board.updateBoard(data);}
 }
 
 
-
+//update score 
 @Override
 public void displayScore(int score) {
-	// TODO Auto-generated method stub	
+	 getScoreLabel().setText("Score:"+score);
+	
 }
 
 
 @Override
 public UserCommand getUserCommand() {
-//	display.addFilter(SWT.KeyUp, new Listener()
-//    {
-//	    UserCommand userCommand= getUserCommand();
-//		public void handleEvent(Event e)
-//        {			
-//			switch (e.keyCode) {
-//			case (SWT.ARROW_UP):
-//				userCommand = UserCommand.Up;
-//				setChanged();				
-//				notifyObservers();
-//				break;
-//			case (SWT.ARROW_DOWN):
-//				userCommand = UserCommand.Down;
-//				setChanged();				
-//				notifyObservers();
-//				break;
-//			case (SWT.ARROW_LEFT):
-//				userCommand = UserCommand.Left;
-//				setChanged();				
-//				notifyObservers();
-//				break;
-//			case (SWT.ARROW_RIGHT):
-//				userCommand = UserCommand.Right;
-//				setChanged();				
-//				notifyObservers();
-//				break;
-//			default:
-//				break;
-//			}		
-//	
-//       	}
-//   	}
+
 	return null;
 }
 
@@ -181,18 +94,9 @@ public void run() {
 			//the OS will wake the display on EVENT (mouse, keyboard, etc).
 		}
 	}		
-	display.dispose();		
-	
+	display.dispose();			
 }
 
 
-
-
-
-//@Override
-//public void run() {
-//	// TODO Auto-generated method stub
-//	
-//}
 
 }
