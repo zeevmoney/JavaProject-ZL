@@ -3,15 +3,19 @@ package model.mazegame;
 import java.util.*;
 
 /*
- * Prim class: generates a maze using Prim algorithm
+ * PrimMazeGenerator class: generates a maze using Prim algorithm
  * Copied from here: http://www.jonathanzong.com/blog/2012/11/06/maze-generation-with-prims-algorithm
  */
-
 
 public class PrimMazeGenerator {
  
 	public int[][] generateMazeByPrimAlgo(int rows,int cols)
     {
+		final int Start = 1;
+		final int Wall = -1;
+		final int End = 2;
+		final int Empty = 0;
+			
     	// dimensions of generated maze
     	int r=rows;
     	int c=cols;
@@ -92,15 +96,15 @@ public class PrimMazeGenerator {
 			for(int j=0;j<c;j++)
 				{
 					if (maz[i][j] == '*')
-						maze[i][j] = -1;
+						maze[i][j] = Wall;
 					else if (maz[i][j] == '.')
-						maze[i][j] = 0;
+						maze[i][j] = Empty;
 					else if (maz[i][j] == 'S')
 					{
-						maze[i][j] = 1;					
+						maze[i][j] = Start;					
 					}
 					else if (maz[i][j] == 'E')
-						maze[i][j] = 2;
+						maze[i][j] = End;
 					
 				}
 			

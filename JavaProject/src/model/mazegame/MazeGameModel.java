@@ -80,7 +80,7 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 			int x = currentGame.getPlayer().x + moveX; //new coordinates for movement
 			int y = currentGame.getPlayer().y + moveY; //new coordinates for movement
 			if (!currentGame.validXY(x, y)) return;  //check if index is valid
-			if (currentGame.getXY(x, y) == -1) return; //check if it's a wall.
+			if (currentGame.getXY(x, y) == Wall) return; //check if it's a wall.
 			if (Math.abs(moveX) == Math.abs(moveY)) score = DiagonalScore; //if it's a diagonal move
 			currentGame.setScore(currentGame.getScore()+score); //update the score
 			currentGame.setXY(currentGame.getPlayer().x, currentGame.getPlayer().y, Empty); //set previoues cell to empty cell
