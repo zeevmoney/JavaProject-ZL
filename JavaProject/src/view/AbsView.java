@@ -400,7 +400,6 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	@Override
 	public void setLose(boolean lose) {
-		System.out.println("DEBUG: UI LOSE");
 		if(lose == true){			
 			final Shell winWindow= new Shell(this.shell);
 			winWindow.setLayout(new GridLayout(2, false));
@@ -453,7 +452,6 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 
 	@Override
 	public void setWin(boolean win) {
-		
 		if(win == true){
 			
 			final Shell winWindow= new Shell(this.shell);
