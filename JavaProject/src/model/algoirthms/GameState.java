@@ -26,8 +26,6 @@ public class GameState {
 		this.board = new int[rows][cols];		
 		this.score = 0;
 		this.player = new Point();
-		this.start = new Point();
-		this.end = new Point();
 	}
 	
 	public GameState() {
@@ -62,22 +60,7 @@ public class GameState {
 		this.player = player;
 	}
 	
-	public Point getStart() {
-		return start;
-	}
 
-	public void setStart(Point start) {
-		this.start = start;
-	}
-
-	public Point getEnd() {
-		return end;
-	}
-
-	public void setEnd(Point end) {
-		this.end = end;
-	}
-	
 	//sets an [x][y] coordinate with <value>
 	public void setXY (int x, int y, int value) {
 		board[x][y] = value;
