@@ -26,6 +26,8 @@ public class GameState {
 		this.board = new int[rows][cols];		
 		this.score = 0;
 		this.player = new Point();
+		this.start = new Point();
+		this.end = new Point();
 	}
 	
 	public GameState() {

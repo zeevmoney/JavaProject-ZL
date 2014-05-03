@@ -11,8 +11,6 @@ import view.AbsView;
 import view.Board;
 
 
-
-
 public class Game2048View extends AbsView implements Runnable {
 	Board board;
 	

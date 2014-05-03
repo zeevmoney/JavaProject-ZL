@@ -14,17 +14,26 @@ import controller.UserCommand;
 public class MazeGameModel extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state
 	Stack<GameState> gameStack; //stack of previous games
-	UserCommand cmd;
+	UserCommand cmd; //user command ENUM
+	
+	//Constants:
 	private final int Start = 1;
 	private final int Wall = -1;
 	private final int End = 2;
 	private final int Empty = 0;
-	private final int Horizontal = 10;
-	private final int Diagonal = 15;
-	int rows;
-	int cols;
+	private final int HorizontalScore = 10;
+	private final int DiagonalScore = 15;
+	private final int rows=16;
+	private final int cols=16;
 	boolean win;
 	boolean lose;
+	
+	
+	public MazeGameModel() {
+		gameStack = new Stack<>();
+		newGame();
+	}
+	
 	
 	//init all values on the game board & set score to 0.
 	//TODO: (Zeev): random generated maze.
@@ -41,12 +50,15 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 				} else if (i==rows-1 && j==cols-1) {
 					bigMaze[i][j] = Start;
 					currentGame.setStart(new Point (i,j));
+					currentGame.setPlayer(new Point (i,j));
 				} else if (i==1 && (j>0 && j<cols-1) || i>0 && j==1)
 					bigMaze[i][j] = Wall;	
 				else bigMaze[i][j] = Empty;
 			}
 		}
-		currentGame.setBoard(bigMaze);		
+		currentGame.setBoard(bigMaze);
+		setChanged();
+		notifyObservers();
 	}
 	
 	
@@ -60,34 +72,35 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	public void newGame() {
 		currentGame = new GameState(rows,cols);
 		boardInit();
-	
 		gameStack.clear();
-		gameStack.add(currentGame);
-		
+		gameStack.add(currentGame.Copy());		
 		setChanged();
 		notifyObservers();
 	}
 
-
 	private void moveHanlde(int moveX, int moveY,UserCommand cmd) {
 			//x and y are sent by the moveX function.
-			int score=Horizontal;
+			System.out.println("DEBUG: Move test");
+			int score=HorizontalScore;
 			int x = currentGame.getPlayer().x + moveX;
 			int y = currentGame.getPlayer().y + moveY;
 			if (!currentGame.validXY(x, y)) return;  //check if index is valid
 			if (currentGame.getXY(x, y) == -1) return; //check if it's a wall.
-			if (Math.abs(x) == Math.abs(y)) score = Diagonal; //if it's a diagonal move
+			if (Math.abs(moveX) == Math.abs(moveY)) score = DiagonalScore; //if it's a diagonal move
 			currentGame.setScore(currentGame.getScore()+score);
+			currentGame.setXY(currentGame.getPlayer().x, currentGame.getPlayer().y, Empty);
 			currentGame.setPlayer(new Point (x,y));
+			currentGame.setXY(x, y, 1);
 			gameStack.add(currentGame.Copy());
 			setChanged();
 			if (currentGame.getPlayer().equals(currentGame.getEnd())) {
 				notifyObservers("Win");
 				return;
 			}
-			gameStack.add(currentGame.Copy());			
 			notifyObservers();			
 	}
+	
+	
 	/*
 	 * "-1,-1"	"-1,0"	"-1,1"
 	 * "0,-1"	"0,0"	"0,1"

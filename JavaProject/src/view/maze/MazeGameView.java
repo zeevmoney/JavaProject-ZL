@@ -34,7 +34,7 @@ public class MazeGameView extends AbsView implements Runnable {
 			Color boardColor = new Color(getDisplay(), 187, 173, 160); //set board color 
 			board.setBackground(boardColor);
 			board.setForeground(boardColor);
-			getShell().setMinimumSize(601, 601);
+			getShell().setMinimumSize(800, 800);
 			getDisplay().addFilter(SWT.KeyUp, new Listener() {		
 				@Override
 				public void handleEvent(Event e) { 

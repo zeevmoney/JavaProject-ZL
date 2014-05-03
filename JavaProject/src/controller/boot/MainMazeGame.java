@@ -13,7 +13,6 @@ public class MainMazeGame {
 		m.addObserver(p);
 		ui.addObserver(p);	
 		ui.run();
-
 	}
 
 }
