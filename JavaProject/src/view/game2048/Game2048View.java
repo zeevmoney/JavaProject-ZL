@@ -2,28 +2,16 @@ package view.game2048;
 
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-
 import controller.UserCommand;
 import view.AbsView;
 import view.Board;
 
 
 
-
-/*
- * TODO: (Lital)
- * Don't forget to add:
- * need to add the data for new board of the new game
- * need add key+mouse listener
- * setChanged & notifyObservers
- * need to change place for the buttons on the screen
- * active user command
- */
 
 public class Game2048View extends AbsView implements Runnable {
 	Board board;
@@ -37,9 +25,13 @@ public class Game2048View extends AbsView implements Runnable {
 	@Override
 	public void displayBoard(int[][] data) {
 		if (board == null) {
+			//TODO: code cleanup.
 			System.out.println("DEBUG DISPLAY BOARD");
-			board = new Board(getGameBoard(), SWT.BORDER, data);
+			board = new Board(getGameBoard(), SWT.WRAP, data);
 			board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,2));
+			Color boardColor = new Color(getDisplay(), 187, 173, 160); //set board color 
+			board.setBackground(boardColor);
+			board.setForeground(boardColor);
 			getShell().setMinimumSize(601, 601);
 			getDisplay().addFilter(SWT.KeyUp, new Listener() {		
 				@Override
@@ -60,16 +52,16 @@ public class Game2048View extends AbsView implements Runnable {
 					case SWT.ARROW_UP:
 						setUi(UserCommand.Up);
 						break;				     
-					}			
+					}	
 					setChanged();
-					notifyObservers();
+					notifyObservers();	
 				}
 			});	
 		} else {
+			System.out.println("DEBUG: updating board");
 			board.updateBoard(data);
 		}
 	}
-	
 	
 	//update score 
 	@Override

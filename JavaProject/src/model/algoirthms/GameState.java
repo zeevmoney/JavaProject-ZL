@@ -1,6 +1,7 @@
 package model.algoirthms;
 
 import java.awt.Point;
+import java.util.Arrays;
 
 /* 
  * GameState is used to describe the current Game state
@@ -95,13 +96,41 @@ public class GameState {
 	//GameState object copy
 	public GameState Copy() {
 		GameState tempState = new GameState();
-		int[][] board = this.board.clone();
-		tempState.setBoard(board);
+		int[][] tempBoard = new int[board.length][board[0].length];
+		for (int i = 0; i < board.length; i++)
+			System.arraycopy(board[i], 0, tempBoard[i], 0, board[i].length);			
+		tempState.setBoard(tempBoard);
 		tempState.setScore(this.score);
 		return tempState;		
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(board);
+		result = prime * result + score;
+		return result;
+	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GameState other = (GameState) obj;
+		if (!Arrays.deepEquals(board, other.board))
+			return false;
+		if (score != other.score)
+			return false;
+		return true;
+	}
+
+
+	
 
 
 

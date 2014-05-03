@@ -7,7 +7,7 @@ package controller;
 
 public enum UserCommand {
 	/*
-	 * the movement keys are like the Numpad on the keyboard
+	 * the movement codes are like the NumPad on the keyboard
 	 * new game = 5, all other are 10...n
 	 */
 	Default(0),

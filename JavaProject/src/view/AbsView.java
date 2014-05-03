@@ -379,12 +379,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * ************************/
 	
 	private void gameBoardGroup () { 
-		//shell.setLayout(new GridLayout(3, false));
-		gameBoard = new Group(shell, SWT.SHADOW_IN);		
+		gameBoard = new Group(shell, SWT.SHADOW_OUT);		
 		gameBoard.setLayout(new GridLayout(1, true));
 		gameBoard.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2));
-	    Color shellColor =  new Color(shell.getDisplay(), 250, 248, 239);
-	    gameBoard.setBackground(shellColor);
+		//Color color = new Color(shell.getDisplay(), 250, 248, 239);
+	    //gameBoard.setBackground(color);
 	}
 	
 	

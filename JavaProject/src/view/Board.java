@@ -27,7 +27,7 @@ public class Board extends Composite{
 		tiles=new Tile [colums][rows];
 		for (int x = 0; x < rows; x++) {
 			for (int y = 0; y < colums; y++){
-				tiles[x][y]=new Tile(this, SWT.BORDER);
+				tiles[x][y]=new Tile(this, SWT.BORDER_SOLID);
 				tiles[x][y].setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));				
 			}
 		}

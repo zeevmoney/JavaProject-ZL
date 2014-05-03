@@ -2,6 +2,7 @@ package model.model2048;
 
 import java.util.Observable;
 import java.util.Stack;
+
 import model.Model;
 import model.algoirthms.GameState;
 import model.algoirthms.GameStateXML;
@@ -16,8 +17,7 @@ import model.algoirthms.GameStateXML;
  * that this object has no longer changed.
  */
 
-//TODO: generate numbers on move only (if something changed, if stuck = do nothing).
-//TODO: make the movement use a strtegy pattern.
+//TODO: make the movement use a strategy pattern.
 
 public class Game2048Model extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state
@@ -30,7 +30,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 		
 	//Constructor
-	//TODO: make this run as a thread.
 	public Game2048Model(int boardSize) {
 		gameStack = new Stack<>();
 		this.boardSize=boardSize;
@@ -59,9 +58,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 
 	
 
-	//returns false if the board is full, else adds a number (2 or 4) to a random cell.
-	//TODO: change to void.
-	private boolean addNumber() {
+	//adds a number (2 or 4) to a random cell.
+	private void addNumber() {
 		boolean flag = false;
 		while (!flag) {
 			//generate 2 random numbers (x and y coordinates)
@@ -79,7 +77,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		}
 		setChanged();
 		notifyObservers();
-		return flag;
 	}
 	
 	@Override
@@ -87,7 +84,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		currentGame = new GameState(boardSize,boardSize);
 		boardInit();
 		gameStack.clear();
-		gameStack.add(currentGame);
+		gameStack.add(currentGame.Copy());	
 		setChanged();
 		notifyObservers();	
 	}
@@ -117,6 +114,31 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 	@Override
 	public void undoMove() {
+//		if (this.gameStack.isEmpty())
+//			return;		
+//		GameState s = gameStack.pop();				
+//		if (s.equals(gameStack.pop()))
+//		{
+//			if(!gameStack.isEmpty())
+//				currentGame = gameStack.pop();
+//			else
+//			{
+//				if(gameStack.size() == 0)
+//					gameStack.push(currentGame.Copy());
+//				return;
+//			}
+//		}
+//		else
+//			currentGame = s;		
+//		if(gameStack.size() == 0)
+//			gameStack.push(currentGame.Copy());
+//		// raise a flag of a change
+//		setChanged();
+//		// actively notify all observers
+//		// and invoke their update method
+//		notifyObservers(); 
+//		
+		
 		currentGame=gameStack.pop();
 		setChanged();
 		notifyObservers();				
@@ -143,9 +165,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		return lose;
 	}
 
-	//returns True if any movement is available.
-	
-	public boolean canMove () {
+	//returns True if any movement is available.	
+	private boolean canMove () {
 		for (int i = 0; i < boardSize; i++) {
 			for (int j = 0; j < boardSize; j++) {
 				if (!currentGame.validXY(i+1, j) || !currentGame.validXY(i, j+1)) //invalid index 
@@ -158,21 +179,32 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		}
 		return false;		
 	}
-	//TODO: FIX currentGame.getXY(i, j) == emptyCell
 	
+	//returns true if board is full
+	private boolean boardIsFull() {
+		for (int i = 0; i < boardSize; i++) {
+			for (int j = 0; j < boardSize; j++) {
+				if (currentGame.getXY(i, j) == emptyCell) 
+					return false;				
+			}
+		}
+		return true;
+	}
+		
 	private void moveHanlde(boolean change) {
+		setChanged(); //changed in any case
 		if (change) { //if there was a change it means that there is an empty space.
-			setChanged(); //changed in any case
-			gameStack.add(currentGame.Copy());	
 			if (win) {
 				notifyObservers("Win");
-				return;
+				System.out.println("DEBUG: WIN");				
+			} else {
+				addNumber();
+				gameStack.add(currentGame.Copy());	
+				notifyObservers();
 			}
-			addNumber();					
-			notifyObservers();	
-		} else if (!change && !canMove()) { //no change & can't move = lost the game.
+		} else if (!change && !canMove() && boardIsFull()) { //no change & can't move & board is full = lost the game.
 			lose = true;
-			setChanged();
+			System.out.println("DEBUG: LOSE");
 			notifyObservers("Lose");
 		}		
 	}

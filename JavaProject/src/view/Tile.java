@@ -45,7 +45,7 @@ public class Tile extends Canvas{
 	//value & color setter.
 	public void setValue(int value) {
 		this.value=value;
-		changeBackgroundColor(); //
+		changeBackgroundColor(); 
 		redraw();
 	}   
 
@@ -53,7 +53,8 @@ public class Tile extends Canvas{
 	private void changeBackgroundColor(){
 		//Create color item and set with default color;
 		//TODO: check if this set is needed.
-		Color tileColor = new Color(getDisplay(), 204, 192, 179);
+		//Color tileColor = new Color(getDisplay(), 204, 192, 179);
+		Color tileColor;
 		switch (value) {		
 			case -1:   tileColor = new Color(getDisplay(), 255, 255, 255); break;
 			case 0:    tileColor = new Color(getDisplay(), 204, 192, 179); break;
