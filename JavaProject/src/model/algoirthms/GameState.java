@@ -104,8 +104,8 @@ public class GameState {
 		tempState.setBoard(tempBoard);
 		tempState.setScore(this.score);
 		tempState.setPlayer(this.player);
-		tempState.setStart(this.start);
-		tempState.setEnd(this.end);
+		//tempState.setStart(this.start);
+		//tempState.setEnd(this.end);
 		return tempState;		
 	}
 
