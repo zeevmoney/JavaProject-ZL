@@ -19,6 +19,7 @@ import model.algoirthms.GameStateXML;
 
 //TODO: make the movement use a strategy pattern.
 //TODO: save/load game with a file select
+//TODO: make win lock the game & make it run after (no) was selected.
 
 public class Game2048Model extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state
@@ -28,6 +29,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	int boardSize;	
 	boolean win;
 	boolean lose;
+	boolean won; //to make sure the game was only won once.
 	
 		
 	//Constructor
@@ -48,6 +50,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	private void boardInit() {
 		win=false;
 		lose=false;
+		won=false;
 		currentGame.setScore(0);
 		for (int i = 0; i < boardSize; i++)
 			for (int j = 0; j < boardSize; j++)
@@ -190,6 +193,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		setChanged(); //changed in any case
 		if (change) { //if there was a change it means that there is an empty space.
 			if (win) {
+				//if (won) return; //can't win twice.
+				//won = true;				
 				notifyObservers("Win");
 			} else {
 				addNumber();
@@ -197,8 +202,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				notifyObservers();
 			}
 		} else if (!change && !canMove() && boardIsFull()) { //no change & can't move & board is full = lost the game.
-			lose = true;
-			System.out.println("DEBUG: LOSE");
+			if (lose) return; //can't lose twice :)
+			lose = true;			
 			setChanged();
 			notifyObservers("Lose");
 		}		

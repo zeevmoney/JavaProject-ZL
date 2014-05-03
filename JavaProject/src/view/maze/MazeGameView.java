@@ -11,12 +11,6 @@ import view.AbsView;
 import view.Board;
 
 
-/*
- * TODO: (Lital)
- * Don't forget to add:
- * setChanged & notifyObservers
- */
-
 public class MazeGameView extends AbsView implements Runnable {
 	Board board;
 	

@@ -401,7 +401,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	@Override
 	public void setLose(boolean lose) {
-		if(lose == true&&flag==false){
+		if(lose == true && flag==false){
 			flag=true;
 			final Shell loseWindow= new Shell(this.shell);
 			loseWindow.setLayout(new GridLayout(2, false));
