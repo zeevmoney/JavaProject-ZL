@@ -41,7 +41,8 @@ public class Presenter implements Observer {
 			if (arg1 != null && arg1.toString() == "Lose")
 				ui.setLose(true);
 		}
-		if (arg0 == ui) {		
+		if (arg0 == ui) {
+			System.out.println("DEBUG UI");
 			cmd = ui.getUserCommand();
 			switch (cmd) {
 				case Up: 
@@ -57,20 +58,16 @@ public class Presenter implements Observer {
 					model.moveRight();
 					break;
 				case UpLeft:
-					model.moveUp();
-					model.moveLeft();
+					model.UpLeft();
 					break;
 				case UpRight:
-					model.moveUp();
-					model.moveRight();
+					model.UpRight();
 					break;
 				case DownLeft:
-					model.moveDown();
-					model.moveLeft();
+					model.DownLeft();
 					break;
 				case DownRight:
-					model.moveDown();
-					model.moveRight();
+					model.DownRight();
 					break;
 				case GetLose:
 					model.getLose();

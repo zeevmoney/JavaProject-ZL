@@ -17,15 +17,8 @@ public interface View  {
 	 */
 	public void displayBoard(int[][] data);	
 	
-	/*
-	 * Returns an INT which represents the user input
-	 * every INT represents an action.
-	 * for example: 
-	 * 2 = move straight down
-	 * 1 = move left & down (diagonal)
-	 */	
 	
-	//TODO: (Lital) Use UserCommand ENUM
+	//returns a UserCommand ENUM.
 	public UserCommand getUserCommand();
 	
 	//Displays user score

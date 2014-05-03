@@ -26,109 +26,92 @@ import view.Board;
  */
 
 public class Game2048View extends AbsView implements Runnable {
-	Display display;
-	Shell shell;	
 	Board board;
-	boolean flag= false;
+	boolean flag = false;
 	
-public Game2048View(String string) {
-	super(string);
-	display= getDisplay();//get from AbsView
-	shell= getShell();//get from AbsView
-	
-	//need to add the data for new board	
-	
-	int [][] data = {{2,16},{2,16}};//just for check, need to change it to start board
-	displayBoard(data);//display the new board
-	board.updateBoard(data);
-	super.setDisplay(display);
-	super.setShell(shell);	
-		
-	shell.setText(string);//set the game name
-	setMenuToolsBar();//create the menu tools bar from AbsView	
-	setButtons();//create the buttons  from AbsView
-	
-	
-	display.addFilter(SWT.KeyUp, new Listener() {		
-		@Override
-		public void handleEvent(Event e) {  
-			switch (e.keyCode){
-			case SWT.ARROW_DOWN:
-				ui = UserCommand.Down;
-			    board.setFocus();
-			    break;
-			case SWT.ARROW_LEFT:
-				ui = UserCommand.Left;
-				board.setFocus();
-				break;
-			case SWT.ARROW_RIGHT:
-				ui = UserCommand.Right;
-				board.setFocus();
-				break;
-			case SWT.ARROW_UP:
-				ui = UserCommand.Up;
-				board.setFocus();
-				break;				     
-			}			
-			setChanged();
-			notifyObservers();
-		}
-	});
- 	
-	
-	shell.setSize(600, 600);
-	shell.open();	
-}
-
-	
-
-
-//display the board
-@Override
-public void displayBoard(int[][] data) {
-	//display the board for the first time after create the board otherwise update board
-	if(flag==false){
-		flag=true;
-		display=new Display();
-		shell=new Shell(display);	
-		board = new Board(shell, SWT.BORDER, data);
-		board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1,2));
+	public Game2048View(String string) {
+		super(string);
 	}
-	else {
-		board.updateBoard(data);}
-}
-
-
-//update score 
-@Override
-public void displayScore(int score) {
-	 getScoreLabel().setText("Score:"+score);
 	
-}
 
-
-@Override
-public UserCommand getUserCommand() {
-
-	return null;
-}
-
-
-
-@Override
-public void run() {
-	//the GUI and main loop thread should be in the same THREAD.
 	
-	//while shell is alive
-	while (!shell.isDisposed()) {
-		//while there are no events (this is the event handler)
-		if(!display.readAndDispatch()) {
-			//the OS will wake the display on EVENT (mouse, keyboard, etc).
+	//display the board
+	@Override
+	public void displayBoard(int[][] data) {
+		if (board == null) {
+			System.out.println("DEBUG DISPLAY BOARD");
+			board = new Board(getGameBoard(), SWT.BORDER, data);
+			board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,2));
+			getShell().setMinimumSize(601, 601);
+			getDisplay().addFilter(SWT.KeyUp, new Listener() {		
+				@Override
+				public void handleEvent(Event e) { 
+					board.setFocus();
+					switch (e.keyCode){
+					case SWT.ARROW_DOWN:
+						setUi(UserCommand.Down); 
+					    break;
+					case SWT.ARROW_LEFT:
+						setUi(UserCommand.Left);
+						
+						break;
+					case SWT.ARROW_RIGHT:
+						setUi(UserCommand.Right);
+						
+						break;
+					case SWT.ARROW_UP:
+						setUi(UserCommand.Up);
+						break;				     
+					}			
+					setChanged();
+					notifyObservers();
+				}
+			});	
+		} else {
+			board.updateBoard(data);
 		}
-	}		
-	display.dispose();			
+	}
+	
+	
+	//update score 
+	@Override
+	public void displayScore(int score) {
+		 getScoreLabel().setText("Score:"+score);
+		
+	}
+		
+	@Override
+	public UserCommand getUserCommand() {
+		return getUi();
+	}
+	
+	
+//	//TODO: Fix this.	
+//	//the GUI and main loop thread should be in the same THREAD.
+	@Override
+	public void run() {
+		//while shell is alive
+		while (!getShell().isDisposed()) {
+			//while there are no events (this is the event handler)
+			if(!getDisplay().readAndDispatch()) {
+				//the OS will auto wake the display on EVENT (mouse, keyboard, etc).
+				getDisplay().sleep();
+			}
+		}
+		//if shell dies -> display dies.
+		getDisplay().dispose();			
+	}
+	
 }
 
 
-
-}
+//display= getDisplay(); //get from AbsView
+//shell= getShell(); //get from AbsView
+//
+//restartGame();		
+////int [][] data = {{2,16},{2,16}};//just for check, need to change it to start board
+////displayBoard(data);//display the new board
+////board.updateBoard(data);
+//setDisplay(display);
+//setShell(shell);	
+//	

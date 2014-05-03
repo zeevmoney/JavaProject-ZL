@@ -1,16 +1,17 @@
 package view;
 
-
-import java.awt.Graphics2D;
 import java.util.Observable;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -18,114 +19,181 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-import controller.Presenter;
 import controller.UserCommand;
 
 
 //TODO: set win+loose screen
+//TODO: re-use for load / save etc
 
-public abstract class AbsView extends Observable implements View {
-	public  Display display;
-	public Shell shell;
-	Presenter presenter;
-	public UserCommand ui;
+/*
+ * Abstract Class AbsView:
+ * This class defines the common parts for classes that run a 2D board game.
+ */
+
+public abstract class AbsView extends Observable implements View,Runnable  {
+	UserCommand ui; //user command ENUM
+	//SWT Components:
+	Display display; 
+	Shell shell; 
 	Menu menuBar;
-	Group group;
-	GridLayout gridLayout;
-	private Label scoreLabel;
+	Group gameButtons;
+	Group gameBoard;
+	//GridLayout gridLayout;
+	Label scoreLabel;
 	
+	/*
+	 * AbsView constructor:
+	 * init upper bar
+	 * init game buttons
+	 * init the group which holds the game board.
+	 */
 
+	public AbsView(String string) {
+		display=new Display();
+		shell=new Shell(display);	
+		shell.setText(string);//set the game name
+		shell.setLayout(new GridLayout(2, false));
+		shell.setSize(600,600);
+		shell.setMinimumSize(600, 600);
+		setMenuToolsBar(); //draw the menu tool bar.
+		gameButtonsMenu(); //draw the game buttons
+		gameBoardGroup();  //draw the board where the game will be placed.		
+		shell.open();		
+	}
 	
-	    
+	
+	/* ************************
+	 * Setters & Getters:
+	 * ************************/
+
+	public UserCommand getUi() {
+		return ui;
+	}
+
+	public void setUi(UserCommand ui) {
+		this.ui = ui;
+	}
+
+	public Display getDisplay() {
+		return display;
+	}
+
+	public void setDisplay(Display display) {
+		this.display = display;
+	}
+
+	public Shell getShell() {
+		return shell;
+	}
+
+	public void setShell(Shell shell) {
+		this.shell = shell;
+	}
+
+	public Menu getMenuBar() {
+		return menuBar;
+	}
+
+	public void setMenuBar(Menu menuBar) {
+		this.menuBar = menuBar;
+	}
+
+
+	public Label getScoreLabel() {
+		return scoreLabel;
+	}
+
+	public void setScoreLabel(Label scoreLabel) {
+		this.scoreLabel = scoreLabel;
+	}
+	
+	public Group getGameBoard() {
+		return gameBoard;
+	}
+
+	public void setGameBoard(Group gameBoard) {
+		this.gameBoard = gameBoard;
+	}
+	
+		
+	/* ************************
+	 * Upper menu bar:
+	 * ************************/
+		
+	
+	//Menu bar (upper menu):
+	
 	protected void setMenuToolsBar() {
 		//create the menu bar and add file and edit
 		this.menuBar=new Menu(shell, SWT.BAR);
 		shell.setMenuBar(menuBar);
-		setFile();//create the file tools bar
-		setEdit();//create the edit tools bar		
+		setFile(); //create the file tools bar
+		setEdit(); //create the edit tools bar		
 	}
 
-	
-	
-	//set menu tool bar
-	//***********************************************************************************************
-	//show the menu of file label at the game and add it to menuBar		
-		private void setFile() {	
+	//File drop down menu
+	private void setFile() {	
+		MenuItem aFileMenu = new MenuItem(menuBar, SWT.CASCADE);
+        aFileMenu.setText("File"); 
+        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+        aFileMenu.setMenu(fileMenu);
+        loadGame(fileMenu); //Load game option
+        saveGame(fileMenu); //Sage game option
+        saveAndExitGameOption(fileMenu); //Save & Exit game option.
+		exitGameOption(fileMenu); //Exit game option.
+	}
 
-	        MenuItem aFileMenu = new MenuItem(menuBar, SWT.CASCADE);
-	        aFileMenu.setText("&File");
-	        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
-	        
-	        aFileMenu.setMenu(fileMenu);
-	        loadGame(fileMenu);// add menu the option for load game
-	        saveGame(fileMenu);// add menu the option for save game
-	        saveAndExitGameOption(fileMenu);// add	menu the option for save and exit game
-			exitGameOption(fileMenu);// add	menu the option for exit new game		
-		}
-
-	
-	
-	//show the menu of edit label and add it to menuBar	
+	//Edit drop down menu.
 	private void setEdit() {
-	//Create the edit			
-			
-	        MenuItem aFileMenu = new MenuItem(menuBar, SWT.CASCADE);
-	        aFileMenu.setText("&Edit");
-	        Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
-	        
-	        aFileMenu.setMenu(fileMenu);
-	        restartGame(fileMenu);// add to edit label the option for restart game
-	        undoMove(fileMenu);//  add to edit label the option for undo last step	       
+		MenuItem aEditMenu = new MenuItem(menuBar, SWT.CASCADE);
+		aEditMenu.setText("Edit");
+	    Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
+	    aEditMenu.setMenu(fileMenu);
+	    restartGameDropMenu(fileMenu); //Restart game option
+	    undoMove(fileMenu); //Edit game option	       
 	}
 
-	  
-	//until here menu bar
-	//***********************************************************************************************
-
-	
-	//set File tool bar
-	//***********************************************************************************************
+	/* ************************
+	 * File drop down menu:
+	 * ************************/	
 	
 	
-	//	file option for save  game
+	//Save game (under the File drop down menu)
 	private void saveGame(Menu fileMenu) {
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
-	    newItem.setText("&save game");
-	    
+	    newItem.setText("Save game");	    
 	    newItem.addSelectionListener(new SelectionAdapter() {
-	
-	    @Override
-        public void widgetSelected(SelectionEvent e) {
-        	ui = UserCommand.SaveGame;
-			setChanged();
-			notifyObservers(); 
-	        }
-	    });
-			
+	    	
+		    @Override
+	        public void widgetSelected(SelectionEvent e) {
+	        	ui = UserCommand.SaveGame;
+				setChanged();
+				notifyObservers(); 
+				
+		    }
+	    });			
 	}
 
-	//file option for load  game
+	//Load game (under the File drop down menu)
 	private void loadGame(Menu fileMenu) {
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
-	    newItem.setText("&load game");
-	
+	    newItem.setText("Load game");	
 	    newItem.addSelectionListener(new SelectionAdapter() {
 	
-	    @Override
-	    public void widgetSelected(SelectionEvent e) {
-	    	ui = UserCommand.LoadGame;
-			setChanged();
-			notifyObservers();    
+		    @Override
+		    public void widgetSelected(SelectionEvent e) {
+		    	ui = UserCommand.LoadGame;
+				setChanged();
+				notifyObservers();    
 	    }
 	});
 		
 	}
 
-	//	file option for save and exit game
+	//Save & Exit (under the File drop down menu)
 	private void saveAndExitGameOption(Menu fileMenu) {
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
-        newItem.setText("&save and exit");
-        
+        newItem.setText("Save and Exit");
         newItem.addSelectionListener(new SelectionAdapter() {
 
             @Override
@@ -140,14 +208,13 @@ public abstract class AbsView extends Observable implements View {
 		
 	}
 	
-	//	file text- for exit game	
+	//Exit Game (under the File drop down menu)
 	private void exitGameOption(Menu fileMenu) {
 	 MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
-        exitItem.setText("&Exit game");
-        
+        exitItem.setText("Exit game");
         exitItem.addSelectionListener(new SelectionAdapter() {
-
-            @Override
+        	
+        	@Override
             public void widgetSelected(SelectionEvent e) {
                 shell.getDisplay().dispose();
                 System.exit(0);
@@ -155,37 +222,38 @@ public abstract class AbsView extends Observable implements View {
         });
 		
 	}
-	//until file tool bar
-	//***********************************************************************************************
 
-
-	//set Edit tool bar
-	//***********************************************************************************************
-
-	//	edit option for restart  game
-	private void restartGame(Menu fileMenu) {
+	/* ************************
+	 * Edit drop down menu:
+	 * ************************/	
+	
+	//Restart Game (under the Edit drop down menu)
+	private void restartGameDropMenu(Menu fileMenu) {
 	
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
-	    newItem.setText("&restart game");
-		    
+	    newItem.setText("Restart Game");		    
 	    newItem.addSelectionListener(new SelectionAdapter() {
-		
-	        @Override
+	    	
+	    	@Override
 	        public void widgetSelected(SelectionEvent e) {
-	        	ui = UserCommand.RestartGame;
-				setChanged();
-				notifyObservers();
+	        	restartGame();
 	        }
 	    });
-	    
-		}
+	 }
+	
+	public void restartGame() {
+    	ui = UserCommand.RestartGame;
+		setChanged();
+		notifyObservers();
+	}
+	
+	
 
-	//edit option for undo last move at  game	
+	//Undo Move (under the Edit drop down menu)
 	private void undoMove(Menu fileMenu) {
 	
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
-	    newItem.setText("&undo move");
-	    
+	    newItem.setText("Undo Move");
 	    newItem.addSelectionListener(new SelectionAdapter() {
 	
 	        @Override
@@ -196,101 +264,100 @@ public abstract class AbsView extends Observable implements View {
 	        }
 	    });
 			
-		}
-	
-	//until here edit menu
-	//***********************************************************************************************
-
-	
-
-	//set button as group
-	//***********************************************************************************************
-	
-	//set all the buttons at group
-	protected void setButtons() {
-		
-		group = new Group(shell, SWT.NONE);
-	    group.setText ( "need find name" ) ;
-	    gridLayout = new GridLayout();
-		gridLayout.numColumns = 1;
-		
-		group.setLayout(gridLayout);
-		group.setLocation(0,0);
-
-	     setScoreLabel(new Label ( group, SWT.NONE )) ; 
-	     getScoreLabel().setText ("score:"); 	     
-	     getScoreLabel().pack () ; 	
-		
-		setUndoMoveButton();
-		setRestartButton();
-		setLoadGameButton();
-		setSaveGameButton();		
 	}
 	
 
+	/* ************************
+	 * Game buttons group
+	 * ************************/	
+	
+	protected void gameButtonsMenu() {
+		
+		//game buttons group
+		gameButtons = new Group(shell, SWT.SHADOW_IN); //check other shadow options
+		gameButtons.setText ("Game Menu");
+		gameButtons.setLayout(new GridLayout(1, true));
+		gameButtons.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1,2));
+		
+		//score label
+		this.scoreLabel = new Label (gameButtons,SWT.NONE); 
+	    scoreLabel.setText ("Score:"); //Score label.	     
+	    //scoreLabel.pack(); //TODO: check this
+	    
+	    //init menu buttons:
+		menuUndoMoveButton();
+		menuRestartButton();
+		menuLoadGameButton();
+		menuSaveGameButton();		
+	}
+	
+	
 
 
-
-//undo the last step
-	private void setUndoMoveButton() {
-		//button2-button for undo move
-		shell.setLayout(new GridLayout(1, true));
-		Button undoMove = new Button(group, SWT.PUSH);
+	//Undo button (under buttons menu)
+	private void menuUndoMoveButton() {
+		Button undoMove = new Button(gameButtons, SWT.PUSH);
 		undoMove.setText("Undo Move");
 		undoMove.setLayoutData(new GridData(SWT.FILL,  SWT.TOP, false, false, 1, 1));
-		//if this button pushed down or up the last move is undo
 		undoMove.addSelectionListener(new SelectionListener() {
-			
+		
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				ui = UserCommand.UndoMove;
 				setChanged();
 				notifyObservers();   		
 			}
-			
+
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {		
-				   
-			}
+			public void widgetDefaultSelected(SelectionEvent arg0) {}			
+
 		});
 	}
 	
-
-
-
-
-//button for restart the current game
-	private void setRestartButton() {
-		//button3-button for restart game
-		shell.setLayout(new GridLayout(1, true));
-		Button restartGame = new Button(group, SWT.PUSH);
+	//Restart button (under buttons menu)
+	private void menuRestartButton() {
+		Button restartGame = new Button(gameButtons, SWT.PUSH);
 		restartGame.setText("Restart Game");
 		restartGame.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-		//if this button pushed down the last move is undo and the the button pushed up back
 		restartGame.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				ui = UserCommand.RestartGame;
-				setChanged();
-				notifyObservers();     		
+				restartGame();     		
 			}
 			
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {	
-			}
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		});
 	}
+	
+	
+	//Save Game button (under buttons menu)
+	//TODO: add file select
+	private void menuSaveGameButton() {		
+		Button saveGame = new Button(gameButtons, SWT.PUSH);
+		saveGame.setText("Save Game");
+		saveGame.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		saveGame.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				ui = UserCommand.SaveGame;
+				setChanged();
+				notifyObservers();     	
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
+		});		
+	}
 
-//button for load the last game
-	private void setLoadGameButton() {
-		//button4- button for load game
-		shell.setLayout(new GridLayout(1, true));
-		Button loadGame = new Button(group, SWT.PUSH);
+	//Load Game button (under buttons menu)
+	//TODO: add file select
+	private void menuLoadGameButton() {
+		Button loadGame = new Button(gameButtons, SWT.PUSH);
 		loadGame.setText("Load Game");
 		loadGame.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-		
-		//if this button pushed down you can load last game
 		loadGame.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -306,57 +373,35 @@ public abstract class AbsView extends Observable implements View {
 		});
 
 	}
-
 	
-//button for save the current game
-	private void setSaveGameButton() {		
-		//button5- button for save game
-		shell.setLayout(new GridLayout(1, true));
-		Button saveGame = new Button(group, SWT.PUSH);
-		saveGame.setText("Save Game");
-		saveGame.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-		
-		//if this button pushed down you can save last game
-		saveGame.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				ui = UserCommand.SaveGame;
-				setChanged();
-				notifyObservers();     	
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {	
-			}
-		});
-				
-		
-	}	
+	/* ************************
+	 * Game board group
+	 * ************************/
+	
+	private void gameBoardGroup () { 
+		//shell.setLayout(new GridLayout(3, false));
+		gameBoard = new Group(shell, SWT.SHADOW_IN);		
+		gameBoard.setLayout(new GridLayout(1, true));
+		gameBoard.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2));
+	    Color shellColor =  new Color(shell.getDisplay(), 250, 248, 239);
+	    gameBoard.setBackground(shellColor);
+	}
+	
+	
+	/*
+	 * 			// Group which wrap game board components
+		    boardGroup = new Group(shell, SWT.SHADOW_OUT);
+		    boardGroup.setLayout(new GridLayout(2, true));
+		    boardGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		    Color shellColor =  new Color(shell.getDisplay(), 250, 248, 239);
+		    boardGroup.setBackground(shellColor);
+	 */
 	
 
-	//until here buttons 
-	//***********************************************************************************************
-
-
-	//other method
-	//***********************************************************************************************
-
-	@Override
-	public abstract void displayBoard(int[][] data);
-
-	@Override
-	public UserCommand getUserCommand() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void displayScore(int score) {
-		 getScoreLabel().setText ("score"+score); 	
-		
-	}
-//open new window msg
+	/* ************************
+	 * Other Methods:
+	 * ************************/	
+	
 	@Override
 	public void setLose(boolean lose) {
 		
@@ -366,49 +411,70 @@ public abstract class AbsView extends Observable implements View {
 //		notifyObservers();   
 		
 	}
-//open new window msg
+
 	@Override
 	public void setWin(boolean win) {
 		
 		// TODO Auto-generated method stub
 		ui = UserCommand.RestartGame;
 		setChanged();
-		notifyObservers();   
-		
+		notifyObservers();		
+	}	
+	
+	@Override
+	public abstract void displayBoard(int[][] data);
+
+	@Override
+	public abstract UserCommand getUserCommand();
+
+	@Override
+	public void displayScore(int score) {
+		 scoreLabel.setText (scoreLabel.getText() + score);		
 	}
 
-	//until here other method
-	//***********************************************************************************************
 
 	
-	//getters and setters	
-	//***********************************************************************************************
 
-	public Label getScoreLabel() {
-		return scoreLabel;
-	}
 
-	public void setScoreLabel(Label scoreLabel) {
-		this.scoreLabel = scoreLabel;
-	}
-	public AbsView(String gameName) {
 
-	}
-	
-	public void setDisplay(Display display){
-		this.display= display;
-	}
-	
-	public void setShell(Shell shell){
-		this.shell= shell;
-	}
-	public Display getDisplay(){
-		return display;
-	}
-	
-	public Shell getShell(){
-		return shell;
-	}
+
 }
+
+
+/*
+ * GridLayout
+	
+	public GridLayout(int numColumns, boolean makeColumnsEqualWidth)
+	Constructs a new instance of this class given the number of columns, and whether or not 
+	the columns should be forced to have the same width. If numColumns has a value less than 1, 
+	the layout will not set the size and position of any controls.
+	Parameters:
+	numColumns - the number of columns in the grid
+	makeColumnsEqualWidth - whether or not the columns will have equal width
+	Since:
+	2.0
+ */
+
+/* 
+ * public GridData(int horizontalAlignment,
+            int verticalAlignment,
+            boolean grabExcessHorizontalSpace,
+            boolean grabExcessVerticalSpace,
+            int horizontalSpan,
+            int verticalSpan)
+	Constructs a new instance of GridData according to the parameters.
+	Parameters:
+	horizontalAlignment - how control will be positioned horizontally within a cell, one of: 
+	SWT.BEGINNING (or SWT.LEFT), SWT.CENTER, SWT.END (or SWT.RIGHT), or SWT.FILL
+	verticalAlignment - how control will be positioned vertically within a cell, 
+	one of: SWT.BEGINNING (or SWT.TOP), SWT.CENTER, SWT.END (or SWT.BOTTOM), or SWT.FILL
+	grabExcessHorizontalSpace - whether cell will be made wide enough to fit the remaining horizontal space
+	grabExcessVerticalSpace - whether cell will be made high enough to fit the remaining vertical space
+	horizontalSpan - the number of column cells that the control will take up
+	verticalSpan - the number of row cells that the control will take up
+	Since:
+	3.0
+ */
+
 
 
