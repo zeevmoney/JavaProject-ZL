@@ -11,12 +11,7 @@ public class PrimMazeGenerator {
  
 	public int[][] generateMazeByPrimAlgo(int rows,int cols)
     {
-		final int Start = 1;
-		final int Wall = -1;
-		final int End = 2;
-		final int Empty = 0;
-			
-    	// dimensions of generated maze
+		// dimensions of generated maze
     	int r=rows;
     	int c=cols;
  
@@ -96,18 +91,16 @@ public class PrimMazeGenerator {
 			for(int j=0;j<c;j++)
 				{
 					if (maz[i][j] == '*')
-						maze[i][j] = Wall;
+						maze[i][j] = MazeGameModel.Wall;
 					else if (maz[i][j] == '.')
-						maze[i][j] = Empty;
+						maze[i][j] = MazeGameModel.Empty;
 					else if (maz[i][j] == 'S')
 					{
-						maze[i][j] = Start;					
+						maze[i][j] = MazeGameModel.Start;					
 					}
 					else if (maz[i][j] == 'E')
-						maze[i][j] = End;
-					
-				}
-			
+						maze[i][j] = MazeGameModel.End;					
+				}			
 		}
 		
 		return maze;
