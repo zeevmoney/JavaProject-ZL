@@ -52,7 +52,7 @@ public class Presenter implements Observer {
 					model.moveDown();
 					break;
 				case Left:
-					model.moveDown();
+					model.moveLeft();
 					break;
 				case Right:
 					model.moveRight();

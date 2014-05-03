@@ -17,6 +17,7 @@ import model.algoirthms.GameStateXML;
  */
 
 //TODO: generate numbers on move only (if something changed, if stuck = do nothing).
+//TODO: make the movement use a strtegy pattern.
 
 public class Game2048Model extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state
@@ -241,58 +242,53 @@ public class Game2048Model extends Observable implements Model,Runnable {
 
 	@Override
 	public void moveDown() {
-		boolean change = moveAllDown();
-		moveHanlde(change);
-	}
-	
-	private boolean moveAllDown() {
-		boolean movement=false; //flag to check if there was any movement
-		boolean merge=false; //flag to check if there was a merge
-		int score = currentGame.getScore();
-		int[][] board = currentGame.getBoard();
-		//2,2,2,2 / 2,2,0,2
+		int x=0;
+		boolean merge = false; //flag to check if there was a merge
+		boolean movement = false; //flag to check if there was any movement
 		//remove all spaces (consolidate everything)
-		for (int i = boardSize-1; i > 0; i--) { //i-1 = out of the array
-			for (int j = 0; j < boardSize-1; j++) {
-				if (board[i][j] == emptyCell) {
-					board[i][j] = board[i-1][j];
-					board [i-1][j] = emptyCell;
-					movement = true;
-				}						
-			}			
-		}
+		while (x<boardSize-1) {
+			x++;
+			if (!movement) //if there was no movement then update movement boolean
+				movement = moveAllDown(); 
+			else //if there was no movement then there is no need to generate a random number.				
+				moveAllDown();			
+		}		
 		//scan for all equal cells
-		for (int i = boardSize-1; i > 0; i--) { //i-1 = out of the array
-			for (int j = 0; j < boardSize-1; j++) {
-				if (board[i][j] == board[i-1][j]) {
-					score += board[i][j]*2; //add the value to the score
-					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore)
-						win = true;					
-					board [i-1][j] = emptyCell; //set the lower cell to 0
+		for (int i = boardSize-1; i > 0; i--) { //i+1 = out of the array
+			for (int j = 0; j < boardSize; j++) {
+				if (currentGame.getXY(i, j) == currentGame.getXY(i-1, j) && currentGame.getXY(i, j) != emptyCell) { //if cells are equal
+					currentGame.setScore(currentGame.getXY(i,j) * 2); //add the value to the score
+					currentGame.setXY(i, j, currentGame.getXY(i, j) * 2); //double the current cell value
+					if (currentGame.getXY(i, j) == winScore) 
+						win = true;
+					currentGame.setXY(i-1,j,emptyCell); //set the lower cell to 0
 					merge = true;
 				}						
 			}			
-		}
-		if (merge) { //if there was any merge
-			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
-			for (int i = boardSize-1; i > 0; i--) { //i-1 = out of the array
-				for (int j = 0; j < boardSize-1; j++) {
-					if (board[i][j] == emptyCell) {
-						board[i][j] = board[i-1][j];
-						board [i-1][j] = emptyCell;
+		}		
+		moveAllDown(); //remove all spaces (consolidate everything again) => 2,2,2,2 / 2,2,0,2 OR 2,2,2,0 -> 4,0,2,0 
+		boolean change = (movement || merge);		
+		moveHanlde(change);
+	}	
+	
+	private boolean moveAllDown() {
+		boolean movement=false; //flag to check if there was any movement
+		for (int i = boardSize-1; i > 0; i--) { //i+1 = out of the array
+			for (int j = 0; j < boardSize; j++) {
+				if (currentGame.getXY(i, j) == emptyCell) {
+					if (currentGame.getXY(i-1,j) != emptyCell) 
+						//if a number which is not an empty cell was moved
 						movement = true;
-					}						
-				}			
-			}
+					currentGame.setXY(i, j, currentGame.getXY(i-1, j));
+					currentGame.setXY(i-1, j, emptyCell);					
+				}						
+			}			
 		}
-		currentGame.setBoard(board);
-		currentGame.setScore(score);
-		if (merge || movement) {
+		if (movement) {
 			setChanged();
 			notifyObservers();
 		}
-		return (merge || movement); //returns true if there was a merge or any movement		
+		return (movement); //returns true if there was a movement
 	}
 	
 	/* **********************
@@ -301,59 +297,57 @@ public class Game2048Model extends Observable implements Model,Runnable {
 
 	@Override
 	public void moveLeft() {
-		boolean change = moveAllLeft();
-		moveHanlde(change);
-	}
-
-	private boolean moveAllLeft() {
-		boolean movement=false; //flag to check if there was any movement
-		boolean merge=false; //flag to check if there was a merge
-		int score = currentGame.getScore();
-		int[][] board = currentGame.getBoard();
-		//2,2,2,2 / 2,2,0,2
+		int x=0;
+		boolean merge = false; //flag to check if there was a merge
+		boolean movement = false; //flag to check if there was any movement
 		//remove all spaces (consolidate everything)
-		for (int i = 0; i < boardSize-1; i++) { 
-			for (int j = 0; j < boardSize-1; j++) {
-				if (board[i][j] == emptyCell) {
-					board[i][j] = board[i][j+1];
-					board [i][j+1] = emptyCell;
-					movement = true;
-				}						
-			}			
-		}
+		while (x<boardSize-1) {
+			x++;
+			if (!movement) //if there was no movement then update movement boolean
+				movement = moveAllLeft(); 
+			else //if there was no movement then there is no need to generate a random number.				
+				moveAllLeft();			
+		}		
 		//scan for all equal cells
-		for (int i = 0; i < boardSize-1; i++) { 
+		for (int i = 0; i < boardSize; i++) {
 			for (int j = 0; j < boardSize-1; j++) {
-				if (board[i][j] == board[i][j+1]) {
-					score += board[i][j]*2; //add the value to the score
-					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore)
+				if (currentGame.getXY(i, j) == currentGame.getXY(i, j+1) && currentGame.getXY(i, j) != emptyCell) { //if cells are equal
+					currentGame.setScore(currentGame.getXY(i,j) * 2); //add the value to the score
+					currentGame.setXY(i, j, currentGame.getXY(i, j) * 2); //double the current cell value
+					if (currentGame.getXY(i, j) == winScore) 
 						win = true;
-					board [i][j+1] = emptyCell; //set the lower cell to 0
+					currentGame.setXY(i,j+1,emptyCell); //set the lower cell to 0
 					merge = true;
 				}						
 			}			
-		}
-		if (merge) { //if there was any merge
-			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
-			for (int i = 0; i < boardSize-1; i++) { 
-				for (int j = 0; j < boardSize-1; j++) {
-					if (board[i][j] == emptyCell) {
-						board[i][j] = board[i][j+1];
-						board [i][j+1] = emptyCell;
+		}		
+		moveAllLeft(); //remove all spaces (consolidate everything again) => 2,2,2,2 / 2,2,0,2 OR 2,2,2,0 -> 4,0,2,0 
+		boolean change = (movement || merge);		
+		moveHanlde(change);
+	}
+	
+	
+	//move everything left
+	private boolean moveAllLeft() {
+		boolean movement=false; //flag to check if there was any movement
+		for (int i = 0; i < boardSize; i++) {
+			for (int j = 0; j < boardSize-1; j++) {
+				if (currentGame.getXY(i, j) == emptyCell) {
+					if (currentGame.getXY(i,j+1) != emptyCell) 
+						//if a number which is not an empty cell was moved
 						movement = true;
-					}						
-				}			
-			}
+					currentGame.setXY(i, j, currentGame.getXY(i, j+1));
+					currentGame.setXY(i, j+1, emptyCell);					
+				}						
+			}			
 		}
-		currentGame.setBoard(board);
-		currentGame.setScore(score);
-		if (merge || movement) {
+		if (movement) {
 			setChanged();
 			notifyObservers();
 		}
-		return (merge || movement); //returns true if there was a merge or any movement		
+		return (movement); //returns true if there was a movement
 	}
+	
 
 	/* *************************
 	 * MoveRight + MoveallRight
@@ -361,59 +355,55 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 	@Override
 	public void moveRight() {
-		boolean change = moveAllRight();
-		moveHanlde(change);			
-	}
-	
-	private boolean moveAllRight() {
-		boolean movement=false; //flag to check if there was any movement
-		boolean merge=false; //flag to check if there was a merge
-		int score = currentGame.getScore();
-		int[][] board = currentGame.getBoard();
-		//2,2,2,2 / 2,2,0,2
+		int x=0;
+		boolean merge = false; //flag to check if there was a merge
+		boolean movement = false; //flag to check if there was any movement
 		//remove all spaces (consolidate everything)
-		for (int i = 0; i < boardSize-1; i++) { 
-			for (int j = boardSize-1; j > 0; j--) {
-				if (board[i][j] == emptyCell) {
-					board[i][j] = board[i][j-1];
-					board [i][j-1] = emptyCell;
-					movement = true;
-				}						
-			}			
-		}
+		while (x<boardSize-1) {
+			x++;
+			if (!movement) //if there was no movement then update movement boolean
+				movement = moveAllRight(); 
+			else //if there was no movement then there is no need to generate a random number.				
+				moveAllRight();			
+		}		
 		//scan for all equal cells
-		for (int i = 0; i < boardSize-1; i++) { 
+		for (int i = 0; i < boardSize; i++) {
 			for (int j = boardSize-1; j > 0; j--) {
-				if (board[i][j] == board[i][j-1]) {
-					score += board[i][j]*2; //add the value to the score
-					board[i][j] *=2; //double the current cell value
-					if (board[i][j] == winScore)
+				if (currentGame.getXY(i, j) == currentGame.getXY(i, j-1) && currentGame.getXY(i, j) != emptyCell) { //if cells are equal
+					currentGame.setScore(currentGame.getXY(i,j) * 2); //add the value to the score
+					currentGame.setXY(i, j, currentGame.getXY(i, j) * 2); //double the current cell value
+					if (currentGame.getXY(i, j) == winScore) 
 						win = true;
-					board [i][j-1] = emptyCell; //set the lower cell to 0
+					currentGame.setXY(i,j-1,emptyCell); //set the left cell to 0
 					merge = true;
 				}						
 			}			
-		}
-		if (merge) { //if there was any merge
-			//remove all spaces (consolidate everything again) (cause of 2,2,2,0 -> 4,0,2,0 for example)
-			for (int i = 0; i < boardSize-1; i++) { 
-				for (int j = boardSize-1; j > 0; j--) {
-					if (board[i][j] == emptyCell) {
-						board[i][j] = board[i][j-1];
-						board [i][j-1] = emptyCell;
+		}		
+		moveAllRight(); //remove all spaces (consolidate everything again) => 2,2,2,2 / 2,2,0,2 OR 2,2,2,0 -> 4,0,2,0 
+		boolean change = (movement || merge);		
+		moveHanlde(change);
+	}
+	
+	
+	//move everything left
+	private boolean moveAllRight() {
+		boolean movement=false; //flag to check if there was any movement
+		for (int i = 0; i < boardSize; i++) {
+			for (int j = boardSize-1; j > 0; j--) {
+				if (currentGame.getXY(i, j) == emptyCell) {
+					if (currentGame.getXY(i,j-1) != emptyCell) 
+						//if a number which is not an empty cell was moved
 						movement = true;
-					}						
-				}			
-			}
+					currentGame.setXY(i, j, currentGame.getXY(i, j-1));
+					currentGame.setXY(i, j-1, emptyCell);					
+				}						
+			}			
 		}
-		currentGame.setBoard(board);
-		currentGame.setScore(score);
-		if (merge || movement) {
+		if (movement) {
 			setChanged();
 			notifyObservers();
 		}
-		return (merge || movement); //returns true if there was a merge or any movement		
-		
+		return (movement); //returns true if there was a movement
 	}
 
 

@@ -32,9 +32,7 @@ public class Game2048View extends AbsView implements Runnable {
 	public Game2048View(String string) {
 		super(string);
 	}
-	
-
-	
+		
 	//display the board
 	@Override
 	public void displayBoard(int[][] data) {
