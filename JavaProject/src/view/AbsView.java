@@ -401,20 +401,108 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	@Override
 	public void setLose(boolean lose) {
 		
-		// TODO Auto-generated method stub
-//		ui = UserCommand.RestartGame;
-//		setChanged();
-//		notifyObservers();   
+		if(lose == true){			
+			final Shell winWindow= new Shell(this.shell);
+			winWindow.setLayout(new GridLayout(2, false));
+			
+			winWindow.setSize(100, 120);
+			winWindow.setText("loser");
+			Label winMsg = new Label (winWindow,SWT.NONE);
+			winMsg.setLayoutData(new GridData(SWT.CENTER,  SWT.UP, true, true, 2, 2));
+			winMsg.setText ("you lose");	
+			Label reStart = new Label (winWindow,SWT.NONE);
+			reStart.setLayoutData(new GridData(SWT.CENTER,  SWT.FILL, true, true, 2, 2));
+			reStart.setText ("start new game?");
+			
+			Button yesButton=new Button(winWindow,SWT.PUSH);
+			yesButton.setText("yes");
+			yesButton.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true, true,1, 1));
+			
+			yesButton.addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					ui = UserCommand.RestartGame;
+					setChanged();
+					notifyObservers();
+					winWindow.close(); 		
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent arg0) {}
+			});
+			Button noButton=new Button(winWindow,SWT.PUSH);
+			noButton.setText("no");
+			noButton.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, true,1, 1));
+			
+			noButton.addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					winWindow.close(); 		
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent arg0) {}
+			});
+			
+			winWindow.open();
+		}
 		
 	}
 
 	@Override
 	public void setWin(boolean win) {
 		
-		// TODO Auto-generated method stub
-		ui = UserCommand.RestartGame;
-		setChanged();
-		notifyObservers();		
+		if(win == true){
+			
+			final Shell winWindow= new Shell(this.shell);
+			winWindow.setLayout(new GridLayout(2, false));
+			
+			winWindow.setSize(100, 120);
+			winWindow.setText("winner");
+			Label winMsg = new Label (winWindow,SWT.NONE);
+			winMsg.setLayoutData(new GridData(SWT.CENTER,  SWT.UP, true, true, 2, 2));
+			winMsg.setText ("you won");	
+			Label reStart = new Label (winWindow,SWT.NONE);
+			reStart.setLayoutData(new GridData(SWT.CENTER,  SWT.FILL, true, true, 2, 2));
+			reStart.setText ("start new game?");
+			
+			Button yesButton=new Button(winWindow,SWT.PUSH);
+			yesButton.setText("yes");
+			yesButton.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true, true,1, 1));
+			
+			yesButton.addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					ui = UserCommand.RestartGame;
+					setChanged();
+					notifyObservers();
+					winWindow.close(); 		
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent arg0) {}
+			});
+			Button noButton=new Button(winWindow,SWT.PUSH);
+			noButton.setText("no");
+			noButton.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, true,1, 1));
+			
+			noButton.addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+					winWindow.close(); 		
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent arg0) {}
+			});			
+			
+			winWindow.open();
+		}
+				
 	}	
 	
 	@Override
