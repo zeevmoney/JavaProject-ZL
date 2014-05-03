@@ -191,7 +191,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		if (change) { //if there was a change it means that there is an empty space.
 			if (win) {
 				notifyObservers("Win");
-				System.out.println("DEBUG: WIN");				
 			} else {
 				addNumber();
 				gameStack.add(currentGame.Copy());	
@@ -200,6 +199,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		} else if (!change && !canMove() && boardIsFull()) { //no change & can't move & board is full = lost the game.
 			lose = true;
 			System.out.println("DEBUG: LOSE");
+			setChanged();
 			notifyObservers("Lose");
 		}		
 	}

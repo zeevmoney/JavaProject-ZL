@@ -34,12 +34,13 @@ public class Presenter implements Observer {
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 == model) {
+			//System.out.println(arg1.toString());
 			ui.displayScore(model.getScore());
 			ui.displayBoard(model.getBoard());
 			if (arg1 != null && arg1.toString() == "Win")
 				ui.setWin(true);
 			if (arg1 != null && arg1.toString() == "Lose")
-				ui.setLose(true);
+				ui.setLose(true);				
 		}
 		if (arg0 == ui) {
 			cmd = ui.getUserCommand();
