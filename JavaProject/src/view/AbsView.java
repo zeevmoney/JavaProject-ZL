@@ -428,12 +428,6 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		 scoreLabel.setText (scoreLabel.getText() + score);		
 	}
 
-
-	
-
-
-
-
 }
 
 

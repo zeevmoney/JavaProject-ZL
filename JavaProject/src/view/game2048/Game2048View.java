@@ -15,7 +15,6 @@ import view.Board;
 
 public class Game2048View extends AbsView implements Runnable {
 	Board board;
-	boolean flag = false;
 	
 	public Game2048View(String string) {
 		super(string);

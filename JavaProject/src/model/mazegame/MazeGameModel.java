@@ -68,37 +68,7 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 		notifyObservers();
 	}
 
-	@Override
-	public void saveGame() {
-		try {
-			GameStateXML gXML = new GameStateXML();
-			gXML.gameStateToXML(currentGame, "MazeSave.xml",gameStack,"MazeStack.xml");
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-	}
 
-	@Override
-	public void loadGame() {
-		try {
-			GameStateXML gXML = new GameStateXML();
-			gXML.gameStateToXML(currentGame, "MazeSave.xml");			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		setChanged();
-		notifyObservers();		
-	}
-
-	@Override
-	public void undoMove() {
-		currentGame=gameStack.pop();
-		setChanged();
-		notifyObservers();	
-		
-	}
-	
 	private void moveHanlde(int moveX, int moveY,UserCommand cmd) {
 			//x and y are sent by the moveX function.
 			int score=Horizontal;
@@ -118,13 +88,10 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 			gameStack.add(currentGame.Copy());			
 			notifyObservers();			
 	}
-	
-	
 	/*
 	 * "-1,-1"	"-1,0"	"-1,1"
 	 * "0,-1"	"0,0"	"0,1"
 	 * "1,-1"	"1,0"	"1,1"
-
 	 */
 	
 
@@ -191,9 +158,54 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	}
 
 
+	@Override
+	public void saveGame() {
+		try {
+			GameStateXML gXML = new GameStateXML();
+			gXML.gameStateToXML(currentGame, "MazeSave.xml",gameStack,"MazeGameStack.xml");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
+	@Override
+	public void loadGame() {
+		try {
+			newGame();
+			GameStateXML gXML = new GameStateXML();
+			currentGame = gXML.gameStateFromXML("MazeSave.xml");
+			gameStack = gXML.gameStackFromXML("MazeGameStack.xml");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		setChanged();
+		notifyObservers();
+	}
 	
-	
+	@Override
+	public void undoMove() {
+		if (gameStack.isEmpty()) //in case stack is empty: do nothing.
+			return;
+		GameState tempState = gameStack.pop();
+		if (currentGame.equals(tempState)) { 
+			if (!gameStack.isEmpty()) {
+				currentGame = gameStack.pop();
+			} else { 
+				//if (gameStack.size() == 0)
+				gameStack.push(currentGame.Copy());
+				return;
+			}
+		} else 
+			currentGame = tempState;
+		
+		if (gameStack.isEmpty())
+			gameStack.push(currentGame.Copy());
+
+		setChanged();
+		notifyObservers();	
+	}
+}
+
 	
 	
 	/*
@@ -324,4 +336,4 @@ public class Prim {
 //	default:
 //		break;
 //}
-}
+

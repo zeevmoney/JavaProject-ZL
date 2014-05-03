@@ -1,10 +1,14 @@
 package view.maze;
 
-import java.util.Observable;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 import controller.UserCommand;
-import view.View;
-
+import view.AbsView;
+import view.Board;
 
 
 /*
@@ -13,47 +17,77 @@ import view.View;
  * setChanged & notifyObservers
  */
 
-public class MazeGameView extends Observable implements View, Runnable {
-
-	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-
+public class MazeGameView extends AbsView implements Runnable {
+	Board board;
+	
+	public MazeGameView(String string) {
+		super(string);
 	}
-
+		
+	//display the board
 	@Override
 	public void displayBoard(int[][] data) {
-		// TODO Auto-generated method stub
-
+		if (board == null) {
+			//TODO: code cleanup.
+			board = new Board(getGameBoard(), SWT.WRAP, data);
+			board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,2));
+			Color boardColor = new Color(getDisplay(), 187, 173, 160); //set board color 
+			board.setBackground(boardColor);
+			board.setForeground(boardColor);
+			getShell().setMinimumSize(601, 601);
+			getDisplay().addFilter(SWT.KeyUp, new Listener() {		
+				@Override
+				public void handleEvent(Event e) { 
+					board.setFocus();
+					switch (e.keyCode){
+					case SWT.ARROW_DOWN:
+						setUi(UserCommand.Down); 
+					    break;
+					case SWT.ARROW_LEFT:
+						setUi(UserCommand.Left);
+						
+						break;
+					case SWT.ARROW_RIGHT:
+						setUi(UserCommand.Right);
+						
+						break;
+					case SWT.ARROW_UP:
+						setUi(UserCommand.Up);
+						break;				     
+					}	
+					setChanged();
+					notifyObservers();	
+				}
+			});	
+		} else {
+			board.updateBoard(data);
+		}
 	}
-
-
-
-
+	
+	//update score 
 	@Override
-
 	public void displayScore(int score) {
-
-		
-
+		 getScoreLabel().setText("Score: "+score);		
 	}
-
-	@Override
-
-	public void setLose(boolean lose) {
-
 		
-	}
-
-	public void setWin(boolean win) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@Override
 	public UserCommand getUserCommand() {
-		// TODO Auto-generated method stub
-		return null;
+		return getUi();
+	}	
+
+	//the GUI and main loop thread should be in the same THREAD.
+	@Override
+	public void run() {
+		//while shell is alive
+		while (!getShell().isDisposed()) {
+			//while there are no events (this is the event handler)
+			if(!getDisplay().readAndDispatch()) {
+				//the OS will auto wake the display on EVENT (mouse, keyboard, etc).
+				getDisplay().sleep();
+			}
+		}
+		//if shell dies -> display dies.
+		getDisplay().dispose();			
 	}
 
 }
