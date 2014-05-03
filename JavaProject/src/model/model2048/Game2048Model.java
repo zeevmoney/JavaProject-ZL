@@ -114,34 +114,25 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 	@Override
 	public void undoMove() {
-//		if (this.gameStack.isEmpty())
-//			return;		
-//		GameState s = gameStack.pop();				
-//		if (s.equals(gameStack.pop()))
-//		{
-//			if(!gameStack.isEmpty())
-//				currentGame = gameStack.pop();
-//			else
-//			{
-//				if(gameStack.size() == 0)
-//					gameStack.push(currentGame.Copy());
-//				return;
-//			}
-//		}
-//		else
-//			currentGame = s;		
-//		if(gameStack.size() == 0)
-//			gameStack.push(currentGame.Copy());
-//		// raise a flag of a change
-//		setChanged();
-//		// actively notify all observers
-//		// and invoke their update method
-//		notifyObservers(); 
-//		
+		if (gameStack.isEmpty()) //in case stack is empty: do nothing.
+			return;
+		GameState tempState = gameStack.pop();
+		if (currentGame.equals(tempState)) { 
+			if (!gameStack.isEmpty()) {
+				currentGame = gameStack.pop();
+			} else { 
+				//if (gameStack.size() == 0)
+				gameStack.push(currentGame.Copy());
+				return;
+			}
+		} else 
+			currentGame = tempState;
 		
-		currentGame=gameStack.pop();
+		if (gameStack.isEmpty())
+			gameStack.push(currentGame.Copy());
+
 		setChanged();
-		notifyObservers();				
+		notifyObservers();	
 	}
 	
 	
