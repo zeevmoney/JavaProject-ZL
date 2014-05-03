@@ -18,6 +18,7 @@ import model.algoirthms.GameStateXML;
  */
 
 //TODO: make the movement use a strategy pattern.
+//TODO: save/load game with a file select
 
 public class Game2048Model extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state
@@ -53,7 +54,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				currentGame.setXY(i, j, emptyCell); 
 		//add 2 random numbers (2 or 4)
 		addNumber(); 
-		addNumber();		
+		addNumber();
+		setChanged();
+		notifyObservers();
 	}
 
 	
@@ -75,8 +78,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				currentGame.setXY(x, y, tempNum);
 			}			
 		}
-		setChanged();
-		notifyObservers();
+
 	}
 	
 	@Override
@@ -94,7 +96,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	public void saveGame() {
 		try {
 			GameStateXML gXML = new GameStateXML();
-			gXML.gameStateToXML(currentGame, "2048Save.xml");
+			gXML.gameStateToXML(currentGame, "2048Save.xml",gameStack,"2048GameStack.xml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -105,7 +107,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		try {
 			newGame();
 			GameStateXML gXML = new GameStateXML();
-			currentGame = gXML.gameStateFromXML("2048Save.xml");			
+			currentGame = gXML.gameStateFromXML("2048Save.xml");
+			gameStack = gXML.gameStackFromXML("2048GameStack.xml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

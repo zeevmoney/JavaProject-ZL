@@ -72,7 +72,7 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	public void saveGame() {
 		try {
 			GameStateXML gXML = new GameStateXML();
-			gXML.gameStateToXML(currentGame, "MazeSave.xml");
+			gXML.gameStateToXML(currentGame, "MazeSave.xml",gameStack,"MazeStack.xml");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

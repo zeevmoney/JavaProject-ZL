@@ -5,7 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-
+import java.util.Stack;
 
 
 //XStream is a simple library to serialize objects to XML and back again.
@@ -31,11 +31,20 @@ public class GameStateXML {
 	 * saves the file inside "resources" folder inside the project dir.
 	 */
 
-	public void gameStateToXML(GameState gameState,String fileName) throws IOException {
+	public void gameStateToXML(GameState gameState,String gameStatefile,Stack<GameState> gameStack,String stackFile) throws IOException {
 		System.out.println("DEBUG: Save XML");
+		
+		//make a GameState XML
 		PrintWriter output = null;
 		String xml = xstream.toXML(gameState);
-		output = new PrintWriter(new FileWriter("resources\\" + fileName));
+		output = new PrintWriter(new FileWriter("resources\\" + gameStatefile));
+		output.println(xml);
+		output.close();
+		
+		//make a GamesStack XML
+		output = null;
+		xml = xstream.toXML(gameStack);
+		output = new PrintWriter(new FileWriter("resources\\" + stackFile));
 		output.println(xml);
 		output.close();		
 	}
@@ -53,6 +62,15 @@ public class GameStateXML {
 		input.close();
 		return m;
 	}
+	
+	public Stack<GameState> gameStackFromXML (String fileName) throws IOException {
+		System.out.println("DEBUG: Load Stack XML");
+		BufferedReader input = new BufferedReader(new FileReader("resources\\" + fileName));
+		Stack<GameState> m = (Stack<GameState>) xstream.fromXML(input);
+		input.close();
+		return m;
+	}
+	
 	
 	
 }
