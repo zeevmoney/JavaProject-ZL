@@ -74,18 +74,15 @@ public class Game2048View extends AbsView implements Runnable {
 	//update score 
 	@Override
 	public void displayScore(int score) {
-		 getScoreLabel().setText("Score:"+score);
-		
+		 getScoreLabel().setText("Score: "+score);		
 	}
 		
 	@Override
 	public UserCommand getUserCommand() {
 		return getUi();
-	}
-	
-	
-//	//TODO: Fix this.	
-//	//the GUI and main loop thread should be in the same THREAD.
+	}	
+
+	//the GUI and main loop thread should be in the same THREAD.
 	@Override
 	public void run() {
 		//while shell is alive
@@ -101,15 +98,3 @@ public class Game2048View extends AbsView implements Runnable {
 	}
 	
 }
-
-
-//display= getDisplay(); //get from AbsView
-//shell= getShell(); //get from AbsView
-//
-//restartGame();		
-////int [][] data = {{2,16},{2,16}};//just for check, need to change it to start board
-////displayBoard(data);//display the new board
-////board.updateBoard(data);
-//setDisplay(display);
-//setShell(shell);	
-//	

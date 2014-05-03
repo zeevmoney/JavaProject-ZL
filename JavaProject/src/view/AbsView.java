@@ -277,12 +277,12 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		gameButtons = new Group(shell, SWT.SHADOW_IN); //check other shadow options
 		gameButtons.setText ("Game Menu");
 		gameButtons.setLayout(new GridLayout(1, true));
-		gameButtons.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1,2));
+		gameButtons.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1,1));
 		
 		//score label
-		this.scoreLabel = new Label (gameButtons,SWT.NONE); 
-	    scoreLabel.setText ("Score:"); //Score label.	     
-	    //scoreLabel.pack(); //TODO: check this
+		this.scoreLabel = new Label (gameButtons,SWT.NONE);
+		scoreLabel.setLayoutData(new GridData(SWT.FILL,  SWT.TOP, false, false, 1, 1));
+		scoreLabel.setText ("Score: "); //Score label.	     
 	    
 	    //init menu buttons:
 		menuUndoMoveButton();

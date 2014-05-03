@@ -200,7 +200,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		for (int i = 0; i < boardSize-1; i++) { //i+1 = out of the array
 			for (int j = 0; j < boardSize; j++) {
 				if (currentGame.getXY(i, j) == currentGame.getXY(i+1, j) && currentGame.getXY(i, j) != emptyCell) { //if cells are equal
-					currentGame.setScore(currentGame.getXY(i,j) * 2); //add the value to the score
+					currentGame.setScore(currentGame.getScore() + currentGame.getXY(i,j) * 2); //add the value to the score
 					currentGame.setXY(i, j, currentGame.getXY(i, j) * 2); //double the current cell value
 					if (currentGame.getXY(i, j) == winScore) 
 						win = true;
@@ -257,7 +257,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		for (int i = boardSize-1; i > 0; i--) { //i+1 = out of the array
 			for (int j = 0; j < boardSize; j++) {
 				if (currentGame.getXY(i, j) == currentGame.getXY(i-1, j) && currentGame.getXY(i, j) != emptyCell) { //if cells are equal
-					currentGame.setScore(currentGame.getXY(i,j) * 2); //add the value to the score
+					currentGame.setScore(currentGame.getScore() + currentGame.getXY(i,j) * 2); //add the value to the score
 					currentGame.setXY(i, j, currentGame.getXY(i, j) * 2); //double the current cell value
 					if (currentGame.getXY(i, j) == winScore) 
 						win = true;
@@ -312,7 +312,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		for (int i = 0; i < boardSize; i++) {
 			for (int j = 0; j < boardSize-1; j++) {
 				if (currentGame.getXY(i, j) == currentGame.getXY(i, j+1) && currentGame.getXY(i, j) != emptyCell) { //if cells are equal
-					currentGame.setScore(currentGame.getXY(i,j) * 2); //add the value to the score
+					currentGame.setScore(currentGame.getScore() + currentGame.getXY(i,j) * 2); //add the value to the score
 					currentGame.setXY(i, j, currentGame.getXY(i, j) * 2); //double the current cell value
 					if (currentGame.getXY(i, j) == winScore) 
 						win = true;
@@ -370,7 +370,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		for (int i = 0; i < boardSize; i++) {
 			for (int j = boardSize-1; j > 0; j--) {
 				if (currentGame.getXY(i, j) == currentGame.getXY(i, j-1) && currentGame.getXY(i, j) != emptyCell) { //if cells are equal
-					currentGame.setScore(currentGame.getXY(i,j) * 2); //add the value to the score
+					currentGame.setScore(currentGame.getScore() + currentGame.getXY(i,j) * 2); //add the value to the score
 					currentGame.setXY(i, j, currentGame.getXY(i, j) * 2); //double the current cell value
 					if (currentGame.getXY(i, j) == winScore) 
 						win = true;
