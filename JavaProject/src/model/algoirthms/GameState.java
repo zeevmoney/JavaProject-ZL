@@ -103,6 +103,9 @@ public class GameState {
 			System.arraycopy(board[i], 0, tempBoard[i], 0, board[i].length);			
 		tempState.setBoard(tempBoard);
 		tempState.setScore(this.score);
+		tempState.setPlayer(this.player);
+		tempState.setStart(this.start);
+		tempState.setEnd(this.end);
 		return tempState;		
 	}
 
