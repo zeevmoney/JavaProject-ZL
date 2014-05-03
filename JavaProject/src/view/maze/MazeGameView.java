@@ -59,10 +59,58 @@ public class MazeGameView extends AbsView implements Runnable {
 					notifyObservers();	
 				}
 			});	
-		} else {
-			board.updateBoard(data);
-		}
+		//mouse listener	
+		getDisplay().addFilter(SWT.MouseDown, new Listener() {
+		int x=0;
+		int y=0;
+		Boolean flag=true;
+			@Override
+			public void handleEvent(Event e) {
+			 x=e.x;
+			 y=e.y;
+			
+			 getDisplay().addFilter(SWT.MouseUp, new Listener() {
+				 @Override
+					public void handleEvent(Event e) {
+					 if(e.x>x){
+						 if(e.y==y)
+						 setUi(UserCommand.Right);
+						 else if(e.y>y)
+							 setUi(UserCommand.DownRight);
+						 else
+							 setUi(UserCommand.UpRight);
+						 }
+					 else if(e.x<x ){
+						 if(e.y==y)
+						 setUi(UserCommand.Left);
+						 else if(e.y>y)
+							 setUi(UserCommand.DownLeft);
+						 else
+							 setUi(UserCommand.UpLeft);
+						 }
+					 else if(e.x==x ){
+						 if(e.y>y)
+							 setUi(UserCommand.Down);
+						 else if(e.y<y)
+							 setUi(UserCommand.Up);
+						 }
+					 if((e.x!=x||e.y!=y)&&flag==true){
+					 flag=false;
+					 setChanged();
+					 notifyObservers();	
+					 }
+				 }
+				 
+				 
+			 });
+			 flag=true;	
+			}
+		
+		});
+	} else {
+		board.updateBoard(data);
 	}
+}
 	
 	//update score 
 	@Override

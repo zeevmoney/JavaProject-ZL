@@ -24,9 +24,10 @@ public class Tile extends Canvas{
 	public Tile(Composite parent, int style){
 		super(parent,style);
 		value=0; 
-		//Font f= getFont();
-		//Font nf= new Font(getDisplay(), f.getFontData()[0].getName(),16,SWT.BOLD);
-		//setFont(nf);
+//		int fontNumber=(Math.min(arg0, arg1)/2);
+//		Font f= getFont();
+//		Font nf= new Font(getDisplay(), f.getFontData()[0].getName(),fontNumber,SWT.BOLD);
+//		setFont(nf);
 		addPaintListener(new PaintListener() {
 		
 			@Override

@@ -37,7 +37,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	Group gameBoard;
 	//GridLayout gridLayout;
 	Label scoreLabel;
-	
+	boolean flag;//for set win&lose window
 	/*
 	 * AbsView constructor:
 	 * init upper bar
@@ -52,6 +52,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		shell.setLayout(new GridLayout(2, false));
 		shell.setSize(600,600);
 		shell.setMinimumSize(600, 600);
+		flag=false;
 		setMenuToolsBar(); //draw the menu tool bar.
 		gameButtonsMenu(); //draw the game buttons
 		gameBoardGroup();  //draw the board where the game will be placed.		
@@ -400,20 +401,21 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	@Override
 	public void setLose(boolean lose) {
-		if(lose == true){			
-			final Shell winWindow= new Shell(this.shell);
-			winWindow.setLayout(new GridLayout(2, false));
+		if(lose == true&&flag==false){
+			flag=true;
+			final Shell loseWindow= new Shell(this.shell);
+			loseWindow.setLayout(new GridLayout(2, false));
 			
-			winWindow.setSize(100, 120);
-			winWindow.setText("loser");
-			Label winMsg = new Label (winWindow,SWT.NONE);
+			loseWindow.setSize(100, 120);
+			loseWindow.setText("loser");
+			Label winMsg = new Label (loseWindow,SWT.NONE);
 			winMsg.setLayoutData(new GridData(SWT.CENTER,  SWT.UP, true, true, 2, 2));
 			winMsg.setText ("you lose");	
-			Label reStart = new Label (winWindow,SWT.NONE);
+			Label reStart = new Label (loseWindow,SWT.NONE);
 			reStart.setLayoutData(new GridData(SWT.CENTER,  SWT.FILL, true, true, 2, 2));
 			reStart.setText ("start new game?");
 			
-			Button yesButton=new Button(winWindow,SWT.PUSH);
+			Button yesButton=new Button(loseWindow,SWT.PUSH);
 			yesButton.setText("yes");
 			yesButton.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true, true,1, 1));
 			
@@ -424,13 +426,14 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 					ui = UserCommand.RestartGame;
 					setChanged();
 					notifyObservers();
-					winWindow.close(); 		
+					flag=false;
+					loseWindow.close(); 		
 				}
 				
 				@Override
 				public void widgetDefaultSelected(SelectionEvent arg0) {}
 			});
-			Button noButton=new Button(winWindow,SWT.PUSH);
+			Button noButton=new Button(loseWindow,SWT.PUSH);
 			noButton.setText("no");
 			noButton.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, true,1, 1));
 			
@@ -438,22 +441,22 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 				
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					winWindow.close(); 		
+					loseWindow.close(); 		
 				}
 				
 				@Override
 				public void widgetDefaultSelected(SelectionEvent arg0) {}
 			});
 			
-			winWindow.open();
+			loseWindow.open();
 		}
 		
 	}
 
 	@Override
 	public void setWin(boolean win) {
-		if(win == true){
-			
+		if(win == true&&flag==false){
+			flag=true;
 			final Shell winWindow= new Shell(this.shell);
 			winWindow.setLayout(new GridLayout(2, false));
 			
@@ -477,6 +480,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 					ui = UserCommand.RestartGame;
 					setChanged();
 					notifyObservers();
+					flag=false;
 					winWindow.close(); 		
 				}
 				
