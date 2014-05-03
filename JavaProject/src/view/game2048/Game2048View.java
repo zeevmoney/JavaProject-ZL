@@ -26,7 +26,6 @@ public class Game2048View extends AbsView implements Runnable {
 	public void displayBoard(int[][] data) {
 		if (board == null) {
 			//TODO: code cleanup.
-			System.out.println("DEBUG DISPLAY BOARD");
 			board = new Board(getGameBoard(), SWT.WRAP, data);
 			board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,2));
 			Color boardColor = new Color(getDisplay(), 187, 173, 160); //set board color 
@@ -58,7 +57,6 @@ public class Game2048View extends AbsView implements Runnable {
 				}
 			});	
 		} else {
-			System.out.println("DEBUG: updating board");
 			board.updateBoard(data);
 		}
 	}

@@ -32,6 +32,7 @@ public class GameStateXML {
 	 */
 
 	public void gameStateToXML(GameState gameState,String fileName) throws IOException {
+		System.out.println("DEBUG: Save XML");
 		PrintWriter output = null;
 		String xml = xstream.toXML(gameState);
 		output = new PrintWriter(new FileWriter("resources\\" + fileName));
@@ -46,6 +47,7 @@ public class GameStateXML {
 	 */
 	
 	public GameState gameStateFromXML (String fileName) throws IOException {
+		System.out.println("DEBUG: Load XML");
 		BufferedReader input = new BufferedReader(new FileReader("resources\\" + fileName));
 		GameState m = (GameState) xstream.fromXML(input);
 		input.close();

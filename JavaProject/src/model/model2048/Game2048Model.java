@@ -103,8 +103,9 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	@Override
 	public void loadGame() {
 		try {
+			newGame();
 			GameStateXML gXML = new GameStateXML();
-			gXML.gameStateToXML(currentGame, "2048Save.xml");			
+			currentGame = gXML.gameStateFromXML("2048Save.xml");			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
