@@ -31,26 +31,48 @@ public class MazeGameView extends AbsView implements Runnable {
 			board.setBackground(boardColor);
 			board.setForeground(boardColor);
 			getShell().setMinimumSize(800, 800);
-			getDisplay().addFilter(SWT.KeyUp, new Listener() {		
+			getDisplay().addFilter(SWT.KeyUp, new Listener() {
+				int UpPresses=0;
+				int DownPresses=0;
+				int RightPresses=0;
+				int LeftPresses=0;
 				@Override
 				public void handleEvent(Event e) { 
 					board.setFocus();
 					switch (e.keyCode){
 					case SWT.ARROW_DOWN:
-						setUi(UserCommand.Down); 
+						DownPresses=1; 
 					    break;
 					case SWT.ARROW_LEFT:
-						setUi(UserCommand.Left);
-						
+						LeftPresses=1;						
 						break;
 					case SWT.ARROW_RIGHT:
-						setUi(UserCommand.Right);
-						
+						RightPresses=1;						
 						break;
 					case SWT.ARROW_UP:
-						setUi(UserCommand.Up);
+						UpPresses=1;
 						break;				     
 					}	
+					if((DownPresses+LeftPresses+RightPresses+UpPresses)==2){
+						if(UpPresses==1&&LeftPresses==1)
+							setUi(UserCommand.UpLeft);
+						else if(UpPresses==1&&RightPresses==1)
+							setUi(UserCommand.UpRight);
+						else if (DownPresses==1&&RightPresses==1)
+							setUi(UserCommand.DownRight);
+						else if (DownPresses==1&&LeftPresses==1)
+							setUi(UserCommand.DownLeft);
+					}
+					else{
+						if(UpPresses==1)
+							setUi(UserCommand.Up);
+						else if(RightPresses==1)
+							setUi(UserCommand.Right);
+						else if (DownPresses==1)
+							setUi(UserCommand.Down);
+						else if (LeftPresses==1)
+							setUi(UserCommand.Left);						
+					}					
 					setChanged();
 					notifyObservers();	
 				}
