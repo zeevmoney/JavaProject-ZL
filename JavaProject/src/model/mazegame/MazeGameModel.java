@@ -17,15 +17,15 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	UserCommand cmd; //user command ENUM
 	
 	//Constants:
-	static final int Start = 1;
+	static final int Start = -5;
 	static final int Wall = -1;
-	static final int End = 2;
-	static final int Empty = 0;
-	static final int Player = 1;
+	static final int End = -3;
+	static final int Empty = -4;
+	static final int Player = -5;
 	static final int HorizontalScore = 10;
 	static final int DiagonalScore = 15;
-	static final int rows=10;
-	static final int cols=10;
+	static final int rows=16;
+	static final int cols=16;
 	boolean win;
 	boolean lose;
 	

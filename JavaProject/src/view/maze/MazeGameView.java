@@ -25,7 +25,9 @@ public class MazeGameView extends AbsView implements Runnable {
 			//TODO: code cleanup.
 			board = new Board(getGameBoard(), SWT.WRAP, data);
 			board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,2));
-			Color boardColor = new Color(getDisplay(), 187, 173, 160); //set board color 
+			//Color boardColor = new Color(getDisplay(), 187, 173, 160); //set board color 
+			//Color boardColor = new Color(getDisplay(), 250, 248, 239); //set board color
+			Color boardColor = new Color(getDisplay(), 0, 0, 0); //set board color
 			board.setBackground(boardColor);
 			board.setForeground(boardColor);
 			getShell().setMinimumSize(800, 800);
@@ -53,57 +55,63 @@ public class MazeGameView extends AbsView implements Runnable {
 					notifyObservers();	
 				}
 			});	
+			
 		//mouse listener	
 		getDisplay().addFilter(SWT.MouseDown, new Listener() {
-		int x=0;
-		int y=0;
-		Boolean flag=true;
+			int startX=0;
+			int startY=0;
+			Boolean flag=true;
+			
 			@Override
 			public void handleEvent(Event e) {
-			 x=e.x;
-			 y=e.y;
-			
-			 getDisplay().addFilter(SWT.MouseUp, new Listener() {
-				 @Override
+				startX=e.x;
+				startY=e.y;
+				getDisplay().addFilter(SWT.MouseUp, new Listener() {
+					@Override
 					public void handleEvent(Event e) {
-					 if(e.x>x){
-						 if(e.y==y)
-						 setUi(UserCommand.Right);
-						 else if(e.y>y)
-							 setUi(UserCommand.DownRight);
-						 else
-							 setUi(UserCommand.UpRight);
-						 }
-					 else if(e.x<x ){
-						 if(e.y==y)
-						 setUi(UserCommand.Left);
-						 else if(e.y>y)
-							 setUi(UserCommand.DownLeft);
-						 else
-							 setUi(UserCommand.UpLeft);
-						 }
-					 else if(e.x==x ){
-						 if(e.y>y)
-							 setUi(UserCommand.Down);
-						 else if(e.y<y)
-							 setUi(UserCommand.Up);
-						 }
-					 if((e.x!=x||e.y!=y)&&flag==true){
-					 flag=false;
-					 setChanged();
-					 notifyObservers();	
-					 }
-				 }
-				 
-				 
-			 });
+						int endX = e.x;
+						int endY = e.y;
+						System.out.println("-----------------");
+						System.out.println("startX value: "+startX+" endX: "+endX);
+						System.out.println("startY value: "+startY+" endY: "+endY);
+						System.out.println("-----------------");
+						if (endX == startX || endY == startY) { //handle horizontal and vertical
+							if (endX == startX) {
+								if(endY>startY)
+									setUi(UserCommand.Down);
+								else if(endY<startY)
+									setUi(UserCommand.Up);
+							} else if (endY == startY) {
+								if(endX>startX)
+									setUi(UserCommand.Right);
+								else if(endX<startX)
+									setUi(UserCommand.Left);
+							}							 
+						} else if(endX<startX){ //handle diagonal direction
+							if(endY>startY)
+								setUi(UserCommand.DownLeft);
+							else
+								setUi(UserCommand.UpLeft);
+						} else if(endX>startX) {
+							if (endY>startY)
+							 	setUi(UserCommand.DownRight);
+						 	else
+						 		setUi(UserCommand.UpRight);
+						}
+					
+						if((endX!=startX||endY!=startY)&&flag==true){
+							flag=false;
+							setChanged();
+							notifyObservers();	
+						}
+					}			 
+				});
 			 flag=true;	
-			}
-		
+			}		
 		});
-	} else {
-		board.updateBoard(data);
-	}
+		} else
+			board.updateBoard(data);
+	
 }
 	
 	//update score 

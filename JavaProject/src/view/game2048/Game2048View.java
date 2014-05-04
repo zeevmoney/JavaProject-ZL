@@ -6,6 +6,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+
 import controller.UserCommand;
 import view.AbsView;
 import view.Board;
@@ -25,7 +26,7 @@ public class Game2048View extends AbsView implements Runnable {
 			//TODO: code cleanup.
 			board = new Board(getGameBoard(), SWT.WRAP, data);
 			board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,2));
-			Color boardColor = new Color(getDisplay(), 187, 173, 160); //set board color 
+			Color boardColor = new Color(getDisplay(), 187, 173, 160); //set board color
 			board.setBackground(boardColor);
 			board.setForeground(boardColor);
 			getShell().setMinimumSize(601, 601);
@@ -52,8 +53,46 @@ public class Game2048View extends AbsView implements Runnable {
 					setChanged();
 					notifyObservers();	
 				}
-			});	
-		} else {
+			});
+			//mouse listener	
+			getDisplay().addFilter(SWT.MouseDown, new Listener() {
+				int startX=0;
+				int startY=0;
+				Boolean flag=true;
+				
+				@Override
+				public void handleEvent(Event e) {
+					startX=e.x;
+					startY=e.y;
+					getDisplay().addFilter(SWT.MouseUp, new Listener() {
+						@Override
+						public void handleEvent(Event e) {
+							int endX = e.x;
+							int endY = e.y;
+			            	int diffX=Math.abs(endX-startX);
+			            	int diffY=Math.abs(endY-startY);
+			            	if (diffY>diffX) {
+			            		if(endY>startY)
+			            			setUi(UserCommand.Down);
+			            		else if(endY<startY)
+									setUi(UserCommand.Up);
+			            	} else if (diffX>diffY) {
+			            			if(endX>startX)
+										setUi(UserCommand.Right);
+									else if(endX<startX)
+										setUi(UserCommand.Left);
+							}			 
+			            	if((endX!=startX||endY!=startY)&&flag==true){
+								flag=false;
+								setChanged();
+								notifyObservers();	
+							}			 
+						}
+					});
+					flag=true;	
+				}		
+			});			
+	} else {
 			board.updateBoard(data);
 		}
 	}

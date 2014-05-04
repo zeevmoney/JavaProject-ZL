@@ -19,7 +19,8 @@ import model.algoirthms.GameStateXML;
 
 //TODO: make the movement use a strategy pattern.
 //TODO: save/load game with a file select
-//TODO: make win lock the game & make it run after (no) was selected.
+//TODO: make win lock the game & make it run after (no) was selected
+//TODO: in case lost the game: when clicking no make sure lost is set to false and undo 1 move.
 
 public class Game2048Model extends Observable implements Model,Runnable {
 	GameState currentGame; //current game state

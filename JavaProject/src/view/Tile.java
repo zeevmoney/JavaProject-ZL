@@ -24,10 +24,10 @@ public class Tile extends Canvas{
 	public Tile(Composite parent, int style){
 		super(parent,style);
 		value=0; 
-//		int fontNumber=(Math.min(arg0, arg1)/2);
-//		Font f= getFont();
-//		Font nf= new Font(getDisplay(), f.getFontData()[0].getName(),fontNumber,SWT.BOLD);
-//		setFont(nf);
+		//int fontNumber=(Math.min(arg0, arg1)/2);
+		Font f= getFont();
+		Font nf= new Font(getDisplay(), f.getFontData()[0].getName(),16,SWT.BOLD);
+		setFont(nf);
 		addPaintListener(new PaintListener() {
 		
 			@Override
@@ -37,7 +37,7 @@ public class Tile extends Canvas{
 				int mx=getSize().x/2- (""+value).length()*width/2;
 				int my=getSize().y/2- fm.getHeight()/2-fm.getDescent();
 				if(value>0)
-					e.gc.drawString(" "+value, mx, my);			
+					e.gc.drawString(""+value, mx, my);			
 			}
 	   });	   
    }
@@ -48,14 +48,23 @@ public class Tile extends Canvas{
 		this.value=value;
 		changeBackgroundColor(); 
 		redraw();
-	}   
+	}
+	
+
+	
 
 	//change the tile background color
 	private void changeBackgroundColor(){
 		Color tileColor;
-		switch (value) {		
-			case -1:   tileColor = new Color(getDisplay(), 0, 0, 0); break;
-			case 0:    tileColor = new Color(getDisplay(), 204, 192, 179); break;
+		switch (value) {
+			//colors for maze game:
+			case -1:   tileColor = new Color(getDisplay(), 0, 0, 0); break; //black
+			case -2:   tileColor = new Color(getDisplay(), 255,255,255); break; //white
+			case -3:   tileColor = new Color(getDisplay(), 49, 151, 79); break; //green
+			case -4:    tileColor = new Color(getDisplay(), 238, 228, 218); break; //grey
+			case -5:   tileColor = new Color(getDisplay(), 220, 186, 49); break; //yellow
+			//colors for 2048 game
+			case 0:    tileColor = new Color(getDisplay(), 204, 192, 179); break;			
 		    case 2:    tileColor = new Color(getDisplay(), 238, 228, 218); break;
 		    case 4:    tileColor = new Color(getDisplay(), 237, 224, 200); break;
 		    case 8:    tileColor = new Color(getDisplay(), 242, 176, 120); break;
