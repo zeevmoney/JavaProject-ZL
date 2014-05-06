@@ -13,9 +13,20 @@ import view.Board;
 
 public class MazeGameView extends AbsView implements Runnable {
 	Board board;
-	
+	Boolean UpPresses=false;
+	Boolean DownPresses=false;
+	Boolean RightPresses=false;
+	Boolean LeftPresses=false;
 	public MazeGameView(String string) {
 		super(string);
+	}
+	
+	private void setKey(){
+		UpPresses=false;
+		DownPresses=false;
+		RightPresses=false;
+		LeftPresses=false;
+		
 	}
 		
 	//display the board
@@ -31,52 +42,73 @@ public class MazeGameView extends AbsView implements Runnable {
 			board.setBackground(boardColor);
 			board.setForeground(boardColor);
 			getShell().setMinimumSize(800, 800);
-			getDisplay().addFilter(SWT.KeyUp, new Listener() {
-				int UpPresses=0;
-				int DownPresses=0;
-				int RightPresses=0;
-				int LeftPresses=0;
+				
+			getDisplay().addFilter(SWT.KeyUp, new Listener() {				
 				@Override
 				public void handleEvent(Event e) { 
 					board.setFocus();
 					switch (e.keyCode){
 					case SWT.ARROW_DOWN:
-						DownPresses=1; 
+						DownPresses=true; 
 					    break;
 					case SWT.ARROW_LEFT:
-						LeftPresses=1;						
+						LeftPresses=true;						
 						break;
 					case SWT.ARROW_RIGHT:
-						RightPresses=1;						
+						RightPresses=true;						
 						break;
 					case SWT.ARROW_UP:
-						UpPresses=1;
+						UpPresses=true;
 						break;				     
 					}	
-					if((DownPresses+LeftPresses+RightPresses+UpPresses)==2){
-						if(UpPresses==1&&LeftPresses==1)
-							setUi(UserCommand.UpLeft);
-						else if(UpPresses==1&&RightPresses==1)
-							setUi(UserCommand.UpRight);
-						else if (DownPresses==1&&RightPresses==1)
-							setUi(UserCommand.DownRight);
-						else if (DownPresses==1&&LeftPresses==1)
-							setUi(UserCommand.DownLeft);
-					}
-					else{
-						if(UpPresses==1)
-							setUi(UserCommand.Up);
-						else if(RightPresses==1)
-							setUi(UserCommand.Right);
-						else if (DownPresses==1)
-							setUi(UserCommand.Down);
-						else if (LeftPresses==1)
-							setUi(UserCommand.Left);						
-					}					
+					getDisplay().addFilter(SWT.KeyUp, new Listener() {				
+						@Override
+						public void handleEvent(Event e) { 
+							board.setFocus();
+							switch (e.keyCode){
+							case SWT.ARROW_DOWN:
+								DownPresses=true; 
+							    break;
+							case SWT.ARROW_LEFT:
+								LeftPresses=true;						
+								break;
+							case SWT.ARROW_RIGHT:
+								RightPresses=true;						
+								break;
+							case SWT.ARROW_UP:
+								UpPresses=true;
+								break;				     
+							}}});				
+						if(UpPresses==true&&LeftPresses==true){
+							setKey();
+							setUi(UserCommand.UpLeft);}
+						else if(UpPresses==true&&RightPresses==true){
+							setKey();							
+							setUi(UserCommand.UpRight);}
+						else if (DownPresses==true&&RightPresses==true){							
+							setKey();							
+							setUi(UserCommand.DownRight);}
+						else if (DownPresses==true&&LeftPresses==true){							
+							setKey();
+							setUi(UserCommand.DownLeft);}
+						else if(UpPresses==true){							
+							setKey();	
+							setUi(UserCommand.Up);}
+						else if(RightPresses==true){
+							setKey();					
+							setUi(UserCommand.Right);}
+						else if (DownPresses==true){
+							setKey();
+							setUi(UserCommand.Down);}
+						else if (LeftPresses==true){
+							setKey();
+							setUi(UserCommand.Left);}						
+									
 					setChanged();
-					notifyObservers();	
+					notifyObservers();
+					setKey();
 				}
-			});	
+					});	
 			
 		//mouse listener	
 		getDisplay().addFilter(SWT.MouseDown, new Listener() {
