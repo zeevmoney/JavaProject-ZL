@@ -17,6 +17,7 @@ public class MazeGameView extends AbsView implements Runnable {
 	private int horizontal; // -1 for left, 0 for nothing, 1 for right 
 	private int pressedCount;
 	private boolean change;
+	boolean keyUp = false; //used to control a keyUP event in order to know if an arrow key was pressed.
 
 	
 	public MazeGameView(String string) {
@@ -37,14 +38,15 @@ public class MazeGameView extends AbsView implements Runnable {
 			board.setFocus();
 		}
 		if (board == null) { //first init
-			//TODO: code cleanup.
+			//board init
 			board = new Board(getGameBoard(), SWT.WRAP, data);
 			board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,2));
 			Color boardColor = new Color(getDisplay(), 0, 0, 0); //set board color
+			
 			board.setBackground(boardColor);
 			board.setForeground(boardColor);
 			InitInput();
-			getShell().setMinimumSize(800, 800);			
+			getShell().setMinimumSize(800, 800);
 			board.setFocus();
 		} else {
 			board.updateBoard(data);
@@ -62,60 +64,54 @@ public class MazeGameView extends AbsView implements Runnable {
 	        	board.setFocus();
 	        	change=true;
 	        	
-	            //horizontal: -1:left 0:nothing 1:right
-            	//vertical:    -1:up   0:nothing 1:right
-            	if (horizontal < 0 && vertical < 0) { // up and left  	
+            	if (horizontal < 0 && vertical < 0) {   	
             		setUi(UserCommand.UpLeft); 
             		pressedCount--;
-            	} else if(horizontal < 0 && vertical > 0) { //down and left
+            	} else if(horizontal < 0 && vertical > 0) { 
             		setUi(UserCommand.DownLeft); 
             		pressedCount--;
             	}
-            	else if(horizontal > 0 && vertical < 0) { //up and right	
+            	else if(horizontal > 0 && vertical < 0) { 	
             		setUi(UserCommand.UpRight); 
             		pressedCount--;
-            	} else if(horizontal > 0 && vertical > 0) { //down and right            		
-            		setUi(UserCommand.DownRight); pressedCount--;
-            	} else if(horizontal > 0 && vertical == 0 && pressedCount==1) //right
+            	} else if(horizontal > 0 && vertical > 0) {             		
+            		setUi(UserCommand.DownRight); 
+            		pressedCount--;
+            	} else if(horizontal > 0 && vertical == 0 && pressedCount==1) 
             		setUi(UserCommand.Right);
-            	else if(horizontal < 0 && vertical == 0 && pressedCount==1) //left
+            	else if(horizontal < 0 && vertical == 0 && pressedCount==1)
             		setUi(UserCommand.Left);
-            	else if(horizontal == 0 && vertical < 0 && pressedCount==1) //up
+            	else if(horizontal == 0 && vertical < 0 && pressedCount==1)
             		setUi(UserCommand.Up);
-            	else if(horizontal == 0 && vertical > 0 && pressedCount==1) //down
+            	else if(horizontal == 0 && vertical > 0 && pressedCount==1) 
             		setUi(UserCommand.Down);
             	else
             		change=false;
-            		            
+            	
             	switch (e.keyCode) {
-					
-	            	case (SWT.ARROW_UP):
+					case (SWT.ARROW_UP):
 	            		vertical++;
-	            		break;
+						keyUp=true;
+						break;
 					case (SWT.ARROW_DOWN):
 					    vertical--;
+						keyUp=true;
 						break;
 					case (SWT.ARROW_LEFT):
 						horizontal++;
+						keyUp=true;
 						break;
 					case (SWT.ARROW_RIGHT):
 						horizontal--;
-						break;
-					default:
+						keyUp=true;
 						break;
 				}
-            	if ((e.keyCode == SWT.ARROW_UP)
-							|| (e.keyCode == SWT.ARROW_DOWN)
-							|| (e.keyCode == SWT.ARROW_LEFT)
-							|| (e.keyCode == SWT.ARROW_RIGHT) ) {
-						
-						if(change)
-						{
-							pressedCount--;								
-							setChanged();
-							notifyObservers();
-						}
-					}
+            	
+            	if (keyUp && change) { //keyUP = arrow key, change = setUi was set.
+            		pressedCount--;								
+					setChanged();
+					notifyObservers();					
+				}
 	           
 	        }
 	    });
@@ -127,13 +123,12 @@ public class MazeGameView extends AbsView implements Runnable {
 			@Override
 	        public void handleEvent(Event e)
 	        {
-				
 				if (isNewGame()) { //if a restart was made (the var is in AbsView)
 					InitVars();
 					setNewGame(false);
 				}				
 	        		
-	        	if (pressedCount<0 || pressedCount>2)
+	        	if (pressedCount<0 || pressedCount>2) //don't change this if!
 	            		pressedCount=0;
             	switch (e.keyCode) {
 	            	case (SWT.ARROW_UP):
@@ -235,121 +230,3 @@ public class MazeGameView extends AbsView implements Runnable {
 	}
 
 }
-	
-	
-	
-	
-	
-	
-//	getDisplay().addFilter(SWT.KeyDown, new Listener() {
-//		//check if a key was pressed
-//		@Override
-//		public void handleEvent(Event e) { 
-//			board.setFocus();
-//			switch (e.keyCode){
-//				case SWT.ARROW_DOWN:
-//					DownPresses=true;
-//				//	Pressed=true;
-//					break;
-//				case SWT.ARROW_LEFT:
-//					LeftPresses=true;
-//				//	Pressed=true;
-//					break;
-//				case SWT.ARROW_RIGHT:
-//					RightPresses=true;
-//					//Pressed=true;
-//					break;
-//				case SWT.ARROW_UP:
-//					UpPresses=true;
-//					//Pressed=true;
-//					break;				     
-//			}
-//		}
-//	});
-//	
-//	getDisplay().addFilter(SWT.KeyUp, new Listener() {
-//		
-//		@Override
-//		public void handleEvent(Event e) { 
-//			
-//			board.setFocus();
-//			//check if a key was released
-//			//if the same key was released it's a horiznotal/vertical move
-//			switch (e.keyCode){
-//				case SWT.ARROW_DOWN:
-//					if (DownPresses=true) {
-//						setUi(UserCommand.Down);
-//						Pressed=true;
-//					}
-//				    break;
-//				case SWT.ARROW_LEFT:
-//					if (LeftPresses=true) {
-//						setUi(UserCommand.Left);
-//						Pressed=true;
-//					}					
-//				    break;
-//				case SWT.ARROW_RIGHT:
-//					if (RightPresses=true) {
-//						Pressed=true;
-//						setUi(UserCommand.Right);
-//					};						
-//				    break;
-//				case SWT.ARROW_UP:
-//					if (UpPresses=true) {
-//						Pressed=true;
-//						setUi(UserCommand.Up);
-//					}							
-//				    break;
-//		}
-//			
-//				if(UpPresses && LeftPresses) {
-//						setUi(UserCommand.UpLeft);
-//						Pressed=true;					
-//				} else if(UpPresses && RightPresses) {
-//						setUi(UserCommand.UpRight);
-//						Pressed=true;						
-//				} else if (DownPresses && RightPresses) {							
-//						setUi(UserCommand.DownRight);
-//						Pressed=true;
-//				} else if (DownPresses && LeftPresses) {
-//						Pressed=true;
-//						setUi(UserCommand.DownLeft);
-//				}
-//			 else if (Pressed) {
-//				setKey();
-//				setChanged();
-//				notifyObservers();
-//			}
-//		
-//		}
-//	});
-
-
-
-
-
-//getDisplay().addFilter(SWT.KeyDown, new Listener() {		
-//@Override
-//public void handleEvent(Event e) { 
-//	board.setFocus();
-//	switch (e.keyCode){
-//		case SWT.ARROW_DOWN:
-//			setUi(UserCommand.Down); 
-//		    break;
-//		case SWT.ARROW_LEFT:
-//			setUi(UserCommand.Left);
-//			
-//			break;
-//		case SWT.ARROW_RIGHT:
-//			setUi(UserCommand.Right);
-//			
-//			break;
-//		case SWT.ARROW_UP:
-//			setUi(UserCommand.Up);
-//			break;				     
-//		}	
-//		setChanged();
-//		notifyObservers();	
-//}
-//});	
-

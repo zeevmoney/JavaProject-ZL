@@ -1,6 +1,7 @@
 package view;
 
 import java.util.Observable;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -9,6 +10,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -169,9 +171,17 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 	
 	private void saveGame() { //save game function
-    	ui = UserCommand.SaveGame;
-		setChanged();
-		notifyObservers(); 
+		FileDialog fd = new FileDialog(shell, SWT.SAVE);
+		fd.setText("Save Game");
+		fd.setFilterPath("resources\\");
+		String[] filterExt = { "*.xml" };
+		fd.setFilterExtensions(filterExt);
+		String fileName = fd.open(); // Store selected file name as string
+		if (fileName != null) {
+			ui = UserCommand.SaveGame;
+			setChanged();
+			notifyObservers(fileName);
+		}   	
 	}
 
 	//Load game (under the File drop down menu)
@@ -188,10 +198,18 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 	
 	private void loadGame () { //load game function
-		newGame=true;
-    	ui = UserCommand.LoadGame;
-		setChanged();
-		notifyObservers();   
+		FileDialog fd = new FileDialog(shell, SWT.OPEN);
+		fd.setText("Load Game");
+		fd.setFilterPath("resouces\\");
+		String[] filterExt = { "*.xml" };
+		fd.setFilterExtensions(filterExt);
+		String fileName = fd.open();
+		if (fileName != null) {
+			newGame=true;
+			ui = UserCommand.LoadGame;
+			setChanged();
+			notifyObservers(fileName);
+		}   
 	}
 
 	//Save & Exit (under the File drop down menu)
@@ -202,7 +220,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-            	saveGame(); 
+            	saveGame();
                 shell.getDisplay().dispose();
                 System.exit(0);
             }
@@ -338,7 +356,6 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	
 	//Save Game button (under buttons menu)
-	//TODO: add file select
 	private void menuSaveGameButton() {		
 		Button saveGame = new Button(gameButtons, SWT.PUSH);
 		saveGame.setText("Save Game");
@@ -356,7 +373,6 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 
 	//Load Game button (under buttons menu)
-	//TODO: add file select
 	private void menuLoadGameButton() {
 		Button loadGame = new Button(gameButtons, SWT.PUSH);
 		loadGame.setText("Load Game");

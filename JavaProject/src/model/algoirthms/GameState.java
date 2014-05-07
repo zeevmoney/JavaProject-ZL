@@ -87,8 +87,6 @@ public class GameState {
 		tempState.setBoard(tempBoard);
 		tempState.setScore(this.score);
 		tempState.setPlayer(this.player);
-		//tempState.setStart(this.start);
-		//tempState.setEnd(this.end);
 		return tempState;		
 	}
 
@@ -115,18 +113,6 @@ public class GameState {
 		if (score != other.score)
 			return false;
 		return true;
-	}
-
-
-	
-
-
-
-
-
-	
-
-
-	
+	}	
 	
 }

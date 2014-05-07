@@ -30,72 +30,78 @@ public class Game2048View extends AbsView implements Runnable {
 			board.setBackground(boardColor);
 			board.setForeground(boardColor);
 			getShell().setMinimumSize(601, 601);
-			getDisplay().addFilter(SWT.KeyUp, new Listener() {		
-				@Override
-				public void handleEvent(Event e) { 
-					board.setFocus();
-					switch (e.keyCode){
-					case SWT.ARROW_DOWN:
-						setUi(UserCommand.Down); 
-					    break;
-					case SWT.ARROW_LEFT:
-						setUi(UserCommand.Left);
-						
-						break;
-					case SWT.ARROW_RIGHT:
-						setUi(UserCommand.Right);
-						
-						break;
-					case SWT.ARROW_UP:
-						setUi(UserCommand.Up);
-						break;				     
-					}	
-					setChanged();
-					notifyObservers();	
-				}
-			});
-			//mouse listener	
-			getDisplay().addFilter(SWT.MouseDown, new Listener() {
-				int startX=0;
-				int startY=0;
-				Boolean flag=true;
-				
-				@Override
-				public void handleEvent(Event e) {
-					startX=e.x;
-					startY=e.y;
-					getDisplay().addFilter(SWT.MouseUp, new Listener() {
-						@Override
-						public void handleEvent(Event e) {
-							int endX = e.x;
-							int endY = e.y;
-			            	int diffX=Math.abs(endX-startX);
-			            	int diffY=Math.abs(endY-startY);
-			            	if (diffY>diffX) {
-			            		if(endY>startY)
-			            			setUi(UserCommand.Down);
-			            		else if(endY<startY)
-									setUi(UserCommand.Up);
-			            	} else if (diffX>diffY) {
-			            			if(endX>startX)
-										setUi(UserCommand.Right);
-									else if(endX<startX)
-										setUi(UserCommand.Left);
-							}			 
-			            	if((endX!=startX||endY!=startY)&&flag==true){
-								flag=false;
-								setChanged();
-								notifyObservers();	
-							}			 
-						}
-					});
-					flag=true;	
-				}		
-			});			
+			InitInput();		
 	} else {
 			board.updateBoard(data);
 		}
 	}
+		
+	public void InitInput () {		
+		getDisplay().addFilter(SWT.KeyUp, new Listener() {		
+			@Override
+			public void handleEvent(Event e) { 
+				board.setFocus();
+				switch (e.keyCode){
+				case SWT.ARROW_DOWN:
+					setUi(UserCommand.Down); 
+				    break;
+				case SWT.ARROW_LEFT:
+					setUi(UserCommand.Left);
+					
+					break;
+				case SWT.ARROW_RIGHT:
+					setUi(UserCommand.Right);
+					
+					break;
+				case SWT.ARROW_UP:
+					setUi(UserCommand.Up);
+					break;				     
+				}	
+				setChanged();
+				notifyObservers();	
+			}
+		});
+		//mouse listener	
+		getDisplay().addFilter(SWT.MouseDown, new Listener() {
+			int startX=0;
+			int startY=0;
+			Boolean flag=true;
+			
+			@Override
+			public void handleEvent(Event e) {
+				startX=e.x;
+				startY=e.y;
+				getDisplay().addFilter(SWT.MouseUp, new Listener() {
+					@Override
+					public void handleEvent(Event e) {
+						int endX = e.x;
+						int endY = e.y;
+		            	int diffX=Math.abs(endX-startX);
+		            	int diffY=Math.abs(endY-startY);
+		            	if (diffY>diffX) {
+		            		if(endY>startY)
+		            			setUi(UserCommand.Down);
+		            		else if(endY<startY)
+								setUi(UserCommand.Up);
+		            	} else if (diffX>diffY) {
+		            			if(endX>startX)
+									setUi(UserCommand.Right);
+								else if(endX<startX)
+									setUi(UserCommand.Left);
+						}			 
+		            	if((endX!=startX || endY!=startY) && flag){
+							flag=false;
+							setChanged();
+							notifyObservers();	
+						}			 
+					}
+				});
+				flag=true;	
+			}		
+		});	
+	}
+	
+	
 	
 	//update score 
 	@Override

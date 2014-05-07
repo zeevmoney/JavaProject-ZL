@@ -37,14 +37,14 @@ public class GameStateXML {
 		//make a GameState XML
 		PrintWriter output = null;
 		String xml = xstream.toXML(gameState);
-		output = new PrintWriter(new FileWriter("resources\\" + gameStatefile));
+		output = new PrintWriter(new FileWriter(gameStatefile));
 		output.println(xml);
 		output.close();
 		
 		//make a GamesStack XML
 		output = null;
 		xml = xstream.toXML(gameStack);
-		output = new PrintWriter(new FileWriter("resources\\" + stackFile));
+		output = new PrintWriter(new FileWriter(stackFile));
 		output.println(xml);
 		output.close();		
 	}
@@ -57,7 +57,7 @@ public class GameStateXML {
 	
 	public GameState gameStateFromXML (String fileName) throws IOException {
 		System.out.println("DEBUG: Load XML");
-		BufferedReader input = new BufferedReader(new FileReader("resources\\" + fileName));
+		BufferedReader input = new BufferedReader(new FileReader(fileName));
 		GameState m = (GameState) xstream.fromXML(input);
 		input.close();
 		return m;
@@ -65,7 +65,8 @@ public class GameStateXML {
 	
 	public Stack<GameState> gameStackFromXML (String fileName) throws IOException {
 		System.out.println("DEBUG: Load Stack XML");
-		BufferedReader input = new BufferedReader(new FileReader("resources\\" + fileName));
+		BufferedReader input = new BufferedReader(new FileReader(fileName));
+		@SuppressWarnings("unchecked")
 		Stack<GameState> m = (Stack<GameState>) xstream.fromXML(input);
 		input.close();
 		return m;

@@ -11,6 +11,7 @@ import org.eclipse.swt.widgets.Composite;
 
 /*
  * Tile class is used to represent a tile on the game board.
+ * Both boards: 2048 + MazeGame
  */
 
 
@@ -24,7 +25,6 @@ public class Tile extends Canvas{
 	public Tile(Composite parent, int style){
 		super(parent,style);
 		value=0; 
-		//int fontNumber=(Math.min(arg0, arg1)/2);
 		Font f= getFont();
 		Font nf= new Font(getDisplay(), f.getFontData()[0].getName(),16,SWT.BOLD);
 		setFont(nf);

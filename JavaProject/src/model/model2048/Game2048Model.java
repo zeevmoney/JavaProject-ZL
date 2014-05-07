@@ -17,8 +17,9 @@ import model.algoirthms.GameStateXML;
  * that this object has no longer changed.
  */
 
+
+
 //TODO: make the movement use a strategy pattern.
-//TODO: save/load game with a file select
 //TODO: make win lock the game & make it run after (no) was selected
 //TODO: in case lost the game: when clicking no make sure lost is set to false and undo 1 move.
 
@@ -97,22 +98,22 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 	
 	@Override
-	public void saveGame() {
+	public void saveGame(String fileName) {
 		try {
 			GameStateXML gXML = new GameStateXML();
-			gXML.gameStateToXML(currentGame, "2048Save.xml",gameStack,"2048GameStack.xml");
+			gXML.gameStateToXML(currentGame,fileName,gameStack,fileName.replace(".xml", "Stack.xml"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void loadGame() {
+	public void loadGame(String fileName) {
 		try {
 			newGame();
 			GameStateXML gXML = new GameStateXML();
-			currentGame = gXML.gameStateFromXML("2048Save.xml");
-			gameStack = gXML.gameStackFromXML("2048GameStack.xml");
+			currentGame = gXML.gameStateFromXML(fileName);
+			gameStack = gXML.gameStackFromXML(fileName.replace(".xml", "Stack.xml"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -193,9 +194,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	private void moveHanlde(boolean change) {
 		setChanged(); //changed in any case
 		if (change) { //if there was a change it means that there is an empty space.
-			if (win) {
-				//if (won) return; //can't win twice.
-				//won = true;				
+			if (win) {			
 				notifyObservers("Win");
 			} else {
 				addNumber();

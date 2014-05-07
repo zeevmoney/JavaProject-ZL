@@ -1,11 +1,9 @@
 package model.mazegame;
 
-//http://www.jonathanzong.com/blog/2012/11/06/maze-generation-with-prims-algorithm
 
 import java.awt.Point;
 import java.util.Observable;
 import java.util.Stack;
-
 import model.Model;
 import model.algoirthms.GameState;
 import model.algoirthms.GameStateXML;
@@ -35,9 +33,7 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 		newGame();
 	}
 	
-	
 	//init all values on the game board & set score to 0.
-	//TODO: (Zeev): random generated maze.
 	private void boardInit() {
 		win=false;
 		lose=false;
@@ -59,7 +55,6 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -96,13 +91,11 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 			notifyObservers();			
 	}
 	
-	
 	/*
 	 * "-1,-1"	"-1,0"	"-1,1"
 	 * "0,-1"	"0,0"	"0,1"
 	 * "1,-1"	"1,0"	"1,1"
-	 */
-	
+	 */	
 
 	@Override
 	public void moveUp() {
@@ -168,22 +161,22 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 
 
 	@Override
-	public void saveGame() {
+	public void saveGame(String fileName) {
 		try {
 			GameStateXML gXML = new GameStateXML();
-			gXML.gameStateToXML(currentGame, "MazeSave.xml",gameStack,"MazeGameStack.xml");
+			gXML.gameStateToXML(currentGame,fileName,gameStack,fileName.replace(".xml", "Stack.xml"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
-	public void loadGame() {
+	public void loadGame(String fileName) {
 		try {
 			newGame();
 			GameStateXML gXML = new GameStateXML();
-			currentGame = gXML.gameStateFromXML("MazeSave.xml");
-			gameStack = gXML.gameStackFromXML("MazeGameStack.xml");
+			currentGame = gXML.gameStateFromXML(fileName);
+			gameStack = gXML.gameStackFromXML(fileName.replace(".xml", "Stack.xml"));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -200,7 +193,6 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 			if (!gameStack.isEmpty()) {
 				currentGame = gameStack.pop();
 			} else { 
-				//if (gameStack.size() == 0)
 				gameStack.push(currentGame.Copy());
 				return;
 			}

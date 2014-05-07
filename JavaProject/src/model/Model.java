@@ -12,8 +12,8 @@ public interface Model {
 	
 	//Game control:
 	public void newGame();
-	public void saveGame(); //Save Game (XML)
-	public void loadGame(); //Load Game (XML)
+	public void saveGame(String fileName); //Save Game (XML)
+	public void loadGame(String fileName); //Load Game (XML)
 	public void undoMove();
 
 	
