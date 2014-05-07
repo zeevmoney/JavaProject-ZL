@@ -1,7 +1,6 @@
 package view;
 
 import java.util.Observable;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -15,12 +14,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-
 import controller.UserCommand;
-
-
-//TODO: set win+loose screen
-//TODO: re-use for load / save etc
 
 /*
  * Abstract Class AbsView:
@@ -35,9 +29,10 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	Menu menuBar;
 	Group gameButtons;
 	Group gameBoard;
-	//GridLayout gridLayout;
 	Label scoreLabel;
+	boolean newGame=false; //used to init some vars in maze game.
 	boolean flag;//for set win&lose window
+	
 	/*
 	 * AbsView constructor:
 	 * init upper bar
@@ -113,15 +108,20 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		this.gameBoard = gameBoard;
 	}
 	
+	public boolean isNewGame() {
+		return newGame;
+	}
+
+	public void setNewGame(boolean newGame) {
+		this.newGame = newGame;
+	}
 		
 	/* ************************
 	 * Upper menu bar:
-	 * ************************/
-		
+	 * ************************/		
 	
 	//Menu bar (upper menu):
-	
-	protected void setMenuToolsBar() {
+	private void setMenuToolsBar() {
 		//create the menu bar and add file and edit
 		this.menuBar=new Menu(shell, SWT.BAR);
 		shell.setMenuBar(menuBar);
@@ -153,8 +153,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 
 	/* ************************
 	 * File drop down menu:
-	 * ************************/	
-	
+	 * ************************/		
 	
 	//Save game (under the File drop down menu)
 	private void saveGame(Menu fileMenu) {
@@ -164,12 +163,15 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	    	
 		    @Override
 	        public void widgetSelected(SelectionEvent e) {
-	        	ui = UserCommand.SaveGame;
-				setChanged();
-				notifyObservers(); 
-				
+		    	saveGame();				
 		    }
 	    });			
+	}
+	
+	private void saveGame() { //save game function
+    	ui = UserCommand.SaveGame;
+		setChanged();
+		notifyObservers(); 
 	}
 
 	//Load game (under the File drop down menu)
@@ -180,12 +182,16 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 		    @Override
 		    public void widgetSelected(SelectionEvent e) {
-		    	ui = UserCommand.LoadGame;
-				setChanged();
-				notifyObservers();    
-	    }
-	});
-		
+		    	loadGame();   
+		    }
+	    });		
+	}
+	
+	private void loadGame () { //load game function
+		newGame=true;
+    	ui = UserCommand.LoadGame;
+		setChanged();
+		notifyObservers();   
 	}
 
 	//Save & Exit (under the File drop down menu)
@@ -196,9 +202,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 
             @Override
             public void widgetSelected(SelectionEvent e) {
-            	ui = UserCommand.SaveGame;
-    			setChanged();
-    			notifyObservers(); 
+            	saveGame(); 
                 shell.getDisplay().dispose();
                 System.exit(0);
             }
@@ -234,12 +238,13 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	    	
 	    	@Override
 	        public void widgetSelected(SelectionEvent e) {
-	        	restartGame();
+	    		restartGame();	        	
 	        }
 	    });
 	 }
 	
-	public void restartGame() {
+	private void restartGame() { //restart game main function
+		newGame=true;
     	ui = UserCommand.RestartGame;
 		setChanged();
 		notifyObservers();
@@ -256,14 +261,18 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	        @Override
 	        public void widgetSelected(SelectionEvent e) {
-	        	ui = UserCommand.UndoMove;
-				setChanged();
-				notifyObservers();   
+	        	undoMove();
 	        }
 	    });
 			
 	}
 	
+	private void undoMove() { //undoMove main function
+		newGame=true;
+    	ui = UserCommand.UndoMove;
+		setChanged();
+		notifyObservers();
+	}	
 
 	/* ************************
 	 * Game buttons group
@@ -301,9 +310,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				ui = UserCommand.UndoMove;
-				setChanged();
-				notifyObservers();   		
+				undoMove();  		
 			}
 
 			@Override
@@ -321,7 +328,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				restartGame();     		
+				restartGame();
 			}
 			
 			@Override
@@ -340,9 +347,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				ui = UserCommand.SaveGame;
-				setChanged();
-				notifyObservers();     	
+				saveGame();    	
 			}
 			
 			@Override
@@ -360,9 +365,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				ui = UserCommand.LoadGame;
-				setChanged();
-				notifyObservers(); 		
+				loadGame(); 		
 			}
 			
 			@Override
@@ -380,20 +383,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		gameBoard = new Group(shell, SWT.SHADOW_OUT);		
 		gameBoard.setLayout(new GridLayout(1, true));
 		gameBoard.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2));
-		//Color color = new Color(shell.getDisplay(), 250, 248, 239);
-	    //gameBoard.setBackground(color);
 	}
-	
-	
-	/*
-	 * 			// Group which wrap game board components
-		    boardGroup = new Group(shell, SWT.SHADOW_OUT);
-		    boardGroup.setLayout(new GridLayout(2, true));
-		    boardGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
-		    Color shellColor =  new Color(shell.getDisplay(), 250, 248, 239);
-		    boardGroup.setBackground(shellColor);
-	 */
-	
 
 	/* ************************
 	 * Other Methods:
@@ -406,26 +396,21 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			final Shell loseWindow= new Shell(this.shell);
 			loseWindow.setLayout(new GridLayout(2, false));
 			
-			loseWindow.setSize(100, 120);
-			loseWindow.setText("loser");
-			Label winMsg = new Label (loseWindow,SWT.NONE);
-			winMsg.setLayoutData(new GridData(SWT.CENTER,  SWT.UP, true, true, 2, 2));
-			winMsg.setText ("you lose");	
+			loseWindow.setSize(300, 120);
+			loseWindow.setText("You lost the game");
 			Label reStart = new Label (loseWindow,SWT.NONE);
 			reStart.setLayoutData(new GridData(SWT.CENTER,  SWT.FILL, true, true, 2, 2));
-			reStart.setText ("start new game?");
+			reStart.setText ("Restart Game?");
 			
 			Button yesButton=new Button(loseWindow,SWT.PUSH);
-			yesButton.setText("yes");
+			yesButton.setText("Yes");
 			yesButton.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true, true,1, 1));
 			
 			yesButton.addSelectionListener(new SelectionListener() {
 				
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					ui = UserCommand.RestartGame;
-					setChanged();
-					notifyObservers();
+					restartGame();
 					flag=false;
 					loseWindow.close(); 		
 				}
@@ -433,15 +418,17 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 				@Override
 				public void widgetDefaultSelected(SelectionEvent arg0) {}
 			});
+			
 			Button noButton=new Button(loseWindow,SWT.PUSH);
-			noButton.setText("no");
+			noButton.setText("No");
 			noButton.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, true,1, 1));
 			
 			noButton.addSelectionListener(new SelectionListener() {
 				
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					loseWindow.close(); 		
+					loseWindow.close();
+					System.exit(0);
 				}
 				
 				@Override
@@ -455,31 +442,24 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 
 	@Override
 	public void setWin(boolean win) {
-		if(win == true&&flag==false){
+		if(win && !flag){
 			flag=true;
-			final Shell winWindow= new Shell(this.shell);
+			final Shell winWindow = new Shell(this.shell);
 			winWindow.setLayout(new GridLayout(2, false));
-			
-			winWindow.setSize(100, 120);
-			winWindow.setText("winner");
+			winWindow.setSize(300, 120);
+			winWindow.setText("You Won The Game");
 			Label winMsg = new Label (winWindow,SWT.NONE);
 			winMsg.setLayoutData(new GridData(SWT.CENTER,  SWT.UP, true, true, 2, 2));
-			winMsg.setText ("you won");	
-			Label reStart = new Label (winWindow,SWT.NONE);
-			reStart.setLayoutData(new GridData(SWT.CENTER,  SWT.FILL, true, true, 2, 2));
-			reStart.setText ("start new game?");
-			
+			winMsg.setText ("Restart Game?");
 			Button yesButton=new Button(winWindow,SWT.PUSH);
-			yesButton.setText("yes");
+			yesButton.setText("Yes");
 			yesButton.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true, true,1, 1));
 			
 			yesButton.addSelectionListener(new SelectionListener() {
 				
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					ui = UserCommand.RestartGame;
-					setChanged();
-					notifyObservers();
+					restartGame();
 					flag=false;
 					winWindow.close(); 		
 				}
@@ -488,14 +468,15 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 				public void widgetDefaultSelected(SelectionEvent arg0) {}
 			});
 			Button noButton=new Button(winWindow,SWT.PUSH);
-			noButton.setText("no");
+			noButton.setText("No");
 			noButton.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, true,1, 1));
 			
 			noButton.addSelectionListener(new SelectionListener() {
 				
 				@Override
 				public void widgetSelected(SelectionEvent arg0) {
-					winWindow.close(); 		
+					winWindow.close();
+					System.exit(0);
 				}
 				
 				@Override
@@ -518,6 +499,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		 scoreLabel.setText (scoreLabel.getText() + score);		
 	}
 
+
+
+
 }
 
 
@@ -534,6 +518,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	Since:
 	2.0
  */
+
 
 /* 
  * public GridData(int horizontalAlignment,
