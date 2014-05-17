@@ -34,9 +34,8 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	Group gameButtons;
 	Group gameBoard;
 	Label scoreLabel;
+	String gameName; //game name String.
 	boolean newGame=false; //used to init some vars in maze game.
-//	boolean won;
-//	boolean lost;
 	
 	/*
 	 * AbsView constructor:
@@ -44,20 +43,21 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * init game buttons
 	 * init the group which holds the game board.
 	 */
-
 	public AbsView(String string) {
+		gameName = string;
+	}
+	
+	public void initComponents () { //init everything
 		display=new Display();
 		shell=new Shell(display);	
-		shell.setText(string);//set the game name
+		shell.setText(gameName);//set the game name
 		shell.setLayout(new GridLayout(2, false));
 		shell.setSize(600,600);
 		shell.setMinimumSize(600, 600);
-//		won = false;
-//		lost = false;
 		setMenuToolsBar(); //draw the menu tool bar.
 		gameButtonsMenu(); //draw the game buttons
 		gameBoardGroup();  //draw the board where the game will be placed.		
-		shell.open();		
+		shell.open();	
 	}
 	
 	
@@ -436,11 +436,17 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 
 	@Override
 	public abstract UserCommand getUserCommand();
+	
+	@Override
+	public abstract void run(); //the run is inside the concrete implementation
 
 	@Override
 	public void displayScore(int score) {
-		 scoreLabel.setText (scoreLabel.getText() + score);		
+		 scoreLabel.setText("Score: "+score);
 	}
+	
+//	@Override
+//	public abstract void displayScore(int score);
 
 
 

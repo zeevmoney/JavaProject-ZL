@@ -127,7 +127,6 @@ public class Game2048Model extends Observable implements Model,Runnable {
 			if (!gameStack.isEmpty()) {
 				currentGame = gameStack.pop();
 			} else { 
-				//if (gameStack.size() == 0)
 				gameStack.push(currentGame.Copy());
 				return;
 			}
@@ -174,8 +173,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		for (int i = 0; i < boardSize-1; i++) 
 			for (int j = 0; j < boardSize-1; j++)
 				if (currentGame.getXY(i, j) == currentGame.getXY(i, j+1)) 
-					return true;
-		
+					return true;		
 		return false;		
 	}
 	

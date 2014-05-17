@@ -12,7 +12,7 @@ public class MainMazeGame {
 		Presenter p= new Presenter(m,ui);
 		m.addObserver(p);
 		ui.addObserver(p);	
-		ui.run();
+		new Thread (ui).start();
 	}
 
 }

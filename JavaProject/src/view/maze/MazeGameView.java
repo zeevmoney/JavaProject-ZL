@@ -17,6 +17,7 @@ public class MazeGameView extends AbsView implements Runnable {
 	private int horizontal; // -1 for left, 0 for nothing, 1 for right 
 	private int pressedCount;
 	private boolean change;
+	private int[][] data;
 	boolean keyUp = false; //used to control a keyUP event in order to know if an arrow key was pressed.
 
 	
@@ -33,24 +34,32 @@ public class MazeGameView extends AbsView implements Runnable {
 	
 	//display the board
 	@Override
-	public void displayBoard(int[][] data) {
-		if (isNewGame() && board!=null) {
-			board.setFocus();
-		}
-		if (board == null) { //first init
-			//board init
-			board = new Board(getGameBoard(), SWT.WRAP, data);
-			board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,2));
-			Color boardColor = new Color(getDisplay(), 0, 0, 0); //set board color
+	public void displayBoard(int[][] nData) {
+		data = nData;
+		getDisplay().syncExec(new Runnable() {
 			
-			board.setBackground(boardColor);
-			board.setForeground(boardColor);
-			InitInput();
-			getShell().setMinimumSize(800, 800);
-			board.setFocus();
-		} else {
-			board.updateBoard(data);
-		}
+			@Override
+			public void run() {
+				if (isNewGame() && board!=null) {
+					board.setFocus();
+				}
+				if (board == null) { //first init
+					//board init
+					board = new Board(getGameBoard(), SWT.WRAP, data);
+					board.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,2));
+					Color boardColor = new Color(getDisplay(), 0, 0, 0); //set board color
+					
+					board.setBackground(boardColor);
+					board.setForeground(boardColor);
+					InitInput();
+					getShell().setMinimumSize(800, 800);
+					board.setFocus();
+				} else {
+					board.updateBoard(data);
+				}				
+			}
+		});
+
 	}
 			
 	
@@ -217,6 +226,7 @@ public class MazeGameView extends AbsView implements Runnable {
 	//the GUI and main loop thread should be in the same THREAD.
 	@Override
 	public void run() {
+		initComponents(); //init the game board using the main GUI thread (the function is in the AbsView Class)
 		//while shell is alive
 		while (!getShell().isDisposed()) {
 			//while there are no events (this is the event handler)

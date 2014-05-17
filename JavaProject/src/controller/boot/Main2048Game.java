@@ -14,7 +14,6 @@ public class Main2048Game {
 		Presenter p= new Presenter(m,ui);
 		m.addObserver(p);
 		ui.addObserver(p);
-		ui.run();
+		new Thread (ui).start();
 	}
-
 }
