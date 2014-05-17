@@ -2,6 +2,7 @@ package model.algoirthms;
 
 import java.awt.Point;
 import java.util.Arrays;
+import java.util.Stack;
 
 /* 
  * GameState is used to describe the current Game state
@@ -13,9 +14,8 @@ public class GameState {
 	int rows; //board rows
 	int cols; //board columns
 	int score; //current game score
-	Point player;
-	Point start;
-	Point end;
+	Stack<GameState> gameStack; //save game stack (used only while saving / loading)
+	Point player; //player position in the maze game.
 	
 	
 		
@@ -26,6 +26,7 @@ public class GameState {
 		this.board = new int[rows][cols];		
 		this.score = 0;
 		this.player = new Point();
+		//saveGameStack = new Stack<GameState>();
 	}
 	
 	public GameState() {
@@ -59,6 +60,14 @@ public class GameState {
 	public void setPlayer(Point player) {
 		this.player = player;
 	}
+	
+	public Stack<GameState> getGameStack() {
+		return gameStack;
+	}
+
+	public void setGameStack(Stack<GameState> saveGameStack) {
+		this.gameStack = saveGameStack;
+	}	
 	
 
 	//sets an [x][y] coordinate with <value>
@@ -113,6 +122,8 @@ public class GameState {
 		if (score != other.score)
 			return false;
 		return true;
-	}	
+	}
+
+
 	
 }

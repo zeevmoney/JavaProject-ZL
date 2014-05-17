@@ -7,6 +7,7 @@ import model.Model;
 import model.algoirthms.GameState;
 import model.algoirthms.GameStateXML;
 
+
 /*
  * 2048GameModel Class, responsible for all the game logic.
  *  
@@ -19,8 +20,6 @@ import model.algoirthms.GameStateXML;
 
 
 
-//TODO: make the movement use a strategy pattern.
-//TODO: make win lock the game & make it run after (no) was selected
 //TODO: in case lost the game: when clicking no make sure lost is set to false and undo 1 move.
 
 public class Game2048Model extends Observable implements Model,Runnable {
@@ -43,10 +42,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	
 	
 	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-		
-	}
+	public void run() {}
 	
 	//init all values on the game board & set score to 0.
 	private void boardInit() {
@@ -101,7 +97,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	public void saveGame(String fileName) {
 		try {
 			GameStateXML gXML = new GameStateXML();
-			gXML.gameStateToXML(currentGame,fileName,gameStack,fileName.replace(".xml", "Stack.xml"));
+			currentGame.setGameStack(gameStack); //clone the current game stack
+			gXML.gameStateToXML(currentGame,fileName); //save to xml
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -110,10 +107,10 @@ public class Game2048Model extends Observable implements Model,Runnable {
 	@Override
 	public void loadGame(String fileName) {
 		try {
-			newGame();
+			newGame(); //used to eliminate some bugs.
 			GameStateXML gXML = new GameStateXML();
 			currentGame = gXML.gameStateFromXML(fileName);
-			gameStack = gXML.gameStackFromXML(fileName.replace(".xml", "Stack.xml"));
+			gameStack = currentGame.getGameStack();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -167,16 +164,18 @@ public class Game2048Model extends Observable implements Model,Runnable {
 
 	//returns True if any movement is available.	
 	private boolean canMove () {
-		for (int i = 0; i < boardSize; i++) {
-			for (int j = 0; j < boardSize; j++) {
-				if (!currentGame.validXY(i+1, j) || !currentGame.validXY(i, j+1)) //invalid index 
-					continue;
-				//right cell equals / bottom cell equals
-				if (currentGame.getXY(i, j) == currentGame.getXY(i+1, j) || currentGame.getXY(i, j) == currentGame.getXY(i, j+1)) {
+		//check if bottom cell equals 
+		for (int i = 0; i < boardSize-1; i++) 
+			for (int j = 0; j < boardSize; j++)
+				if (currentGame.getXY(i, j) == currentGame.getXY(i+1, j)) 
+					return true;		
+		
+		//check if right cell equals
+		for (int i = 0; i < boardSize-1; i++) 
+			for (int j = 0; j < boardSize-1; j++)
+				if (currentGame.getXY(i, j) == currentGame.getXY(i, j+1)) 
 					return true;
-				}
-			}
-		}
+		
 		return false;		
 	}
 	
@@ -190,15 +189,18 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		}
 		return true;
 	}
-		
+	
+	//checks if the game was won (the game will continue after 2048 was reached)
 	private void moveHanlde(boolean change) {
-		setChanged(); //changed in any case
 		if (change) { //if there was a change it means that there is an empty space.
-			if (win) {			
-				notifyObservers("Win");
+			if (win && !won) { //if 2048 was reached
+				won = true; //can't win twice (win = 2048, when you continue, you can't win again).
+				setChanged();
+				notifyObservers("Win");				
 			} else {
 				addNumber();
 				gameStack.add(currentGame.Copy());	
+				setChanged();
 				notifyObservers();
 			}
 		} else if (!change && !canMove() && boardIsFull()) { //no change & can't move & board is full = lost the game.

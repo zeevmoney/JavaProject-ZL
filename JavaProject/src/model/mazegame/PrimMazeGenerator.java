@@ -102,7 +102,6 @@ public class PrimMazeGenerator {
 						maze[i][j] = MazeGameModel.End;					
 				}			
 		}
-		
 		return maze;
     }
     

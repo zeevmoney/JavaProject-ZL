@@ -5,6 +5,7 @@ import view.game2048.Game2048View;
 import controller.Presenter;
 
 //starts the game
+//TODO: add animation to the appearance of a new tile.
 public class Main2048Game {
 	
 	public static void main(String[] args) {

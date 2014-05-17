@@ -4,6 +4,7 @@ package model.mazegame;
 import java.awt.Point;
 import java.util.Observable;
 import java.util.Stack;
+
 import model.Model;
 import model.algoirthms.GameState;
 import model.algoirthms.GameStateXML;
@@ -40,22 +41,22 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 		PrimMazeGenerator temp = new PrimMazeGenerator();
 		currentGame.setScore(0);
 		int [][] bigMaze = temp.generateMazeByPrimAlgo(rows,cols);
-		for (int i = 0; i < rows; i++) 
+		outerloop:
+		for (int i = 0; i < rows; i++) { 
 			for (int j = 0; j < cols; j++) { 
-				if(bigMaze[i][j] == Start) 
+				if(bigMaze[i][j] == Start) {
 					currentGame.setPlayer(new Point (i,j));
+					break outerloop;
+				}
 			}
-			
+		}
 		currentGame.setBoard(bigMaze);
 		setChanged();
 		notifyObservers();
-	}
-	
+	}	
 	
 	@Override
-	public void run() {
-		// TODO Auto-generated method stub
-	}
+	public void run() {}
 
 	@Override
 	public void newGame() {
@@ -70,6 +71,7 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	
 	//main move handling function.
 	private void moveHanlde(int moveX, int moveY,UserCommand cmd) {
+			if (win) { return; } //if won? do nothing.
 			//x and y are sent by the move[Direction] functions.
 			int score=HorizontalScore; //horizontal score
 			int x = currentGame.getPlayer().x + moveX; //new coordinates for movement
@@ -78,8 +80,9 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 			if (currentGame.getXY(x, y) == Wall) return; //check if it's a wall.
 			if (Math.abs(moveX) == Math.abs(moveY)) score = DiagonalScore; //if it's a diagonal move
 			currentGame.setScore(currentGame.getScore()+score); //update the score
-			currentGame.setXY(currentGame.getPlayer().x, currentGame.getPlayer().y, Empty); //set previoues cell to empty cell
+			currentGame.setXY(currentGame.getPlayer().x, currentGame.getPlayer().y, Empty); //set previous cell to empty cell
 			if (currentGame.getXY(x, y)==End) {
+				win = true;
 				setChanged();
 				notifyObservers("Win");
 				return;
@@ -164,7 +167,8 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	public void saveGame(String fileName) {
 		try {
 			GameStateXML gXML = new GameStateXML();
-			gXML.gameStateToXML(currentGame,fileName,gameStack,fileName.replace(".xml", "Stack.xml"));
+			currentGame.setGameStack(gameStack); //clone the current game stack
+			gXML.gameStateToXML(currentGame,fileName); //save to xml
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -173,10 +177,10 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	@Override
 	public void loadGame(String fileName) {
 		try {
-			newGame();
+			newGame(); //used to eliminate some bugs.
 			GameStateXML gXML = new GameStateXML();
 			currentGame = gXML.gameStateFromXML(fileName);
-			gameStack = gXML.gameStackFromXML(fileName.replace(".xml", "Stack.xml"));
+			gameStack = currentGame.getGameStack();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -208,21 +212,6 @@ public class MazeGameModel extends Observable implements Model,Runnable {
 	
 		
 }
-
-//for (int i = 0; i < rows; i++) {
-//for (int j = 0; j < cols; j++) {
-//	if (i==0 && j==0) {
-//		bigMaze[i][j] = End;
-//		currentGame.setEnd(new Point (i,j));
-//	} else if (i==rows-1 && j==cols-1) {
-//		bigMaze[i][j] = Start;
-//		currentGame.setStart(new Point (i,j));
-//		currentGame.setPlayer(new Point (i,j));
-//	} else if (i==1 && (j>0 && j<cols-1) || i>0 && j==1)
-//		bigMaze[i][j] = Wall;	
-//	else bigMaze[i][j] = Empty;
-//}
-//}
 
 
 

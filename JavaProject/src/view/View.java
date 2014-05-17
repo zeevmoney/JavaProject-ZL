@@ -25,9 +25,9 @@ public interface View  {
 	public void displayScore(int score);
 
 	//will get true if game was lost.
-	public void setLose(boolean lose);
+	public void setLose();
 	
 	//will get true if game was won.
-	public void setWin(boolean win);
+	public void setWin();
 	
 }

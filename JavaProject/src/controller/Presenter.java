@@ -38,9 +38,11 @@ public class Presenter implements Observer {
 			ui.displayScore(model.getScore());
 			ui.displayBoard(model.getBoard());
 			if (arg1 != null && arg1.toString() == "Win")
-				ui.setWin(true);
-			if (arg1 != null && arg1.toString() == "Lose")
-				ui.setLose(true);				
+				ui.setWin();
+			if (arg1 != null && arg1.toString() == "Lose") {
+				ui.setLose();				
+			}
+				
 		}
 		if (arg0 == ui) {
 			cmd = ui.getUserCommand();
