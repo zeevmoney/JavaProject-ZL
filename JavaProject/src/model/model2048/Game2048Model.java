@@ -19,7 +19,6 @@ import model.algoirthms.GameStateXML;
  */
 
 
-
 //TODO: in case lost the game: when clicking no make sure lost is set to false and undo 1 move.
 
 public class Game2048Model extends Observable implements Model,Runnable {
@@ -79,8 +78,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				currentGame.setXY(x, y, tempNum);
 			}			
 		}
-
 	}
+	
 	
 	@Override
 	public void newGame() {
