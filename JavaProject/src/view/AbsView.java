@@ -1,25 +1,32 @@
 package view;
 
+
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Observable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import model.algoirthms.ObjectXML;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-
 
 import controller.UserCommand;
 
@@ -27,7 +34,7 @@ import controller.UserCommand;
  * Abstract Class AbsView:
  * This class defines the common parts for classes that run a 2D board game.
  */
-
+//TODO: add mouse check
 public abstract class AbsView extends Observable implements View,Runnable  {
 	UserCommand ui; //user command ENUM
 	//SWT Components:
@@ -37,7 +44,8 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	Group gameButtons;
 	Group gameBoard;
 	Label scoreLabel;
-	String gameName; //game name String.
+	Combo serverCombo;
+	String gameName; //game name String.	
 	boolean newGame=false; //used to init some vars in maze game.
 	boolean killThread=false; //used to kill the current running gui thread (for switching games)
 	
@@ -358,7 +366,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	protected void gameButtonsMenu() {
 		
 		//game buttons group
-		gameButtons = new Group(shell, SWT.SHADOW_IN); //check other shadow options
+		gameButtons = new Group(shell, SWT.SHADOW_IN);
 		gameButtons.setText ("Game Menu");
 		gameButtons.setLayout(new GridLayout(1, true));
 		gameButtons.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1,1));
@@ -372,7 +380,8 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		menuUndoMoveButton();
 		menuRestartButton();
 		menuLoadGameButton();
-		menuSaveGameButton();		
+		menuSaveGameButton();	
+		gameServerMenu();
 	}
 	
 	
@@ -459,10 +468,348 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		gameBoard.setLayout(new GridLayout(1, true));
 		gameBoard.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2));
 	}
+	
+	
+	/* ************************
+	 * Server Control
+	 * ************************/
+	
+	/*
+	 * 	private Listener connectToServer() {
+		return (new ConnectToServer(display){
+
+			@Override
+			public void setUserCommand(int userCommand) {
+				GamesMaze2048View.this.userCommand = userCommand;
+				setChanged();
+				notifyObservers(this.socketAddress);
+				if (connectedToServer) {
+					connected(true);
+					connect.setText("Disonnect");
+					if (ipBox.indexOf(ipBox.getText()) == -1) {
+						ipBox.add(ipBox.getText());
+					}
+				} else {
+					connected(false);
+					connect.setText("Connect");
+				}
+				
+			}
+
+			@Override
+			public void connected(Boolean flag) {
+				getSolver.setEnabled(flag);
+				
+			}});
+	}
+	 */
+	
+	private void gameServerMenu() {
+		//TODO: asd
+		
+		//Seperator
+		Label seperator = new Label(gameButtons, SWT.SEPARATOR | SWT.HORIZONTAL);
+		seperator.setLayoutData(new GridData(SWT.FILL,  SWT.TOP, false, false, 1, 1));
+		
+		Label serverLabel = new Label(gameButtons, SWT.NONE);
+		serverLabel.setText("Enter a server address:");
+		
+		//Server Add/Select combo box.
+		serverCombo = new Combo(gameButtons, SWT.FILL);
+		serverCombo.setText("localhost:1337");
+		serverCombo.setToolTipText("Syntax: <Server>:<Port>");
+		//Dynamic load of selections
+		String serverList[];
+		try {
+			serverList = (String[]) ObjectXML.ObjectFromXML("resources/Ips.xml");
+			serverCombo.setItems(serverList);
+		} catch (Exception e) {
+			System.out.println("File Doesn't Exist!");
+			serverCombo.add("localhost:1337");
+		}
+		
+//////		//Server Selection + validation.
+//////		serverCombo.addModifyListener(new ModifyListener() {
+//////
+//////			@Override
+//////			public void modifyText(ModifyEvent arg0) {
+//////				String[] server = serverCombo.getItems();
+//////				for (String string : server) {
+//////					System.out.println(string);
+//////					
+//////				}
+////////				if (!isValidIP(server)) {
+////////					//connectButton.setEnabled(true);
+////////					System.out.println("Invalid");
+////////				}
+////////				System.out.println(serverCombo.getItem(serverCombo.getSelectionIndex()));
+////////				
+////
+////
+////			}
+//		});
+
+		Button connect = new Button(gameButtons, SWT.PUSH);
+		connect.setText("Connect");
+		connect.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		connect.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				 		
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {	
+			}
+		});	
+		Label seperator2 = new Label(gameButtons, SWT.SEPARATOR | SWT.HORIZONTAL);
+		seperator2.setLayoutData(new GridData(SWT.FILL,  SWT.TOP, false, false, 1, 1));
+		
+		
+		//TODO: add/remove to xml
+		
+		//ArrayList<String> serverData = getServerData();
+		//String[] arr = new String[serverData.size()];
+		//serverData.toArray(arr);
+		//comboServers.setItems(arr);
+		
+		
+		
+
+//		Composite controlsLayout = new Composite(composite, SWT.NULL);
+//		controlsLayout.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false,
+//				false, 1, 1));
+//
+//		FillLayout fillLayout = new FillLayout();
+//		fillLayout.type = SWT.VERTICAL;
+//		controlsLayout.setLayout(fillLayout);
+//		// controlsLayout.setBackground(shellColor);
+//
+//		allGame = new Button(composite, SWT.RADIO);
+//		allGame.setText("Solve All Game");
+//		allGame.setFont(font);
+//		// allGame.setBackground(shellColor);
+//		allGame.setSelection(true);
+//		singleMove = new Button(composite, SWT.RADIO);
+//		singleMove.setText("Give Hints:");
+//		singleMove.setFont(font);
+//		// singleMove.setBackground(shellColor);
+//
+//		numOfMoves = new Text(composite, SWT.BORDER);
+//		numOfMoves.setText("1");
+//		numOfMoves.setEnabled(false);
+//
+//		Label labelServerDetails = new Label(composite, SWT.NONE);
+//		labelServerDetails.setText("2. Select Server Details");
+//
+//		comboServers = new Combo(composite, SWT.NONE);
+//		ArrayList<String> serverData = getServerData();
+//		String[] arr = new String[serverData.size()];
+//		serverData.toArray(arr);
+//		comboServers.setItems(arr);
+//
+//		Label labelNewServer = new Label(composite, SWT.NONE);
+//		labelNewServer.setText("3. Add New Server:");
+//		ip = new Text(composite, SWT.BORDER);
+//		port = new Text(composite, SWT.BORDER);
+//
+//		// Hint button
+//		addServer = GenerateButton(composite, SWT.PUSH, new GridData(SWT.FILL,
+//				SWT.TOP, false, false, 1, 1), "Add server", null);
+//		addServer.setEnabled(false);
+//
+//		connectButton = GenerateButton(composite, SWT.PUSH, new GridData(
+//				SWT.FILL, SWT.TOP, false, false, 1, 1), "Connect", null);
+//		connectButton.setEnabled(false);
+//		connectButton.setText("Connect");
+//		
+//		connectionStateLbl = new Label(composite, SWT.NONE);
+//		
+//		ExpandItem hintSettingsExpander = new ExpandItem(bar, SWT.NONE, 0);
+//		hintSettingsExpander.setText("Hint Settings         :");
+//		hintSettingsExpander.setHeight(composite.computeSize(SWT.DEFAULT,
+//				SWT.DEFAULT).y);
+//		hintSettingsExpander.setControl(composite);
+//		// hintSettingsExpander.setImage(image);
+//		hintSettingsExpander.setExpanded(true);
+//
+//		addServer.setEnabled(false);
+//		bar.setSpacing(8);
+//		
+//
+//		// On Choose solve all game or solve few moves
+//		allGame.addSelectionListener(new SelectionListener() {
+//
+//			@Override
+//			public void widgetSelected(SelectionEvent arg0) {
+//
+//				numOfMoves.setEnabled(false);
+//			}
+//
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent arg0) {
+//
+//			}
+//		});
+//		singleMove.addSelectionListener(new SelectionListener() {
+//
+//			@Override
+//			public void widgetSelected(SelectionEvent arg0) {
+//				numOfMoves.setEnabled(true);
+//			}
+//
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent arg0) {
+//
+//			}
+//		});
+//
+//		// On Change IP & Port:
+//		ip.addModifyListener(new ModifyListener() {
+//			@Override
+//			public void modifyText(ModifyEvent arg0) {
+//				addServer.setEnabled(validIpPort());
+//			}
+//		});
+//		port.addModifyListener(new ModifyListener() {
+//
+//			@Override
+//			public void modifyText(ModifyEvent arg0) {
+//				addServer.setEnabled(validIpPort());
+//
+//			}
+//		});
+//
+//		// on adding new port
+//		// note: no need to do validation here - in case not valid data - button
+//		// is disabled
+//		addServer.addSelectionListener(new SelectionListener() {
+//
+//			@Override
+//			public void widgetSelected(SelectionEvent arg0) {
+//				// add server data to combo
+//				comboServers.add(ip.getText() + " " + port.getText());
+//
+//				// clear text boxes
+//				ip.setText("");
+//				port.setText("");
+//
+//				// select in servers combo the newly added ip
+//				// new ip is always added to the end of the list
+//				comboServers.select(comboServers.getItemCount() - 1);
+//
+//				// TODO: save server settings
+//			}
+//
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent arg0) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//		});
+//
+//		// on server selection changed
+//		comboServers.addModifyListener(new ModifyListener() {
+//
+//			@Override
+//			public void modifyText(ModifyEvent arg0) {
+//				String selectedServer = comboServers.getItem(comboServers
+//						.getSelectionIndex());
+//				if (selectedServer != "") {
+//					// enable hints!!!
+//					connectButton.setEnabled(true);
+//				}
+//
+//			}
+//		});
+//
+//		// connect to server on click event
+//		connectButton.addSelectionListener(new SelectionListener() {
+//
+//			@Override
+//			public void widgetSelected(SelectionEvent arg0) {
+//				if (connectButton.getText() == "Connect"){
+//				String selectedServerData = comboServers.getText();
+//				userCommand = GameAction.CONNECT;
+//				// raise a flag of a change
+//				setChanged();
+//				// actively notify all observers
+//				// and invoke their update method
+//				Object[] args = { selectedServerData.split(" ")[0],
+//						Integer.parseInt(selectedServerData.split(" ")[1]) };
+//				notifyObservers(args);
+//				hintButton.setEnabled(true);
+//				connectionStateLbl.setText("connected....");
+//				connectButton.setText("Disconnect");
+//				}
+//				else{
+//					userCommand = GameAction.DISCONNECT;
+//					// raise a flag of a change
+//					setChanged();
+//					notifyObservers();
+//					hintButton.setEnabled(false);
+//					connectionStateLbl.setText("");
+//					connectButton.setText("Connect");
+//				}
+//
+//			}
+//
+//			@Override
+//			public void widgetDefaultSelected(SelectionEvent arg0) {
+//				// TODO Auto-generated method stub
+//
+//			}
+//		});
+
+	}
+
+//    private void hidePopUp() {
+//        if(popup != null){
+//            popup.hide();
+//        }
+//    }
+//
+//    private void showPopUp(Event e, Shell shell) {
+//       Composite composite = new Composite(shell, SWT.EMBEDDED);
+//       Frame frame = SWT_AWT.new_Frame(composite);
+//       JPanel p = new JPanel();
+//       frame.add(p);
+//       JLabel mouse = new JLabel("Syntax: Server:Port");
+//      
+//       
+//       popup = PopupFactory.getSharedInstance().getPopup(p, mouse , shell.getBounds().x + 20,shell.getBounds().y+20);
+//       popup.show();
+//    }
+	
+	
 
 	/* ************************
 	 * Other Methods:
-	 * ************************/	
+	 * ************************/
+	
+	//a regex to make that the string is a valid ip:port format.
+	private boolean isValidIP(String in) {
+		String[] temp = in.split(":");
+		try {
+			String ip = new String (InetAddress.getByName(temp[0]).toString());
+			in = new String (ip + temp[1]);
+		} catch (UnknownHostException e) {
+			System.out.println("Wrong Input, Syntax is: <Ip/Host>:<Port>");
+		}		
+		Matcher m = Pattern.compile("((\\d+\\.){3}\\d+):(\\d+)").matcher(in);
+		if (m.find()) {
+		    String[] p = m.group(1).split("\\.");
+		    for (int i = 0; i < 4; i++)
+		      if (Integer.parseInt(p[i]) > 255) return false;
+		    if (Integer.parseInt(m.group(3)) > 65535) return false;
+		    return true;
+		  }
+		  return false;
+	}
+	
+	
+	
 	
 	@Override
 	public void setLose() {

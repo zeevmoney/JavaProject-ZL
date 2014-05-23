@@ -9,6 +9,7 @@ import org.eclipse.swt.widgets.Listener;
 import controller.UserCommand;
 import view.AbsView;
 import view.Board;
+import view.Tile;
 
 
 public class MazeGameView extends AbsView implements Runnable {
@@ -29,7 +30,7 @@ public class MazeGameView extends AbsView implements Runnable {
 		vertical=0;
 		horizontal=0;
 		pressedCount=0;
-		board.setFocus();
+		//board.setFocus();
 	}
 	
 	//display the board
@@ -70,7 +71,7 @@ public class MazeGameView extends AbsView implements Runnable {
 	        @Override
 	        public void handleEvent(Event e)
 	        {
-	        	board.setFocus();
+	        	//board.setFocus();
 	        	change=true;
 	        	
             	if (horizontal < 0 && vertical < 0) {   	
@@ -117,6 +118,7 @@ public class MazeGameView extends AbsView implements Runnable {
 				}
             	
             	if (keyUp && change) { //keyUP = arrow key, change = setUi was set.
+            		board.setFocus();
             		pressedCount--;								
 					setChanged();
 					notifyObservers();					
@@ -173,36 +175,38 @@ public class MazeGameView extends AbsView implements Runnable {
 				getDisplay().addFilter(SWT.MouseUp, new Listener() {
 					@Override
 					public void handleEvent(Event e) {
-						int endX = e.x;
-						int endY = e.y;
-						if (endX == startX || endY == startY) { //handle horizontal and vertical
-							if (endX == startX) {
+						if (e.widget instanceof Tile) {
+							int endX = e.x;
+							int endY = e.y;
+							if (endX == startX || endY == startY) { //handle horizontal and vertical
+								if (endX == startX) {
+									if(endY > startY)
+										setUi(UserCommand.Down);
+									else if(endY<startY)
+										setUi(UserCommand.Up);
+								} else if (endY == startY) {
+									if(endX>startX)
+										setUi(UserCommand.Right);
+									else if(endX<startX)
+										setUi(UserCommand.Left);
+								}							 
+							} else if(endX < startX){ //handle diagonal direction
 								if(endY > startY)
-									setUi(UserCommand.Down);
-								else if(endY<startY)
-									setUi(UserCommand.Up);
-							} else if (endY == startY) {
-								if(endX>startX)
-									setUi(UserCommand.Right);
-								else if(endX<startX)
-									setUi(UserCommand.Left);
-							}							 
-						} else if(endX < startX){ //handle diagonal direction
-							if(endY > startY)
-								setUi(UserCommand.DownLeft);
-							else
-								setUi(UserCommand.UpLeft);
-						} else if(endX > startX) {
-							if (endY > startY)
-							 	setUi(UserCommand.DownRight);
-						 	else
-						 		setUi(UserCommand.UpRight);
-						}
-					
-						if((endX!=startX||endY!=startY)&&flag==true){
-							flag=false;
-							setChanged();
-							notifyObservers();	
+									setUi(UserCommand.DownLeft);
+								else
+									setUi(UserCommand.UpLeft);
+							} else if(endX > startX) {
+								if (endY > startY)
+								 	setUi(UserCommand.DownRight);
+							 	else
+							 		setUi(UserCommand.UpRight);
+							}
+						
+							if((endX!=startX||endY!=startY)&&flag==true){
+								flag=false;
+								setChanged();
+								notifyObservers();	
+							}
 						}
 					}			 
 				});

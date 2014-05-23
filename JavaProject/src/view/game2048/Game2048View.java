@@ -10,6 +10,7 @@ import org.eclipse.swt.widgets.Listener;
 import controller.UserCommand;
 import view.AbsView;
 import view.Board;
+import view.Tile;
 
 
 public class Game2048View extends AbsView {
@@ -49,25 +50,27 @@ public class Game2048View extends AbsView {
 		getDisplay().addFilter(SWT.KeyUp, new Listener() {		
 			@Override
 			public void handleEvent(Event e) { 
-				board.setFocus();
 				switch (e.keyCode){
 				case SWT.ARROW_DOWN:
 					setUi(UserCommand.Down); 
 				    break;
 				case SWT.ARROW_LEFT:
 					setUi(UserCommand.Left);
-					
 					break;
 				case SWT.ARROW_RIGHT:
 					setUi(UserCommand.Right);
-					
 					break;
 				case SWT.ARROW_UP:
 					setUi(UserCommand.Up);
-					break;				     
+					break;
+				default:
+					return;
 				}	
-				setChanged();
-				notifyObservers();	
+				if ((e.keyCode == SWT.ARROW_UP) || (e.keyCode == SWT.ARROW_DOWN) || (e.keyCode == SWT.ARROW_LEFT) || (e.keyCode == SWT.ARROW_RIGHT)) {
+					board.setFocus();
+					setChanged();
+					notifyObservers();
+				}
 			}
 		});
 		//mouse listener	
@@ -83,27 +86,30 @@ public class Game2048View extends AbsView {
 				getDisplay().addFilter(SWT.MouseUp, new Listener() {
 					@Override
 					public void handleEvent(Event e) {
-						int endX = e.x;
-						int endY = e.y;
-		            	int diffX=Math.abs(endX-startX);
-		            	int diffY=Math.abs(endY-startY);
-		            	if (diffY>diffX) {
-		            		if(endY>startY)
-		            			setUi(UserCommand.Down);
-		            		else if(endY<startY)
-								setUi(UserCommand.Up);
-		            	} else if (diffX>diffY) {
-		            			if(endX>startX)
-									setUi(UserCommand.Right);
-								else if(endX<startX)
-									setUi(UserCommand.Left);
-						}			 
-		            	if((endX!=startX || endY!=startY) && flag){
-							flag=false;
-							setChanged();
-							notifyObservers();	
-						}			 
+						if (e.widget instanceof Tile) { //to make sure mouse only works inside the board
+							int endX = e.x;
+							int endY = e.y;
+			            	int diffX=Math.abs(endX-startX);
+			            	int diffY=Math.abs(endY-startY);
+			            	if (diffY>diffX) {
+			            		if(endY>startY)
+			            			setUi(UserCommand.Down);
+			            		else if(endY<startY)
+									setUi(UserCommand.Up);
+			            	} else if (diffX>diffY) {
+			            			if(endX>startX)
+										setUi(UserCommand.Right);
+									else if(endX<startX)
+										setUi(UserCommand.Left);
+							}			 
+			            	if((endX!=startX || endY!=startY) && flag){
+								flag=false;
+								setChanged();
+								notifyObservers();	
+							}			 
+						}
 					}
+						
 				});
 				flag=true;	
 			}		
