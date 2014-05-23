@@ -2,6 +2,8 @@ package model.mazegame;
 
 import java.util.*;
 
+import model.ModelElements;
+
 /*
  * PrimMazeGenerator class: generates a maze using Prim algorithm
  * Copied from here: http://www.jonathanzong.com/blog/2012/11/06/maze-generation-with-prims-algorithm
@@ -91,15 +93,15 @@ public class PrimMazeGenerator {
 			for(int j=0;j<c;j++)
 				{
 					if (maz[i][j] == '*')
-						maze[i][j] = MazeGameModel.Wall;
+						maze[i][j] = ModelElements.MazeWall.getElement();
 					else if (maz[i][j] == '.')
-						maze[i][j] = MazeGameModel.Empty;
+						maze[i][j] = ModelElements.MazeEmpty.getElement();
 					else if (maz[i][j] == 'S')
 					{
-						maze[i][j] = MazeGameModel.Start;					
+						maze[i][j] = ModelElements.MazeStart.getElement();					
 					}
 					else if (maz[i][j] == 'E')
-						maze[i][j] = MazeGameModel.End;					
+						maze[i][j] = ModelElements.MazeEnd.getElement();					
 				}			
 		}
 		return maze;

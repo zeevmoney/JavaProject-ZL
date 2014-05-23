@@ -226,17 +226,29 @@ public class MazeGameView extends AbsView implements Runnable {
 	//the GUI and main loop thread should be in the same THREAD.
 	@Override
 	public void run() {
-		initComponents(); //init the game board using the main GUI thread (the function is in the AbsView Class)
+		initComponents(); //init the game board using the main GUI thread (the function is in the AbsView Class)		
 		//while shell is alive
 		while (!getShell().isDisposed()) {
+			if (isKillThread()) {  //used to switch games
+				board = null;
+				setKillThread(false);
+				return;
+			}
 			//while there are no events (this is the event handler)
 			if(!getDisplay().readAndDispatch()) {
 				//the OS will auto wake the display on EVENT (mouse, keyboard, etc).
+				if (board == null) {
+					setUi(UserCommand.NewGame);
+					setChanged();
+					notifyObservers();
+				}
 				getDisplay().sleep();
 			}
 		}
 		//if shell dies -> display dies.
 		getDisplay().dispose();			
 	}
+
+
 
 }

@@ -10,13 +10,16 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+
 
 import controller.UserCommand;
 
@@ -36,6 +39,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	Label scoreLabel;
 	String gameName; //game name String.
 	boolean newGame=false; //used to init some vars in maze game.
+	boolean killThread=false; //used to kill the current running gui thread (for switching games)
 	
 	/*
 	 * AbsView constructor:
@@ -48,16 +52,16 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 	
 	public void initComponents () { //init everything
+		killThread = false;
 		display=new Display();
 		shell=new Shell(display);	
 		shell.setText(gameName);//set the game name
 		shell.setLayout(new GridLayout(2, false));
-		shell.setSize(600,600);
-		shell.setMinimumSize(600, 600);
+		shell.setSize(799,799);
 		setMenuToolsBar(); //draw the menu tool bar.
 		gameButtonsMenu(); //draw the game buttons
-		gameBoardGroup();  //draw the board where the game will be placed.		
-		shell.open();	
+		gameBoardGroup();  //draw the board where the game will be placed.
+		shell.open();		
 	}
 	
 	
@@ -141,25 +145,77 @@ public abstract class AbsView extends Observable implements View,Runnable  {
         aFileMenu.setText("File"); 
         Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
         aFileMenu.setMenu(fileMenu);
+//        new2048Game(fileMenu);
+//        newMazeGame(fileMenu);
+        newGame(fileMenu);
         loadGame(fileMenu); //Load game option
         saveGame(fileMenu); //Sage game option
         saveAndExitGameOption(fileMenu); //Save & Exit game option.
 		exitGameOption(fileMenu); //Exit game option.
 	}
 
+
 	//Edit drop down menu.
 	private void setEdit() {
 		MenuItem aEditMenu = new MenuItem(menuBar, SWT.CASCADE);
 		aEditMenu.setText("Edit");
-	    Menu fileMenu = new Menu(shell, SWT.DROP_DOWN);
-	    aEditMenu.setMenu(fileMenu);
-	    restartGameDropMenu(fileMenu); //Restart game option
-	    undoMove(fileMenu); //Edit game option	       
+	    Menu editMenu = new Menu(shell, SWT.DROP_DOWN);
+	    aEditMenu.setMenu(editMenu);
+	    restartGameDropMenu(editMenu); //Restart game option
+	    undoMoveDropDown(editMenu); //Edit game option	       
 	}
 
 	/* ************************
 	 * File drop down menu:
 	 * ************************/		
+	
+	private void newGame(Menu fileMenu) {
+		MenuItem newGame = new MenuItem(fileMenu, SWT.CASCADE);
+		newGame.setText("New Game");
+		Menu newGameSubMenu = new Menu(shell, SWT.DROP_DOWN);
+		newGame.setMenu(newGameSubMenu);
+        new2048Game(newGameSubMenu);
+        newMazeGame(newGameSubMenu);
+	}	
+	
+	private void new2048Game(Menu menu) {
+		MenuItem new2048Game = new MenuItem(menu, SWT.NONE);
+		new2048Game.setText("2048");
+		
+		new2048Game.addSelectionListener(new SelectionAdapter() {
+		    
+			@Override
+	        public void widgetSelected(SelectionEvent e) {
+				if (gameName.contains("2048")) {
+					restartGame();
+				} else {
+					ui = UserCommand.SwitchGame;
+					setChanged();
+					notifyObservers();			
+				}
+		    }		
+		});
+	}
+	
+	
+	private void newMazeGame(Menu menu) {
+		MenuItem new2048Game = new MenuItem(menu, SWT.NONE);
+		new2048Game.setText("Maze");
+		
+		new2048Game.addSelectionListener(new SelectionAdapter() {
+		    
+			@Override
+	        public void widgetSelected(SelectionEvent e) {
+				if (gameName.contains("Maze")) {
+					restartGame();
+				} else {
+					ui = UserCommand.SwitchGame;
+					setChanged();
+					notifyObservers();
+				}		
+		    }		
+		});		
+	}	
 	
 	//Save game (under the File drop down menu)
 	private void saveGame(Menu fileMenu) {
@@ -268,14 +324,13 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	private void restartGame() { //restart game main function
 		newGame=true;
     	ui = UserCommand.RestartGame;
-		setChanged();
+    	setChanged();
 		notifyObservers();
 	}
 	
-	
 
 	//Undo Move (under the Edit drop down menu)
-	private void undoMove(Menu fileMenu) {
+	private void undoMoveDropDown(Menu fileMenu) {
 	
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
 	    newItem.setText("Undo Move");
@@ -444,13 +499,21 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	public void displayScore(int score) {
 		 scoreLabel.setText("Score: "+score);
 	}
+
+	@Override
+	public void killThread() {
+		killThread = true;
+	}
 	
-//	@Override
-//	public abstract void displayScore(int score);
-
-
-
-
+	public boolean isKillThread() {
+		return killThread;
+	}
+	
+	
+	public void setKillThread(boolean flag) {
+		killThread = flag;
+	}
+	
 }
 
 
@@ -586,4 +649,18 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 //}
 //
 
+
+/*
+ * 
+ * 		shell.addListener(SWT.Close, new Listener() {
+			public void handleEvent(Event event)
+			{
+		        int style = SWT.APPLICATION_MODAL | SWT.YES | SWT.NO;
+		        MessageBox messageBox = new MessageBox(shell, style);
+		        messageBox.setText("Information");
+		        messageBox.setMessage("Close the shell?");
+		        event.doit = messageBox.open() == SWT.YES;
+		        }
+		    });
+ */
 

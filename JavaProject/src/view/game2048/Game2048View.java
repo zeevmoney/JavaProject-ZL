@@ -24,7 +24,7 @@ public class Game2048View extends AbsView {
 	@Override
 	public void displayBoard(int[][] nData) {
 		data = nData;
-		getDisplay().syncExec(new Runnable() {
+		getDisplay().asyncExec(new Runnable() {
 			
 			@Override
 			public void run() {
@@ -34,8 +34,8 @@ public class Game2048View extends AbsView {
 					Color boardColor = new Color(getDisplay(), 187, 173, 160); //set board color
 					board.setBackground(boardColor);
 					board.setForeground(boardColor);
-					getShell().setMinimumSize(601, 601);
-					InitInput();		
+					getShell().setMinimumSize(800, 800);
+					InitInput();
 				} else {
 					board.updateBoard(data);
 				}				
@@ -43,7 +43,8 @@ public class Game2048View extends AbsView {
 		});
 
 	}
-		
+	
+
 	public void InitInput () {		
 		getDisplay().addFilter(SWT.KeyUp, new Listener() {		
 			@Override
@@ -121,14 +122,26 @@ public class Game2048View extends AbsView {
 		initComponents(); //init the game board using the main GUI thread (the function is in the AbsView Class)
 		//while shell is alive
 		while (!getShell().isDisposed()) {
+			if (isKillThread()) { //used to switch games
+				board = null;
+				setKillThread(false);
+				return;
+			}
 			//while there are no events (this is the event handler)
 			if(!getDisplay().readAndDispatch()) {
 				//the OS will auto wake the display on EVENT (mouse, keyboard, etc).
+				if (board == null) {
+					setUi(UserCommand.NewGame);
+					setChanged();
+					notifyObservers();
+				}
 				getDisplay().sleep();
 			}
 		}
 		//if shell dies -> display dies.
-		getDisplay().dispose();			
+		getDisplay().dispose();
 	}
+	
+
 	
 }

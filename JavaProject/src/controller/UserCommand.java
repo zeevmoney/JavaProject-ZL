@@ -10,6 +10,7 @@ public enum UserCommand {
 	 * the movement codes are like the NumPad on the keyboard
 	 * new game = 5, all other are 10...n
 	 */
+	
 	Default(0),
 	Up (8),
 	Down(2),
@@ -25,10 +26,13 @@ public enum UserCommand {
 	UndoMove(12),
 	GetWin(13),
 	GetLose(14),
-	RestartGame(15);	
+	RestartGame(15), 
+	SwitchGame(16);	
 
-	//default constructor
+	
 	private int command;
+	
+	//default constructor
 	private UserCommand(int command) {
 		this.command = command;
 	}

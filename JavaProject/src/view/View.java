@@ -30,4 +30,7 @@ public interface View  {
 	//will get true if game was won.
 	public void setWin();
 	
+	//Set Visible for the shell (used for switching games)
+	public void killThread();
+
 }

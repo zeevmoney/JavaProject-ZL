@@ -1,11 +1,9 @@
 package model.model2048;
 
-import java.util.Observable;
-import java.util.Stack;
-
-import model.Model;
+import model.AbsModel;
+import model.ModelElements;
 import model.algoirthms.GameState;
-import model.algoirthms.GameStateXML;
+
 
 
 /*
@@ -21,30 +19,28 @@ import model.algoirthms.GameStateXML;
 
 //TODO: in case lost the game: when clicking no make sure lost is set to false and undo 1 move.
 
-public class Game2048Model extends Observable implements Model,Runnable {
+public class Game2048Model extends AbsModel {
 	GameState currentGame; //current game state
-	Stack<GameState> gameStack; //stack of previous games
-	final int emptyCell = 0;
-	final int winScore = 2048;
-	int boardSize;	
+	final int winScore;
+	final int boardSize;
+	int emptyCell = ModelElements.Game2048Empty.getElement();
 	boolean win;
 	boolean lose;
 	boolean won; //to make sure the game was only won once.
+	static final String gameName = new String("2048");
 	
 		
 	//Constructor
-	public Game2048Model(int boardSize) {
-		gameStack = new Stack<>();
+	public Game2048Model(int boardSize,int winScore) {
+		this.winScore = winScore;
 		this.boardSize=boardSize;
 		newGame();
 	}
 	
 	
-	@Override
-	public void run() {}
-	
 	//init all values on the game board & set score to 0.
-	private void boardInit() {
+	public void boardInit() {
+		currentGame = new GameState(this.boardSize,this.boardSize);
 		win=false;
 		lose=false;
 		won=false;
@@ -78,88 +74,8 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				currentGame.setXY(x, y, tempNum);
 			}			
 		}
-	}
+	}	
 	
-	
-	@Override
-	public void newGame() {
-		currentGame = new GameState(boardSize,boardSize);
-		boardInit();
-		gameStack.clear();
-		gameStack.add(currentGame.Copy());	
-		setChanged();
-		notifyObservers();	
-	}
-	
-	
-	@Override
-	public void saveGame(String fileName) {
-		try {
-			GameStateXML gXML = new GameStateXML();
-			currentGame.setGameStack(gameStack); //clone the current game stack
-			gXML.gameStateToXML(currentGame,fileName); //save to xml
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void loadGame(String fileName) {
-		try {
-			newGame(); //used to eliminate some bugs.
-			GameStateXML gXML = new GameStateXML();
-			currentGame = gXML.gameStateFromXML(fileName);
-			gameStack = currentGame.getGameStack();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		setChanged();
-		notifyObservers();
-	}
-	
-	@Override
-	public void undoMove() {
-		if (gameStack.isEmpty()) //in case stack is empty: do nothing.
-			return;
-		GameState tempState = gameStack.pop();
-		if (currentGame.equals(tempState)) { 
-			if (!gameStack.isEmpty()) {
-				currentGame = gameStack.pop();
-			} else { 
-				gameStack.push(currentGame.Copy());
-				return;
-			}
-		} else 
-			currentGame = tempState;
-		
-		if (gameStack.isEmpty())
-			gameStack.push(currentGame.Copy());
-
-		setChanged();
-		notifyObservers();	
-	}
-	
-	
-	@Override
-	public int[][] getBoard() {
-		return currentGame.getBoard();		
-	}
-
-	@Override
-	public int getScore() {
-		return currentGame.getScore();
-	}
-	
-	@Override
-	public boolean getWin() {
-		return win;
-	}
-
-	@Override
-	public boolean getLose() {
-		return lose;
-	}
-
 	//returns True if any movement is available.	
 	private boolean canMove () {
 		//check if bottom cell equals 
@@ -196,7 +112,7 @@ public class Game2048Model extends Observable implements Model,Runnable {
 				notifyObservers("Win");				
 			} else {
 				addNumber();
-				gameStack.add(currentGame.Copy());	
+				GameStackPush(currentGame.Copy());
 				setChanged();
 				notifyObservers();
 			}
@@ -436,6 +352,16 @@ public class Game2048Model extends Observable implements Model,Runnable {
 		}
 		return (movement); //returns true if there was a movement
 	}
+	
+	
+	@Override
+	public void setCurrentGame(GameState game) {
+		this.currentGame = game;
+	}
+	
+	public GameState getCurrentGame() {
+		return currentGame;
+	}	
 
 
 	@Override
@@ -451,7 +377,12 @@ public class Game2048Model extends Observable implements Model,Runnable {
 
 
 	@Override
-	public void DownLeft() {}	
+	public void DownLeft() {}
+
+
+
+
+
 
 
 }

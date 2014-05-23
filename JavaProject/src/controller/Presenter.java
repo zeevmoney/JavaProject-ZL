@@ -1,7 +1,7 @@
 package controller;
-
 import java.util.Observable;
 import java.util.Observer;
+import java.util.Timer;
 
 import model.Model;
 import view.View;
@@ -17,12 +17,18 @@ import view.View;
 public class Presenter implements Observer {
 	//Both View & Model are injected using strategy pattern.
 	private View ui;
+	private View ui2;
 	private Model model;
+	private Model model2;
 	UserCommand cmd;
+	Thread t;
+
 	
-	public Presenter(Model m, View ui2){
-		this.model = m;
-		this.ui = ui2;
+	public Presenter(Model model,Model model2, View ui, View ui2){
+		this.model = model;
+		this.model2 = model2;
+		this.ui = ui;
+		this.ui2 = ui2;		
 		cmd = UserCommand.Default;
 	}
 
@@ -31,6 +37,7 @@ public class Presenter implements Observer {
 	 * This is invoked upon any change to objects "view" and "model"
 	 * we can actively get the state of this objects.
 	 */
+
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 == model) {
@@ -41,11 +48,12 @@ public class Presenter implements Observer {
 				ui.setWin();
 			if (arg1 != null && arg1.toString() == "Lose") {
 				ui.setLose();				
-			}
-				
+			}				
 		}
+		
 		if (arg0 == ui) {
 			cmd = ui.getUserCommand();
+			
 			switch (cmd) {
 				case Up: 
 					model.moveUp();
@@ -71,12 +79,6 @@ public class Presenter implements Observer {
 				case DownRight:
 					model.DownRight();
 					break;
-				case GetLose:
-					model.getLose();
-					break;
-				case GetWin:
-					model.getWin();
-					break;
 				case LoadGame:
 					if (arg1 != null && arg1.toString()!= "")
 						model.loadGame(arg1.toString());
@@ -94,14 +96,27 @@ public class Presenter implements Observer {
 					break;
 				case RestartGame:
 					model.newGame();
+					break;
+				case SwitchGame:
+					//Switching Models
+					Model tempModel = model;
+					model = model2;
+					model2 = tempModel;
+					//Switching Uis
+					View tempView = ui;
+					ui = ui2;
+					ui2 = tempView;
+					//Killing old game
+					ui2.killThread();
+					t = new Thread((Runnable) ui);
+					t.start();
+					break;					
 				default:
 					break;				
 				}
 		}
 	}
- 
 }
-
 
 
 

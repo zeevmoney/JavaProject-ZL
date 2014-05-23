@@ -32,10 +32,5 @@ public interface Model {
 	
 	//returns the current user score.
 	public int getScore();
-	
-	//returns true if won the game.
-	public boolean getWin();
-	
-	//returns true if lost the game.
-	public boolean getLose(); 
+
 }
