@@ -133,6 +133,10 @@ public class MazeGameModel extends AbsModel {
 		this.currentGame = game;
 	}
 
+
+
+
+
 	
 		
 }

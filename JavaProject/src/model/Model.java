@@ -15,7 +15,8 @@ public interface Model {
 	public void saveGame(String fileName); //Save Game (XML)
 	public void loadGame(String fileName); //Load Game (XML)
 	public void undoMove();
-
+	public void connectToServer(String ip,int port);
+	public void disconnectFromServer();
 	
 	//Movement functions: will change the state on game board.
 	public void moveUp();

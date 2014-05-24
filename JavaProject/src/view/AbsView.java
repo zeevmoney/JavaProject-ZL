@@ -1,8 +1,11 @@
 package view;
 
 
+import java.io.IOException;
 import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
 import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -10,23 +13,27 @@ import java.util.regex.Pattern;
 import model.algoirthms.ObjectXML;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 import controller.UserCommand;
 
@@ -34,7 +41,9 @@ import controller.UserCommand;
  * Abstract Class AbsView:
  * This class defines the common parts for classes that run a 2D board game.
  */
-//TODO: add mouse check
+
+//TODO: fix arrows on combo boxes.
+
 public abstract class AbsView extends Observable implements View,Runnable  {
 	UserCommand ui; //user command ENUM
 	//SWT Components:
@@ -44,8 +53,14 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	Group gameButtons;
 	Group gameBoard;
 	Label scoreLabel;
-	Combo serverCombo;
-	String gameName; //game name String.	
+	Combo serverCombo; //server combo box
+	ArrayList<String> serverList; //server list after import
+	String gameName; //game name String.
+	InetSocketAddress socketAddress; //to hold the server address
+	Button connectButton; //connect to server
+	Button getHintButton; //get hint from server
+	Text movesNumber;
+	Text treeSize;
 	boolean newGame=false; //used to init some vars in maze game.
 	boolean killThread=false; //used to kill the current running gui thread (for switching games)
 	
@@ -57,6 +72,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 */
 	public AbsView(String string) {
 		gameName = string;
+		serverList = new ArrayList<String>();
 	}
 	
 	public void initComponents () { //init everything
@@ -373,7 +389,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		
 		//score label
 		this.scoreLabel = new Label (gameButtons,SWT.NONE);
-		scoreLabel.setLayoutData(new GridData(SWT.FILL,  SWT.TOP, false, false, 1, 1));
+		scoreLabel.setLayoutData(new GridData(SWT.FILL,  SWT.LEFT, false, false, 1, 1));
 		scoreLabel.setText ("Score: "); //Score label.	     
 	    
 	    //init menu buttons:
@@ -381,17 +397,16 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		menuRestartButton();
 		menuLoadGameButton();
 		menuSaveGameButton();	
-		gameServerMenu();
+		menuGameServer();
+		menuHint();
 	}
 	
 	
-
-
 	//Undo button (under buttons menu)
 	private void menuUndoMoveButton() {
 		Button undoMove = new Button(gameButtons, SWT.PUSH);
 		undoMove.setText("Undo Move");
-		undoMove.setLayoutData(new GridData(SWT.FILL,  SWT.TOP, false, false, 1, 1));
+		undoMove.setLayoutData(new GridData(SWT.FILL,  SWT.LEFT, false, false, 1, 1));
 		undoMove.addSelectionListener(new SelectionListener() {
 		
 			@Override
@@ -409,7 +424,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	private void menuRestartButton() {
 		Button restartGame = new Button(gameButtons, SWT.PUSH);
 		restartGame.setText("Restart Game");
-		restartGame.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		restartGame.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, false, false, 1, 1));
 		restartGame.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -504,8 +519,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 	 */
 	
-	private void gameServerMenu() {
-		//TODO: asd
+	
+	@SuppressWarnings("unchecked")
+	private void menuGameServer() {
 		
 		//Seperator
 		Label seperator = new Label(gameButtons, SWT.SEPARATOR | SWT.HORIZONTAL);
@@ -516,272 +532,183 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		
 		//Server Add/Select combo box.
 		serverCombo = new Combo(gameButtons, SWT.FILL);
-		serverCombo.setText("localhost:1337");
 		serverCombo.setToolTipText("Syntax: <Server>:<Port>");
-		//Dynamic load of selections
-		String serverList[];
+		//Dynamic load of selections		
 		try {
-			serverList = (String[]) ObjectXML.ObjectFromXML("resources/Ips.xml");
-			serverCombo.setItems(serverList);
+			serverList = (ArrayList<String>) ObjectXML.ObjectFromXML("resources/Ips.xml");
+			String[] tempList = new String[serverList.size()];
+			tempList = serverList.toArray(tempList);
+			serverCombo.setItems(tempList);
+			serverCombo.setText("127.0.0.1:1337");
 		} catch (Exception e) {
 			System.out.println("File Doesn't Exist!");
-			serverCombo.add("localhost:1337");
+			e.printStackTrace();
 		}
 		
-//////		//Server Selection + validation.
-//////		serverCombo.addModifyListener(new ModifyListener() {
-//////
-//////			@Override
-//////			public void modifyText(ModifyEvent arg0) {
-//////				String[] server = serverCombo.getItems();
-//////				for (String string : server) {
-//////					System.out.println(string);
-//////					
-//////				}
-////////				if (!isValidIP(server)) {
-////////					//connectButton.setEnabled(true);
-////////					System.out.println("Invalid");
-////////				}
-////////				System.out.println(serverCombo.getItem(serverCombo.getSelectionIndex()));
-////////				
-////
-////
-////			}
-//		});
+		serverCombo.addTraverseListener(new TraverseListener() { //enter key is pressed
+			
+			@Override
+			public void keyTraversed(TraverseEvent e) {
+				if (e.keyCode == 13 || e.keyCode == 16777296) { //enter was pressed TODO: SWT CODE
+					String newServer = serverCombo.getText();
+					if ((newServer = isValidIP(newServer)) != null) { //if a valid server:port were entered
+						if (serverList.contains(newServer))
+							System.out.println("Server already exists: " + newServer);
+						else {
+							serverList.add(newServer);
+							serverCombo.add(newServer);
+							try {
+								ObjectXML.objectToXML(serverList, "resources/Ips.xml");
+							} catch (IOException e2) {
+								e2.printStackTrace();
+							}
+						}
+					}
+				}
+			}
+		
+		
+		});
 
-		Button connect = new Button(gameButtons, SWT.PUSH);
-		connect.setText("Connect");
-		connect.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
-		connect.addSelectionListener(new SelectionListener() {
+		connectButton = new Button(gameButtons, SWT.PUSH);
+		connectButton.setText("Connect");
+		connectButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
+		connectButton.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				 		
+				if (connectButton.getText() == "Connect"){
+					String temp = serverCombo.getText();
+					if ((temp = isValidIP(temp))!= null) { //after this command temp holds an ip:port (after DNS check)
+						ui = UserCommand.Connect;
+						System.out.println("DEBUG: Connecting... "+serverCombo.getText());
+						connectButton.setText("Connecting...");
+						connectButton.setEnabled(false);
+						setChanged();
+						notifyObservers(temp);
+					}
+				} else {
+					ui = UserCommand.Disconnect;
+					setChanged();
+					notifyObservers();
+				}
 			}
 			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {	
 			}
 		});	
+		
 		Label seperator2 = new Label(gameButtons, SWT.SEPARATOR | SWT.HORIZONTAL);
 		seperator2.setLayoutData(new GridData(SWT.FILL,  SWT.TOP, false, false, 1, 1));
+	
+	}
+	
+	//TODO: finish this function
+	@Override
+	public void connected(Boolean flag) {
+		if (flag) {
+			System.out.println("crap");
+			getHintButton.setEnabled(true);
+			connectButton.setText("Disconnect");
+			connectButton.setEnabled(true);			
+		}
+		else {
+			getHintButton.setEnabled(false);
+			connectButton.setText("Connect");
+		}
 		
-		
-		//TODO: add/remove to xml
-		
-		//ArrayList<String> serverData = getServerData();
-		//String[] arr = new String[serverData.size()];
-		//serverData.toArray(arr);
-		//comboServers.setItems(arr);
-		
-		
-		
-
-//		Composite controlsLayout = new Composite(composite, SWT.NULL);
-//		controlsLayout.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false,
-//				false, 1, 1));
-//
-//		FillLayout fillLayout = new FillLayout();
-//		fillLayout.type = SWT.VERTICAL;
-//		controlsLayout.setLayout(fillLayout);
-//		// controlsLayout.setBackground(shellColor);
-//
-//		allGame = new Button(composite, SWT.RADIO);
-//		allGame.setText("Solve All Game");
-//		allGame.setFont(font);
-//		// allGame.setBackground(shellColor);
-//		allGame.setSelection(true);
-//		singleMove = new Button(composite, SWT.RADIO);
-//		singleMove.setText("Give Hints:");
-//		singleMove.setFont(font);
-//		// singleMove.setBackground(shellColor);
-//
-//		numOfMoves = new Text(composite, SWT.BORDER);
-//		numOfMoves.setText("1");
-//		numOfMoves.setEnabled(false);
-//
-//		Label labelServerDetails = new Label(composite, SWT.NONE);
-//		labelServerDetails.setText("2. Select Server Details");
-//
-//		comboServers = new Combo(composite, SWT.NONE);
-//		ArrayList<String> serverData = getServerData();
-//		String[] arr = new String[serverData.size()];
-//		serverData.toArray(arr);
-//		comboServers.setItems(arr);
-//
-//		Label labelNewServer = new Label(composite, SWT.NONE);
-//		labelNewServer.setText("3. Add New Server:");
-//		ip = new Text(composite, SWT.BORDER);
-//		port = new Text(composite, SWT.BORDER);
-//
-//		// Hint button
-//		addServer = GenerateButton(composite, SWT.PUSH, new GridData(SWT.FILL,
-//				SWT.TOP, false, false, 1, 1), "Add server", null);
-//		addServer.setEnabled(false);
-//
-//		connectButton = GenerateButton(composite, SWT.PUSH, new GridData(
-//				SWT.FILL, SWT.TOP, false, false, 1, 1), "Connect", null);
-//		connectButton.setEnabled(false);
-//		connectButton.setText("Connect");
-//		
-//		connectionStateLbl = new Label(composite, SWT.NONE);
-//		
-//		ExpandItem hintSettingsExpander = new ExpandItem(bar, SWT.NONE, 0);
-//		hintSettingsExpander.setText("Hint Settings         :");
-//		hintSettingsExpander.setHeight(composite.computeSize(SWT.DEFAULT,
-//				SWT.DEFAULT).y);
-//		hintSettingsExpander.setControl(composite);
-//		// hintSettingsExpander.setImage(image);
-//		hintSettingsExpander.setExpanded(true);
-//
-//		addServer.setEnabled(false);
-//		bar.setSpacing(8);
-//		
-//
-//		// On Choose solve all game or solve few moves
-//		allGame.addSelectionListener(new SelectionListener() {
-//
-//			@Override
-//			public void widgetSelected(SelectionEvent arg0) {
-//
-//				numOfMoves.setEnabled(false);
-//			}
-//
-//			@Override
-//			public void widgetDefaultSelected(SelectionEvent arg0) {
-//
-//			}
-//		});
-//		singleMove.addSelectionListener(new SelectionListener() {
-//
-//			@Override
-//			public void widgetSelected(SelectionEvent arg0) {
-//				numOfMoves.setEnabled(true);
-//			}
-//
-//			@Override
-//			public void widgetDefaultSelected(SelectionEvent arg0) {
-//
-//			}
-//		});
-//
-//		// On Change IP & Port:
-//		ip.addModifyListener(new ModifyListener() {
-//			@Override
-//			public void modifyText(ModifyEvent arg0) {
-//				addServer.setEnabled(validIpPort());
-//			}
-//		});
-//		port.addModifyListener(new ModifyListener() {
-//
-//			@Override
-//			public void modifyText(ModifyEvent arg0) {
-//				addServer.setEnabled(validIpPort());
-//
-//			}
-//		});
-//
-//		// on adding new port
-//		// note: no need to do validation here - in case not valid data - button
-//		// is disabled
-//		addServer.addSelectionListener(new SelectionListener() {
-//
-//			@Override
-//			public void widgetSelected(SelectionEvent arg0) {
-//				// add server data to combo
-//				comboServers.add(ip.getText() + " " + port.getText());
-//
-//				// clear text boxes
-//				ip.setText("");
-//				port.setText("");
-//
-//				// select in servers combo the newly added ip
-//				// new ip is always added to the end of the list
-//				comboServers.select(comboServers.getItemCount() - 1);
-//
-//				// TODO: save server settings
-//			}
-//
-//			@Override
-//			public void widgetDefaultSelected(SelectionEvent arg0) {
-//				// TODO Auto-generated method stub
-//
-//			}
-//		});
-//
-//		// on server selection changed
-//		comboServers.addModifyListener(new ModifyListener() {
-//
-//			@Override
-//			public void modifyText(ModifyEvent arg0) {
-//				String selectedServer = comboServers.getItem(comboServers
-//						.getSelectionIndex());
-//				if (selectedServer != "") {
-//					// enable hints!!!
-//					connectButton.setEnabled(true);
-//				}
-//
-//			}
-//		});
-//
-//		// connect to server on click event
-//		connectButton.addSelectionListener(new SelectionListener() {
-//
-//			@Override
-//			public void widgetSelected(SelectionEvent arg0) {
-//				if (connectButton.getText() == "Connect"){
-//				String selectedServerData = comboServers.getText();
-//				userCommand = GameAction.CONNECT;
-//				// raise a flag of a change
-//				setChanged();
-//				// actively notify all observers
-//				// and invoke their update method
-//				Object[] args = { selectedServerData.split(" ")[0],
-//						Integer.parseInt(selectedServerData.split(" ")[1]) };
-//				notifyObservers(args);
-//				hintButton.setEnabled(true);
-//				connectionStateLbl.setText("connected....");
-//				connectButton.setText("Disconnect");
-//				}
-//				else{
-//					userCommand = GameAction.DISCONNECT;
-//					// raise a flag of a change
-//					setChanged();
-//					notifyObservers();
-//					hintButton.setEnabled(false);
-//					connectionStateLbl.setText("");
-//					connectButton.setText("Connect");
-//				}
-//
-//			}
-//
-//			@Override
-//			public void widgetDefaultSelected(SelectionEvent arg0) {
-//				// TODO Auto-generated method stub
-//
-//			}
-//		});
-
 	}
 
-//    private void hidePopUp() {
-//        if(popup != null){
-//            popup.hide();
-//        }
-//    }
-//
-//    private void showPopUp(Event e, Shell shell) {
-//       Composite composite = new Composite(shell, SWT.EMBEDDED);
-//       Frame frame = SWT_AWT.new_Frame(composite);
-//       JPanel p = new JPanel();
-//       frame.add(p);
-//       JLabel mouse = new JLabel("Syntax: Server:Port");
-//      
-//       
-//       popup = PopupFactory.getSharedInstance().getPopup(p, mouse , shell.getBounds().x + 20,shell.getBounds().y+20);
-//       popup.show();
-//    }
 	
+	private void menuHint() {
+		
+		Group hintControl = new Group(gameButtons, SWT.NONE);
+		hintControl.setText ("Hint Server Control:");
+		hintControl.setLayout(new GridLayout(2, false));
+		//hintControl.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1,1));
+		
+		
+		getHintButton = new Button(hintControl, SWT.PUSH);
+		getHintButton.setText("Get Hint");
+		getHintButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 2, 1));
+		getHintButton.setEnabled(false);
+		getHintButton.addSelectionListener(new SelectionListener() {
+		
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				//getHint();  		
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
+		});
+		
+		Button solveGameRbox = new Button(hintControl, SWT.RADIO);
+		solveGameRbox.setText("Solve The Game");
+		solveGameRbox.setLayoutData(new GridData(SWT.FILL,  SWT.TOP, false, false, 2, 1));
+		
+		solveGameRbox.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				getHintButton.setText("Solve Game");
+				movesNumber.setEnabled(false);
+				treeSize.setEnabled(false);
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		
+		Button getHintRbox = new Button(hintControl, SWT.RADIO);
+		getHintRbox.setText("Give Hints:");
+		getHintRbox.setSelection(true);
+		getHintRbox.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 2, 1));
+		
+		getHintRbox.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				getHintButton.setText("Get Hint");
+				movesNumber.setEnabled(true);
+				treeSize.setEnabled(true);
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		Label movesLabel = new Label (hintControl,SWT.NONE);
+		movesLabel.setLayoutData(new GridData(SWT.LEFT,  SWT.LEFT, false, false, 1, 1));
+		movesLabel.setText ("Num Of Moves: ");
+	
+		
+		movesNumber = new Text(hintControl, SWT.BORDER);
+		movesNumber.setText("1");
+		movesNumber.setLayoutData(new GridData(SWT.LEFT,  SWT.LEFT, false, false, 1, 1));
+		
+		
+		Label treeLabel = new Label (hintControl,SWT.NONE);
+		treeLabel.setLayoutData(new GridData(SWT.BEGINNING,  SWT.BEGINNING, false, false, 1, 1));
+		treeLabel.setText ("Tree Size: ");
+		treeLabel.setToolTipText("Must be 1-7");
+		
+		treeSize = new Text(hintControl, SWT.BORDER);
+		treeSize.setText("7");
+		treeSize.setSize(new Point (1,1));
+		treeSize.setLayoutData(new GridData(SWT.BEGINNING,  SWT.BEGINNING, false, false, 1, 1));
+
+		
+	}
+
 	
 
 	/* ************************
@@ -789,23 +716,24 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * ************************/
 	
 	//a regex to make that the string is a valid ip:port format.
-	private boolean isValidIP(String in) {
+	private String isValidIP(String in) {
 		String[] temp = in.split(":");
 		try {
-			String ip = new String (InetAddress.getByName(temp[0]).toString());
-			in = new String (ip + temp[1]);
+			String ip = new String (InetAddress.getByName(temp[0]).toString()); //resolve dns if needed
+			ip = ip.split("/")[1]; //split google.com/ip = ip only
+			in = new String (ip+":"+temp[1]); //return to ip:port format
 		} catch (UnknownHostException e) {
-			System.out.println("Wrong Input, Syntax is: <Ip/Host>:<Port>");
+			System.out.println("Cant resolve DNS or wrong input. Syntax is: <Ip/Host>:<Port>");
 		}		
 		Matcher m = Pattern.compile("((\\d+\\.){3}\\d+):(\\d+)").matcher(in);
 		if (m.find()) {
 		    String[] p = m.group(1).split("\\.");
 		    for (int i = 0; i < 4; i++)
-		      if (Integer.parseInt(p[i]) > 255) return false;
-		    if (Integer.parseInt(m.group(3)) > 65535) return false;
-		    return true;
+		      if (Integer.parseInt(p[i]) > 255) return null;
+		    if (Integer.parseInt(m.group(3)) > 65535) return null;
+		    return in;
 		  }
-		  return false;
+		  return null;
 	}
 	
 	

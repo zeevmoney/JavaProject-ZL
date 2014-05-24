@@ -27,7 +27,11 @@ public enum UserCommand {
 	GetWin(13),
 	GetLose(14),
 	RestartGame(15), 
-	SwitchGame(16);	
+	SwitchGame(16),
+	Connect(17),
+	Disconnect(18),
+	Connected(19),
+	Disconnected(20);	
 
 	
 	private int command;

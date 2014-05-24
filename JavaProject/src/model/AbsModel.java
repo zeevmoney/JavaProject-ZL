@@ -3,6 +3,8 @@ package model;
 import java.util.Observable;
 import java.util.Stack;
 
+import javax.naming.NoInitialContextException;
+
 import model.algoirthms.GameStateXML;
 import model.algoirthms.GameState;
 import controller.UserCommand;
@@ -71,6 +73,20 @@ public abstract class AbsModel extends Observable implements Model {
 		setChanged();
 		notifyObservers();	
 	}
+	
+	@Override
+	public void connectToServer(String ip, int port) {
+		setChanged();
+		notifyObservers("Connected");
+	}
+	
+	@Override
+	public void disconnectFromServer() {
+		setChanged();
+		notifyObservers("Disconnected");
+		
+	}
+	
 	
 	/*
 	 * Methods for handling the game stack.

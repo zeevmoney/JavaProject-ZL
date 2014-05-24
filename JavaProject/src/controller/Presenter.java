@@ -41,9 +41,12 @@ public class Presenter implements Observer {
 	@Override
 	public void update(Observable arg0, Object arg1) {
 		if (arg0 == model) {
-			//System.out.println(arg1.toString());
 			ui.displayScore(model.getScore());
 			ui.displayBoard(model.getBoard());
+			if (arg1 != null && arg1.toString() == "Connected") 
+				ui.connected(true);
+			if (arg1 != null && arg1.toString() == "Disconnected") 
+				ui.connected(false);			
 			if (arg1 != null && arg1.toString() == "Win")
 				ui.setWin();
 			if (arg1 != null && arg1.toString() == "Lose") {
@@ -110,7 +113,20 @@ public class Presenter implements Observer {
 					ui2.killThread();
 					t = new Thread((Runnable) ui);
 					t.start();
-					break;					
+					break;
+				case Connect:
+					if (arg1 != null) 
+					{ 
+						String temp = (String)arg1; //string to string (for later use)
+						String ip = temp.split(":")[0];
+						Integer port = new Integer(temp.split(":")[1]);
+						System.out.println(ip+" "+port);
+						model.connectToServer(ip, port);					
+					}				
+					break;
+				case Disconnect:
+					model.disconnectFromServer();
+					break;
 				default:
 					break;				
 				}

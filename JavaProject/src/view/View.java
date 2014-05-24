@@ -1,5 +1,4 @@
 package view;
-
 import controller.UserCommand;
 
 /*
@@ -30,7 +29,10 @@ public interface View  {
 	//will get true if game was won.
 	public void setWin();
 	
-	//Set Visible for the shell (used for switching games)
+	//kill a running game thread (used for switching games)
 	public void killThread();
+	
+	//notify the gui that a connection was established
+	public void connected(Boolean flag);
 
 }

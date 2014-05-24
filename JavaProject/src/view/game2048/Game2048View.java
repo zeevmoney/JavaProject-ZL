@@ -49,28 +49,28 @@ public class Game2048View extends AbsView {
 	public void InitInput () {		
 		getDisplay().addFilter(SWT.KeyUp, new Listener() {		
 			@Override
-			public void handleEvent(Event e) { 
-				switch (e.keyCode){
-				case SWT.ARROW_DOWN:
-					setUi(UserCommand.Down); 
-				    break;
-				case SWT.ARROW_LEFT:
-					setUi(UserCommand.Left);
-					break;
-				case SWT.ARROW_RIGHT:
-					setUi(UserCommand.Right);
-					break;
-				case SWT.ARROW_UP:
-					setUi(UserCommand.Up);
-					break;
-				default:
-					return;
+			public void handleEvent(Event e) {
+				switch (e.keyCode) {
+					case SWT.ARROW_DOWN:
+						setUi(UserCommand.Down); 
+					    break;
+					case SWT.ARROW_LEFT:
+						setUi(UserCommand.Left);
+						break;
+					case SWT.ARROW_RIGHT:
+						setUi(UserCommand.Right);
+						break;
+					case SWT.ARROW_UP:
+						setUi(UserCommand.Up);
+						break;
+					default:
+						return;
 				}	
-				if ((e.keyCode == SWT.ARROW_UP) || (e.keyCode == SWT.ARROW_DOWN) || (e.keyCode == SWT.ARROW_LEFT) || (e.keyCode == SWT.ARROW_RIGHT)) {
-					board.setFocus();
-					setChanged();
-					notifyObservers();
-				}
+					if ((e.keyCode == SWT.ARROW_UP) || (e.keyCode == SWT.ARROW_DOWN) || (e.keyCode == SWT.ARROW_LEFT) || (e.keyCode == SWT.ARROW_RIGHT)) {
+						board.setFocus();
+						setChanged();
+						notifyObservers();
+					}				
 			}
 		});
 		//mouse listener	
