@@ -9,8 +9,7 @@ import java.util.Stack;
 
 import common.GameState;
 import common.GameStateXML;
-
-import controller.UserCommand;
+import common.UserCommand;
 
 public abstract class AbsModel extends Observable implements Model {
 	Stack<GameState> gameStack; //stack of previous games

@@ -6,7 +6,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import controller.UserCommand;
+import common.UserCommand;
+
 import view.AbsView;
 import view.Board;
 import view.Tile;

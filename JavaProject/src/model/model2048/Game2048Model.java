@@ -6,7 +6,7 @@ import model.AbsModel;
 import common.GameState;
 import common.ModelElements;
 import common.SolveMsg;
-import controller.UserCommand;
+import common.UserCommand;
 
 
 

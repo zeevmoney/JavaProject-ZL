@@ -1,5 +1,5 @@
 package view;
-import controller.UserCommand;
+import common.UserCommand;
 
 /*
  * The view is a passive interface that displays data 

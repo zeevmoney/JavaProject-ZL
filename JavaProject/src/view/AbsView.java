@@ -33,8 +33,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import common.ObjectXML;
-
-import controller.UserCommand;
+import common.UserCommand;
 
 /*
  * Abstract Class AbsView:

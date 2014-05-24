@@ -4,8 +4,8 @@ import java.awt.Point;
 
 import common.GameState;
 import common.ModelElements;
+import common.UserCommand;
 import model.AbsModel;
-import controller.UserCommand;
 
 public class MazeGameModel extends AbsModel {
 	GameState currentGame; //current game state

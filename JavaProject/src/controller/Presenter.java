@@ -3,6 +3,8 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Timer;
 
+import common.UserCommand;
+
 import model.Model;
 import view.View;
 
