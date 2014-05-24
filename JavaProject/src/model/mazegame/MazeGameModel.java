@@ -2,10 +2,9 @@ package model.mazegame;
 
 import java.awt.Point;
 
+import common.GameState;
 import common.ModelElements;
-
 import model.AbsModel;
-import model.algoirthms.GameState;
 import controller.UserCommand;
 
 public class MazeGameModel extends AbsModel {

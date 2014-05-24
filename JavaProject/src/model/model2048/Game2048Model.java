@@ -3,7 +3,7 @@ package model.model2048;
 import java.io.IOException;
 
 import model.AbsModel;
-import model.algoirthms.GameState;
+import common.GameState;
 import common.ModelElements;
 import common.SolveMsg;
 import controller.UserCommand;

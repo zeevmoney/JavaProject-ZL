@@ -1,4 +1,4 @@
-package model.algoirthms;
+package common;
 
 import java.awt.Point;
 import java.util.Arrays;

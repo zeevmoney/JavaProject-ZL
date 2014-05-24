@@ -6,8 +6,10 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.util.Observable;
 import java.util.Stack;
-import model.algoirthms.GameState;
-import model.algoirthms.GameStateXML;
+
+import common.GameState;
+import common.GameStateXML;
+
 import controller.UserCommand;
 
 public abstract class AbsModel extends Observable implements Model {

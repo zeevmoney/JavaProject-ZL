@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import model.algoirthms.ObjectXML;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -31,6 +31,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import common.ObjectXML;
 
 import controller.UserCommand;
 
