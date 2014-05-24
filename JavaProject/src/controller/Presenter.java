@@ -91,8 +91,8 @@ public class Presenter implements Observer {
 					break;
 				case SaveGame:
 					if (arg1 != null && arg1.toString()!= "")
-						System.out.println(arg1.toString());
 						model.saveGame(arg1.toString());
+					//System.out.println(arg1.toString());
 					break;
 				case UndoMove:
 					model.undoMove();
@@ -120,13 +120,21 @@ public class Presenter implements Observer {
 						String temp = (String)arg1; //string to string (for later use)
 						String ip = temp.split(":")[0];
 						Integer port = new Integer(temp.split(":")[1]);
-						System.out.println(ip+" "+port);
-						model.connectToServer(ip, port);					
+						model.connectToServer(ip, port);
 					}				
 					break;
 				case Disconnect:
 					model.disconnectFromServer();
 					break;
+				case Solve:
+					if (arg1 != null) {
+						int treeSize = (int) arg1;
+						if (treeSize == -1) 
+							model.solveGame();
+						else
+							model.getHint(treeSize);
+					}
+					break;				
 				default:
 					break;				
 				}

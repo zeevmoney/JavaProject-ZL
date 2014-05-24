@@ -1,8 +1,12 @@
 package model.model2048;
 
+import java.io.IOException;
+
 import model.AbsModel;
-import model.ModelElements;
 import model.algoirthms.GameState;
+import common.ModelElements;
+import common.SolveMsg;
+import controller.UserCommand;
 
 
 
@@ -380,9 +384,49 @@ public class Game2048Model extends AbsModel {
 	public void DownLeft() {}
 
 
+	@Override
+	public void getHint(int treeSize) { //get single hint
+		try {
+				outToServer.writeObject(new SolveMsg("2048","MiniMax",UserCommand.Solve,currentGame,treeSize));
+				outToServer.flush();
+				SolveMsg solveMsg = (SolveMsg) inFromServer.readObject();
+				doMove(solveMsg.getCmd());				
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+	}
 
+	@Override
+	public void solveGame() { //solve the whole game
+		while (!won || lose) {
+			getHint(-1);			
+			/* 
+			 * TODO	
+			 * System.out.println("sleep");
+				Thread.sleep(600);
+				System.out.println("wake up");
+			 */
+		}
+		
+	}	
+	
+	private void doMove(UserCommand cmd) {
+		switch (cmd) {
+			case Up:
+				moveUp();
+				break;
+			case Down:
+				moveDown();
+				break;
+			case Left:
+				moveLeft();
+				break;
+			case Right:
+				moveRight();
+				break;
+			default:
+		}
 
-
-
+	}
 
 }

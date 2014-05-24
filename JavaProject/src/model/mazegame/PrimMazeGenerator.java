@@ -2,7 +2,7 @@ package model.mazegame;
 
 import java.util.*;
 
-import model.ModelElements;
+import common.ModelElements;
 
 /*
  * PrimMazeGenerator class: generates a maze using Prim algorithm

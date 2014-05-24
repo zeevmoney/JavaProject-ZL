@@ -17,13 +17,6 @@ import com.thoughtworks.xstream.io.xml.StaxDriver;
 
 
 public class ObjectXML {
-	//TODO: remove this.
-//	private XStream xstream;
-//	
-//	public ObjectXML() {
-//		xstream = new XStream(new StaxDriver());
-//	}
-	
 	/*
 	 * Export Object to XML
 	 * Input: Object & file name

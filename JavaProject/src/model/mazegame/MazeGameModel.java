@@ -2,8 +2,9 @@ package model.mazegame;
 
 import java.awt.Point;
 
+import common.ModelElements;
+
 import model.AbsModel;
-import model.ModelElements;
 import model.algoirthms.GameState;
 import controller.UserCommand;
 
@@ -131,6 +132,12 @@ public class MazeGameModel extends AbsModel {
 	@Override
 	public void setCurrentGame(GameState game) {
 		this.currentGame = game;
+	}
+
+	@Override
+	public void solveGame() {
+		// TODO Auto-generated method stub
+		
 	}
 
 

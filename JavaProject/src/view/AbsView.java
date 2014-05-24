@@ -6,12 +6,11 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import model.algoirthms.ObjectXML;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -23,12 +22,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.MessageBox;
@@ -489,37 +486,6 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * Server Control
 	 * ************************/
 	
-	/*
-	 * 	private Listener connectToServer() {
-		return (new ConnectToServer(display){
-
-			@Override
-			public void setUserCommand(int userCommand) {
-				GamesMaze2048View.this.userCommand = userCommand;
-				setChanged();
-				notifyObservers(this.socketAddress);
-				if (connectedToServer) {
-					connected(true);
-					connect.setText("Disonnect");
-					if (ipBox.indexOf(ipBox.getText()) == -1) {
-						ipBox.add(ipBox.getText());
-					}
-				} else {
-					connected(false);
-					connect.setText("Connect");
-				}
-				
-			}
-
-			@Override
-			public void connected(Boolean flag) {
-				getSolver.setEnabled(flag);
-				
-			}});
-	}
-	 */
-	
-	
 	@SuppressWarnings("unchecked")
 	private void menuGameServer() {
 		
@@ -532,7 +498,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		
 		//Server Add/Select combo box.
 		serverCombo = new Combo(gameButtons, SWT.FILL);
-		serverCombo.setToolTipText("Syntax: <Server>:<Port>");
+		serverCombo.setToolTipText("Syntax: <Server>:<Port>.\nServers are added automaticly on connect\nor by pressing <Enter>");
 		//Dynamic load of selections		
 		try {
 			serverList = (ArrayList<String>) ObjectXML.ObjectFromXML("resources/Ips.xml");
@@ -549,27 +515,15 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			
 			@Override
 			public void keyTraversed(TraverseEvent e) {
-				if (e.keyCode == 13 || e.keyCode == 16777296) { //enter was pressed TODO: SWT CODE
+				if (e.detail == SWT.TRAVERSE_RETURN) { //enter was pressed
 					String newServer = serverCombo.getText();
-					if ((newServer = isValidIP(newServer)) != null) { //if a valid server:port were entered
-						if (serverList.contains(newServer))
-							System.out.println("Server already exists: " + newServer);
-						else {
-							serverList.add(newServer);
-							serverCombo.add(newServer);
-							try {
-								ObjectXML.objectToXML(serverList, "resources/Ips.xml");
-							} catch (IOException e2) {
-								e2.printStackTrace();
-							}
-						}
-					}
+					addserver(newServer);
 				}
-			}
-		
+			}		
 		
 		});
-
+		
+		//Connect / Disconnect button. Valid server will be automatically added to the combo + file.
 		connectButton = new Button(gameButtons, SWT.PUSH);
 		connectButton.setText("Connect");
 		connectButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 1, 1));
@@ -579,7 +533,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			public void widgetSelected(SelectionEvent arg0) {
 				if (connectButton.getText() == "Connect"){
 					String temp = serverCombo.getText();
-					if ((temp = isValidIP(temp))!= null) { //after this command temp holds an ip:port (after DNS check)
+					if ((temp = addserver(temp))!= null) { //after this command temp holds an ip:port (after DNS check)
 						ui = UserCommand.Connect;
 						System.out.println("DEBUG: Connecting... "+serverCombo.getText());
 						connectButton.setText("Connecting...");
@@ -604,22 +558,42 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	}
 	
+	//add a new server to file + combo.
+	private String addserver (String newServer) { 
+		if ((newServer = isValidIP(newServer)) != null) { //if a valid server:port were entered
+			if (serverList.contains(newServer)) {
+				System.out.println("DEBUG: Server already exists: " + newServer);
+				return newServer;
+			} else {
+				try {
+					serverList.add(newServer);
+					serverCombo.add(newServer);
+					ObjectXML.objectToXML(serverList, "resources/Ips.xml");
+					
+				} catch (IOException e2) {
+					e2.printStackTrace();
+				}
+				return newServer;
+			}
+		}
+		return null;
+	}
+	
 	//TODO: finish this function
 	@Override
 	public void connected(Boolean flag) {
-		if (flag) {
-			System.out.println("crap");
+		if (flag) { //connected to server
 			getHintButton.setEnabled(true);
 			connectButton.setText("Disconnect");
 			connectButton.setEnabled(true);			
 		}
-		else {
+		else { //disconnected from server
 			getHintButton.setEnabled(false);
+			connectButton.setEnabled(true);
 			connectButton.setText("Connect");
-		}
-		
+		}		
 	}
-
+	
 	
 	private void menuHint() {
 		
@@ -637,7 +611,25 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				//getHint();  		
+				if (getHintButton.getText() == "Get Hint") { //single / multiple hints.
+					int hintsNum = Integer.parseInt(movesNumber.getText());
+					int treeDepth = Integer.parseInt(treeSize.getText());
+					if (treeDepth > 7 || treeDepth < 1) { treeDepth = 7; } //more than 7 is too much!					
+					for (int i = 0; i < hintsNum; i++) {
+						ui = UserCommand.Solve;
+						setChanged();
+						notifyObservers(treeDepth);
+						try {
+							Thread.sleep(500);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					}
+				} else {
+					ui = UserCommand.Solve;
+					setChanged();
+					notifyObservers(-1);					
+				}					
 			}
 
 			@Override
@@ -658,10 +650,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			}
 			
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		});
 		
 		
@@ -680,10 +669,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			}
 			
 			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		});
 		
 		Label movesLabel = new Label (hintControl,SWT.NONE);
@@ -715,7 +701,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * Other Methods:
 	 * ************************/
 	
-	//a regex to make that the string is a valid ip:port format.
+	//Resolve dns + a regex to make that the string is a valid ip.
 	private String isValidIP(String in) {
 		String[] temp = in.split(":");
 		try {
@@ -725,12 +711,14 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		} catch (UnknownHostException e) {
 			System.out.println("Cant resolve DNS or wrong input. Syntax is: <Ip/Host>:<Port>");
 		}		
-		Matcher m = Pattern.compile("((\\d+\\.){3}\\d+):(\\d+)").matcher(in);
+		//Matcher m = Pattern.compile("((\\d+\\.){3}\\d+):(\\d+)").matcher(in); //NOTE: change m.group(3) if using this.
+		Matcher m = Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d{1,5})").matcher(in);
 		if (m.find()) {
-		    String[] p = m.group(1).split("\\.");
+			String[] p = m.group(1).split("\\.");
+		    System.out.println(Arrays.toString(p));
 		    for (int i = 0; i < 4; i++)
 		      if (Integer.parseInt(p[i]) > 255) return null;
-		    if (Integer.parseInt(m.group(3)) > 65535) return null;
+		    if (Integer.parseInt(m.group(2)) > 65535) return null;
 		    return in;
 		  }
 		  return null;

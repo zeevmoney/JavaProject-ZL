@@ -1,5 +1,6 @@
 package model;
 
+
 /*
  * The model is an interface defining the data to be displayed.
  * or otherwise acted upon in the user interface.
@@ -17,6 +18,8 @@ public interface Model {
 	public void undoMove();
 	public void connectToServer(String ip,int port);
 	public void disconnectFromServer();
+	public void getHint(int treeSize); //get hint (treeSize = minimax treeSize)
+	public void solveGame(); //solve the game
 	
 	//Movement functions: will change the state on game board.
 	public void moveUp();
@@ -33,5 +36,6 @@ public interface Model {
 	
 	//returns the current user score.
 	public int getScore();
+
 
 }

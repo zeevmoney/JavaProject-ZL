@@ -30,8 +30,7 @@ public enum UserCommand {
 	SwitchGame(16),
 	Connect(17),
 	Disconnect(18),
-	Connected(19),
-	Disconnected(20);	
+	Solve(19);	
 
 	
 	private int command;

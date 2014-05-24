@@ -128,7 +128,7 @@ public class Game2048View extends AbsView {
 		initComponents(); //init the game board using the main GUI thread (the function is in the AbsView Class)
 		//while shell is alive
 		while (!getShell().isDisposed()) {
-			if (isKillThread()) { //used to switch games
+			if (isKillThread()) { //used to switch games DO NOT REMOVE ANYTHING!
 				board = null;
 				setKillThread(false);
 				return;
@@ -136,7 +136,7 @@ public class Game2048View extends AbsView {
 			//while there are no events (this is the event handler)
 			if(!getDisplay().readAndDispatch()) {
 				//the OS will auto wake the display on EVENT (mouse, keyboard, etc).
-				if (board == null) {
+				if (board == null) { //for the game start
 					setUi(UserCommand.NewGame);
 					setChanged();
 					notifyObservers();

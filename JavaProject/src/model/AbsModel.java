@@ -1,17 +1,21 @@
 package model;
 
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.Socket;
 import java.util.Observable;
 import java.util.Stack;
-
-import javax.naming.NoInitialContextException;
-
-import model.algoirthms.GameStateXML;
 import model.algoirthms.GameState;
+import model.algoirthms.GameStateXML;
 import controller.UserCommand;
 
 public abstract class AbsModel extends Observable implements Model {
 	Stack<GameState> gameStack; //stack of previous games
 	UserCommand cmd; //user command ENUM
+	Socket myServer;
+	public ObjectOutputStream outToServer;
+	public ObjectInputStream inFromServer;
 
 	public AbsModel() {
 		gameStack = new Stack<>();
@@ -76,16 +80,46 @@ public abstract class AbsModel extends Observable implements Model {
 	
 	@Override
 	public void connectToServer(String ip, int port) {
-		setChanged();
-		notifyObservers("Connected");
+		try {
+			myServer = new Socket(InetAddress.getByName(ip), port);
+			outToServer = new ObjectOutputStream(myServer.getOutputStream());
+			inFromServer = new ObjectInputStream(myServer.getInputStream());
+			String input = (String) inFromServer.readObject();
+			System.out.println("Connection info: " + input);
+			//getState().setConnectedToServer(true); //TODO:
+			setChanged();
+			notifyObservers("Connected");
+		} catch (Exception e) {
+			System.out.println("Can't connect to server.");
+			setChanged();
+			notifyObservers("Disconnected");
+			//e.printStackTrace(); //TODO:
+		}
 	}
 	
 	@Override
 	public void disconnectFromServer() {
-		setChanged();
-		notifyObservers("Disconnected");
-		
+		try {
+			outToServer.writeObject(UserCommand.Disconnect);
+			outToServer.flush();
+			outToServer.close();
+			inFromServer.close();
+			myServer.close(); //close the socket
+			setChanged();
+			notifyObservers("Disconnected");
+		} catch (Exception e) {
+			//e.printStackTrace();
+			System.out.println("Not connected.");
+		}		
 	}
+	
+	@Override
+	public void getHint(int treeSize) {}
+	
+	public abstract void solveGame();
+		
+	
+
 	
 	
 	/*

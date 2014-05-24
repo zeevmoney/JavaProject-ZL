@@ -1,4 +1,9 @@
-package model;
+package common;
+
+/*
+ * Enum to hold configuration for the different model elements.
+ */
+
 
 public enum ModelElements {
 	
