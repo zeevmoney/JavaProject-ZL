@@ -15,6 +15,11 @@ import common.UserCommand;
  * changes in View and Model Interfaces.
  */
 
+/**
+ * @author k
+ *
+ */
+
 public class Presenter implements Observer {
 	//Both View & Model are injected using strategy pattern.
 	private View ui;
@@ -25,6 +30,12 @@ public class Presenter implements Observer {
 	Thread t;
 
 	
+	/**
+	 * @param model
+	 * @param model2
+	 * @param ui
+	 * @param ui2
+	 */
 	public Presenter(Model model,Model model2, View ui, View ui2){
 		this.model = model;
 		this.model2 = model2;

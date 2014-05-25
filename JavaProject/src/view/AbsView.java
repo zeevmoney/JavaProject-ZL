@@ -16,7 +16,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -39,7 +38,8 @@ import common.UserCommand;
  * This class defines the common parts for classes that run a 2D board game.
  */
 
-//TODO: fix arrows on combo boxes.
+
+//TODO: disable hint / solve.
 
 public abstract class AbsView extends Observable implements View,Runnable  {
 	UserCommand ui; //user command ENUM

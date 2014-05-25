@@ -135,8 +135,7 @@ public class MazeGameModel extends AbsModel {
 
 	@Override
 	public void solveGame(int treeDepth) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
 
 
