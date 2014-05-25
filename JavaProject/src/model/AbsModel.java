@@ -8,7 +8,7 @@ import java.util.Observable;
 import java.util.Stack;
 
 import common.GameState;
-import common.GameStateXML;
+import common.SolveMsg;
 import common.UserCommand;
 
 public abstract class AbsModel extends Observable implements Model {
@@ -17,6 +17,7 @@ public abstract class AbsModel extends Observable implements Model {
 	Socket myServer;
 	public ObjectOutputStream outToServer;
 	public ObjectInputStream inFromServer;
+	boolean solving; //used to check if the client sent a new request to server.
 
 	public AbsModel() {
 		gameStack = new Stack<>();
@@ -85,43 +86,45 @@ public abstract class AbsModel extends Observable implements Model {
 			myServer = new Socket(InetAddress.getByName(ip), port);
 			outToServer = new ObjectOutputStream(myServer.getOutputStream());
 			inFromServer = new ObjectInputStream(myServer.getInputStream());
-			String input = (String) inFromServer.readObject();
-			System.out.println("Connection info: " + input);
-			//getState().setConnectedToServer(true); //TODO:
+			SolveMsg msg = (SolveMsg) inFromServer.readObject();
+			System.out.println("[Client]: Recieved Status: " + msg.getInfo());
+			System.out.println("[Client]: Connected to server: "+ip+":"+port);
 			setChanged();
 			notifyObservers("Connected");
 		} catch (Exception e) {
-			System.out.println("Can't connect to server.");
+			//e.printStackTrace();
+			solving = false;
+			System.out.println("[Client]: Can't connect to server.");
 			setChanged();
 			notifyObservers("Disconnected");
-			//e.printStackTrace(); //TODO:
 		}
 	}
 	
 	@Override
 	public void disconnectFromServer() {
 		try {
+			outToServer.writeObject(new SolveMsg(null,null,UserCommand.StopSolving,null,null));
 			outToServer.writeObject(UserCommand.Disconnect);
 			outToServer.flush();
 			outToServer.close();
 			inFromServer.close();
 			myServer.close(); //close the socket
+		} catch (Exception e) {
+			System.out.println("[Client]: Not connected.");
+		} finally {
+			solving = false;
+			System.out.println("[Client]: Colsing Connection");
 			setChanged();
 			notifyObservers("Disconnected");
-		} catch (Exception e) {
-			//e.printStackTrace();
-			System.out.println("Not connected.");
-		}		
+		}
 	}
 	
 	@Override
-	public void getHint(int treeSize) {}
+	public void getHint(int hintsNum, int treeDepth) {}
 	
-	public abstract void solveGame();
+	@Override
+	public void solveGame(int treeDepth) {}
 		
-	
-
-	
 	
 	/*
 	 * Methods for handling the game stack.
@@ -134,9 +137,13 @@ public abstract class AbsModel extends Observable implements Model {
 		this.gameStack = gameStack;
 	}
 
-	public void GameStackPush(GameState state) {
+	public void gameStackPush(GameState state) {
 		this.gameStack.push(state.Copy());
-	}	
+	}
+	
+	public GameState gameStackPeek() {
+		return this.gameStack.peek();
+	}
 		
 	
 	@Override
@@ -178,6 +185,15 @@ public abstract class AbsModel extends Observable implements Model {
 	public abstract void setCurrentGame(GameState game);
 	
 	public abstract void boardInit();
+
+
+	public boolean isSolving() {
+		return solving;
+	}
+
+	public void setSolving(boolean solving) {
+		this.solving = solving;
+	}
 
 
 }

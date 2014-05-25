@@ -6,7 +6,6 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,7 +49,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	Menu menuBar;
 	Group gameButtons;
 	Group gameBoard;
-	Label scoreLabel;
+	Label scoreLabel,directionLabel;
 	Combo serverCombo; //server combo box
 	ArrayList<String> serverList; //server list after import
 	String gameName; //game name String.
@@ -506,10 +505,10 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			String[] tempList = new String[serverList.size()];
 			tempList = serverList.toArray(tempList);
 			serverCombo.setItems(tempList);
-			serverCombo.setText("127.0.0.1:1337");
+			serverCombo.setText(tempList[0]);
 		} catch (Exception e) {
-			System.out.println("File Doesn't Exist!");
-			e.printStackTrace();
+			System.out.println("[Client]: File Doesn't Exist!");
+			serverCombo.setText("127.0.0.1:1337");
 		}
 		
 		serverCombo.addTraverseListener(new TraverseListener() { //enter key is pressed
@@ -536,7 +535,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 					String temp = serverCombo.getText();
 					if ((temp = addserver(temp))!= null) { //after this command temp holds an ip:port (after DNS check)
 						ui = UserCommand.Connect;
-						System.out.println("DEBUG: Connecting... "+serverCombo.getText());
+						System.out.println("[Client]: Connecting To: "+serverCombo.getText());
 						connectButton.setText("Connecting...");
 						connectButton.setEnabled(false);
 						setChanged();
@@ -563,8 +562,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	private String addserver (String newServer) { 
 		if ((newServer = isValidIP(newServer)) != null) { //if a valid server:port were entered
 			if (serverList.contains(newServer)) {
-				System.out.println("DEBUG: Server already exists: " + newServer);
-				return newServer;
+				return newServer; //if server already exists.
 			} else {
 				try {
 					serverList.add(newServer);
@@ -580,19 +578,25 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		return null;
 	}
 	
-	//TODO: finish this function
 	@Override
-	public void connected(Boolean flag) {
-		if (flag) { //connected to server
-			getHintButton.setEnabled(true);
-			connectButton.setText("Disconnect");
-			connectButton.setEnabled(true);			
-		}
-		else { //disconnected from server
-			getHintButton.setEnabled(false);
-			connectButton.setEnabled(true);
-			connectButton.setText("Connect");
-		}		
+	public void connected(final Boolean flag) {
+		getDisplay().syncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				if (flag) { //connected to server
+					getHintButton.setEnabled(true);
+					connectButton.setText("Disconnect");
+					connectButton.setEnabled(true);			
+				}
+				else { //disconnected from server
+					getHintButton.setEnabled(false);
+					connectButton.setEnabled(true);
+					connectButton.setText("Connect");
+				}				
+			}
+		});
+	
 	}
 	
 	
@@ -601,41 +605,39 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		Group hintControl = new Group(gameButtons, SWT.NONE);
 		hintControl.setText ("Hint Server Control:");
 		hintControl.setLayout(new GridLayout(2, false));
-		//hintControl.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 1,1));
+		hintControl.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1,1));
 		
 		
 		getHintButton = new Button(hintControl, SWT.PUSH);
 		getHintButton.setText("Get Hint");
-		getHintButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, false, false, 2, 1));
+		getHintButton.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true, 2, 1));
 		getHintButton.setEnabled(false);
 		getHintButton.addSelectionListener(new SelectionListener() {
 		
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				if (getHintButton.getText() == "Get Hint") { //single / multiple hints.
-					int hintsNum = Integer.parseInt(movesNumber.getText());
+				try {
 					int treeDepth = Integer.parseInt(treeSize.getText());
-					if (treeDepth > 7 || treeDepth < 1) { treeDepth = 7; } //more than 7 is too much!					
-					for (int i = 0; i < hintsNum; i++) {
-						ui = UserCommand.Solve;
-						setChanged();
-						notifyObservers(treeDepth);
-						try {
-							Thread.sleep(500);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-					}
-				} else {
+					int hintsNum;
 					ui = UserCommand.Solve;
+					if (getHintButton.getText().equals("Get Hint")) { //single / multiple hints.
+						hintsNum = Integer.parseInt(movesNumber.getText());
+					} else {
+						hintsNum = 2000;
+					}
+					int [] arr = {hintsNum,treeDepth};
 					setChanged();
-					notifyObservers(-1);					
-				}					
+					notifyObservers(arr);
+				} catch (NumberFormatException e) {
+						errorBox("Invalid Input, TreeSize & Moves must be numeric.");
+				}
+				//getShell().forceFocus();
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		});
+	
 		
 		Button solveGameRbox = new Button(hintControl, SWT.RADIO);
 		solveGameRbox.setText("Solve The Game");
@@ -679,7 +681,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 		
 		movesNumber = new Text(hintControl, SWT.BORDER);
-		movesNumber.setText("1");
+		movesNumber.setText("10");
 		movesNumber.setLayoutData(new GridData(SWT.LEFT,  SWT.LEFT, false, false, 1, 1));
 		
 		
@@ -690,8 +692,12 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		
 		treeSize = new Text(hintControl, SWT.BORDER);
 		treeSize.setText("7");
-		treeSize.setSize(new Point (1,1));
 		treeSize.setLayoutData(new GridData(SWT.BEGINNING,  SWT.BEGINNING, false, false, 1, 1));
+		
+		directionLabel = new Label (hintControl,SWT.NONE);
+		directionLabel.setLayoutData(new GridData(SWT.CENTER,  SWT.CENTER, false, false, 1, 1));
+		directionLabel.setText ("<Direction>");
+		//directionLabel.setEnabled(false);
 
 		
 	}
@@ -710,14 +716,13 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			ip = ip.split("/")[1]; //split google.com/ip = ip only
 			in = new String (ip+":"+temp[1]); //return to ip:port format
 		} catch (UnknownHostException e) {
-			System.out.println("Cant resolve DNS or wrong input. Syntax is: <Ip/Host>:<Port>");
+			System.out.println("[Client]: Cant resolve DNS or wrong input. Syntax is: <Ip/Host>:<Port>");
 		}		
 		//Matcher m = Pattern.compile("((\\d+\\.){3}\\d+):(\\d+)").matcher(in); //NOTE: change m.group(3) if using this.
 		Matcher m = Pattern.compile("(\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}):(\\d{1,5})").matcher(in);
 		if (m.find()) {
 			String[] p = m.group(1).split("\\.");
-		    System.out.println(Arrays.toString(p));
-		    for (int i = 0; i < 4; i++)
+			for (int i = 0; i < 4; i++)
 		      if (Integer.parseInt(p[i]) > 255) return null;
 		    if (Integer.parseInt(m.group(2)) > 65535) return null;
 		    return in;
@@ -728,26 +733,49 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	
 	
+	public void errorBox(String string) {
+		MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK | SWT.CANCEL);
+		errorBox.setText("Error!");
+		errorBox.setMessage(string);			
+		errorBox.open();
+	}
+	
+	
 	@Override
 	public void setLose() {
-		MessageBox loseWindow = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-		loseWindow.setText("You Lost The Game!");
-		loseWindow.setMessage("Restart Game?");			
-		int buttonID = loseWindow.open();
-		if (buttonID == SWT.YES)
-			restartGame();
-		else
-			System.exit(0);
+		getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				MessageBox loseWindow = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+				loseWindow.setText("You Lost The Game!");
+				loseWindow.setMessage("Restart Game?");			
+				int buttonID = loseWindow.open();
+				if (buttonID == SWT.YES)
+					restartGame();
+				else
+					System.exit(0);				
+			}
+		});
+
 	}
 
 	@Override
 	public void setWin() {
-		MessageBox winWindow = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
-		winWindow.setText("You Won The Game!");
-		winWindow.setMessage("Restart Game?");			
-		int buttonID = winWindow.open();
-		if (buttonID == SWT.YES)
-			restartGame();		
+		getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				MessageBox winWindow = new MessageBox(shell, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
+				winWindow.setText("You Won The Game!");
+				winWindow.setMessage("Restart Game?");			
+				int buttonID = winWindow.open();
+				if (buttonID == SWT.YES)
+					restartGame();	
+				
+			}
+		});
+	
 	}	
 	
 	@Override
@@ -760,8 +788,15 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	public abstract void run(); //the run is inside the concrete implementation
 
 	@Override
-	public void displayScore(int score) {
-		 scoreLabel.setText("Score: "+score);
+	public void displayScore(final int score) {
+		getDisplay().asyncExec(new Runnable() {
+			
+			@Override
+			public void run() {
+				 scoreLabel.setText("Score: "+score);				
+			}
+		});
+		
 	}
 
 	@Override
@@ -776,6 +811,10 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	public void setKillThread(boolean flag) {
 		killThread = flag;
+	}
+
+	public void setDirectionLabel(String str) {
+		this.directionLabel.setText(str);
 	}
 	
 }
@@ -817,114 +856,4 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	3.0
  */
 
-//if(lose && !lost){
-//lost=true;
-//final Shell loseWindow= new Shell(this.shell);
-//loseWindow.setLayout(new GridLayout(2, false));
-//
-//loseWindow.setSize(250, 150);
-//loseWindow.setText("You lost the game");
-//Label reStart = new Label (loseWindow,SWT.NONE);
-//reStart.setLayoutData(new GridData(SWT.CENTER,  SWT.FILL, true, true, 2, 2));
-//reStart.setText ("Restart Game?");
-//
-//Button yesButton=new Button(loseWindow,SWT.PUSH);
-//yesButton.setText("Yes");
-//yesButton.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true, true,1, 1));
-//
-//yesButton.addSelectionListener(new SelectionListener() {
-//	
-//	@Override
-//	public void widgetSelected(SelectionEvent arg0) {
-//		restartGame();
-//		lost=false;
-//		loseWindow.close(); 		
-//	}
-//	
-//	@Override
-//	public void widgetDefaultSelected(SelectionEvent arg0) {}
-//});
-//
-//Button noButton=new Button(loseWindow,SWT.PUSH);
-//noButton.setText("No");
-//noButton.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, true,1, 1));
-//
-//noButton.addSelectionListener(new SelectionListener() {
-//	
-//	@Override
-//	public void widgetSelected(SelectionEvent arg0) {
-//		loseWindow.close();
-//		System.exit(0);
-//	}
-//	
-//	@Override
-//	public void widgetDefaultSelected(SelectionEvent arg0) {}
-//});
-//
-//loseWindow.setFocus();
-//loseWindow.open();
-//
-//}
-
-
-//if(win && !won){
-//won=true;
-////final Shell winWindow = new Shell(this.shell);
-//
-//winWindow.setLayout(new GridLayout(2, false));
-//winWindow.setSize(250, 150);
-//winWindow.setText("You Won The Game");
-//Label winMsg = new Label (winWindow,SWT.NONE);
-//winMsg.setLayoutData(new GridData(SWT.CENTER,  SWT.UP, true, true, 2, 2));
-//winMsg.setText ("Restart Game?");
-//Button yesButton=new Button(winWindow,SWT.PUSH);
-//yesButton.setText("Yes");
-//yesButton.setLayoutData(new GridData(SWT.FILL, SWT.RIGHT, true, true,1, 1));
-//yesButton.addSelectionListener(new SelectionListener() {
-//	
-//	@Override
-//	public void widgetSelected(SelectionEvent arg0) {
-//		restartGame();
-//		won=false;
-//		winWindow.close(); 		
-//	}
-//	
-//	@Override
-//	public void widgetDefaultSelected(SelectionEvent arg0) {}
-//});
-//
-//Button noButton=new Button(winWindow,SWT.PUSH);
-//noButton.setText("No");
-//noButton.setLayoutData(new GridData(SWT.FILL, SWT.LEFT, true, true,1, 1));
-//noButton.addSelectionListener(new SelectionListener() {
-//	
-//	@Override
-//	public void widgetSelected(SelectionEvent arg0) {
-//		winWindow.close();
-//		//System.exit(0);
-//	}
-//	
-//	@Override
-//	public void widgetDefaultSelected(SelectionEvent arg0) {}
-//});			
-//
-//
-//winWindow.open();
-//}
-//
-
-
-/*
- * 
- * 		shell.addListener(SWT.Close, new Listener() {
-			public void handleEvent(Event event)
-			{
-		        int style = SWT.APPLICATION_MODAL | SWT.YES | SWT.NO;
-		        MessageBox messageBox = new MessageBox(shell, style);
-		        messageBox.setText("Information");
-		        messageBox.setMessage("Close the shell?");
-		        event.doit = messageBox.open() == SWT.YES;
-		        }
-		    });
- */
 

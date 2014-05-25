@@ -217,11 +217,11 @@ public class MazeGameView extends AbsView implements Runnable {
 	}
 
 
-	//update score 
-	@Override
-	public void displayScore(int score) {
-		 getScoreLabel().setText("Score: "+score);		
-	}
+//	//update score 
+//	@Override
+//	public void displayScore(int score) {
+//		 getScoreLabel().setText("Score: "+score);		
+//	}
 		
 	@Override
 	public UserCommand getUserCommand() {

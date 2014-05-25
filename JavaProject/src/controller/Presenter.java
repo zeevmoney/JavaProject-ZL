@@ -1,12 +1,11 @@
 package controller;
 import java.util.Observable;
 import java.util.Observer;
-import java.util.Timer;
-
-import common.UserCommand;
 
 import model.Model;
 import view.View;
+
+import common.UserCommand;
 
 /*
  * The presenter acts upon the model and the view. 
@@ -41,7 +40,7 @@ public class Presenter implements Observer {
 	 */
 
 	@Override
-	public void update(Observable arg0, Object arg1) {
+	public void update(Observable arg0, final Object arg1) {
 		if (arg0 == model) {
 			ui.displayScore(model.getScore());
 			ui.displayBoard(model.getBoard());
@@ -56,92 +55,98 @@ public class Presenter implements Observer {
 			}				
 		}
 		
+		
 		if (arg0 == ui) {
 			cmd = ui.getUserCommand();
-			
-			switch (cmd) {
-				case Up: 
-					model.moveUp();
-					break;
-				case Down:
-					model.moveDown();
-					break;
-				case Left:
-					model.moveLeft();
-					break;
-				case Right:
-					model.moveRight();
-					break;
-				case UpLeft:
-					model.UpLeft();
-					break;
-				case UpRight:
-					model.UpRight();
-					break;
-				case DownLeft:
-					model.DownLeft();
-					break;
-				case DownRight:
-					model.DownRight();
-					break;
-				case LoadGame:
-					if (arg1 != null && arg1.toString()!= "")
-						model.loadGame(arg1.toString());
-					break;
-				case NewGame:
-					model.newGame();
-					break;
-				case SaveGame:
-					if (arg1 != null && arg1.toString()!= "")
-						model.saveGame(arg1.toString());
-					//System.out.println(arg1.toString());
-					break;
-				case UndoMove:
-					model.undoMove();
-					break;
-				case RestartGame:
-					model.newGame();
-					break;
-				case SwitchGame:
-					//Switching Models
-					Model tempModel = model;
-					model = model2;
-					model2 = tempModel;
-					//Switching Uis
-					View tempView = ui;
-					ui = ui2;
-					ui2 = tempView;
-					//Killing old game
-					ui2.killThread();
-					t = new Thread((Runnable) ui);
-					t.start();
-					break;
-				case Connect:
-					if (arg1 != null) 
-					{ 
-						String temp = (String)arg1; //string to string (for later use)
-						String ip = temp.split(":")[0];
-						Integer port = new Integer(temp.split(":")[1]);
-						model.connectToServer(ip, port);
-					}				
-					break;
-				case Disconnect:
-					model.disconnectFromServer();
-					break;
-				case Solve:
-					if (arg1 != null) {
-						int treeSize = (int) arg1;
-						if (treeSize == -1) 
-							model.solveGame();
-						else
-							model.getHint(treeSize);
-					}
-					break;				
-				default:
-					break;				
+			new Thread(new Runnable() {
+				
+				@Override
+				public void run() {
+					switch (cmd) {
+					case Up: 
+						model.moveUp();
+						break;
+					case Down:
+						model.moveDown();
+						break;
+					case Left:
+						model.moveLeft();
+						break;
+					case Right:
+						model.moveRight();
+						break;
+					case UpLeft:
+						model.UpLeft();
+						break;
+					case UpRight:
+						model.UpRight();
+						break;
+					case DownLeft:
+						model.DownLeft();
+						break;
+					case DownRight:
+						model.DownRight();
+						break;
+					case LoadGame:
+						if (arg1 != null && arg1.toString()!= "")
+							model.loadGame(arg1.toString());
+						break;
+					case NewGame:
+						model.newGame();
+						break;
+					case SaveGame:
+						if (arg1 != null && arg1.toString()!= "")
+							model.saveGame(arg1.toString());
+						break;
+					case UndoMove:
+						model.undoMove();
+						break;
+					case RestartGame:
+						model.newGame();
+						break;
+					case SwitchGame:
+						//Switching Models
+						Model tempModel = model;
+						model = model2;
+						model2 = tempModel;
+						//Switching Uis
+						View tempView = ui;
+						ui = ui2;
+						ui2 = tempView;
+						//Killing old game
+						ui2.killThread();
+						t = new Thread((Runnable) ui);
+						t.start();
+						break;
+					case Connect:
+						if (arg1 != null) 
+						{ 
+							String temp = (String)arg1; //string to string (for later use)
+							String ip = temp.split(":")[0];
+							Integer port = new Integer(temp.split(":")[1]);
+							model.connectToServer(ip, port);
+						}				
+						break;
+					case Disconnect:
+						model.disconnectFromServer();
+						break;
+					case Solve: //int [] arr = {hintsNum,treeDepth};
+						if (arg1 != null && arg1 instanceof int[]) {
+							int[] temp = (int[]) arg1;
+							int hintsNum = temp[0];						
+							int treeDepth = temp[1];
+							model.getHint(hintsNum,treeDepth);
+						}
+						break;				
+					default:
+						break;				
+					}					
 				}
+			}).start();
 		}
 	}
+
+
 }
 
 

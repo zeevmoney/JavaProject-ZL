@@ -70,7 +70,7 @@ public class MazeGameModel extends AbsModel {
 			}
 			currentGame.setPlayer(new Point (x,y)); //set new x,y for the player
 			currentGame.setXY(x, y, Player);
-			GameStackPush(currentGame.Copy());
+			gameStackPush(currentGame.Copy());
 			setChanged();
 			notifyObservers();			
 	}
@@ -134,10 +134,12 @@ public class MazeGameModel extends AbsModel {
 	}
 
 	@Override
-	public void solveGame() {
+	public void solveGame(int treeDepth) {
 		// TODO Auto-generated method stub
 		
 	}
+
+
 
 
 

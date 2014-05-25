@@ -1,8 +1,11 @@
 package model.model2048;
 
-import java.io.IOException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import model.AbsModel;
+import model.Gameclient;
 import common.GameState;
 import common.ModelElements;
 import common.SolveMsg;
@@ -31,7 +34,8 @@ public class Game2048Model extends AbsModel {
 	boolean win;
 	boolean lose;
 	boolean won; //to make sure the game was only won once.
-	static final String gameName = new String("2048");
+	
+	//static final String gameName = new String("2048");
 	
 		
 	//Constructor
@@ -116,7 +120,7 @@ public class Game2048Model extends AbsModel {
 				notifyObservers("Win");				
 			} else {
 				addNumber();
-				GameStackPush(currentGame.Copy());
+				gameStackPush(currentGame.Copy());
 				setChanged();
 				notifyObservers();
 			}
@@ -383,32 +387,66 @@ public class Game2048Model extends AbsModel {
 	@Override
 	public void DownLeft() {}
 
-
+	//TODO make the server check depth.
 	@Override
-	public void getHint(int treeSize) { //get single hint
+	public void getHint(int hintsNum,int treeDepth) { //get single hint
 		try {
-				outToServer.writeObject(new SolveMsg("2048","MiniMax",UserCommand.Solve,currentGame,treeSize));
-				outToServer.flush();
-				SolveMsg solveMsg = (SolveMsg) inFromServer.readObject();
-				doMove(solveMsg.getCmd());				
+			while(!(won || lose) && hintsNum > 0) {
+				if (!isSolving()) {
+					outToServer.writeObject(new SolveMsg("2048","MiniMax",UserCommand.Solve,null,null)); //first msg is used to set the Solver
+					//outToServer.flush();
+					setSolving(true);
+				}
+				ExecutorService executor = Executors.newSingleThreadExecutor();
+				SolveMsg msg = new SolveMsg("2048", "MiniMax", UserCommand.Solve, gameStackPeek(), treeDepth);
+				Future<SolveMsg> result = executor.submit(new Gameclient(outToServer, inFromServer, msg));
+				executor.shutdown();
+				//try {
+				doMove(result.get().getCmd());
+				Thread.sleep(100);
+				//} catch (Exception e) {
+					
+				//}
+				hintsNum--;
+			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			setSolving(false);
+			System.out.println("[Client]: Lost connection to server.");
+			setChanged();
+			notifyObservers("Disconnected");
 		}		
 	}
+	
 
-	@Override
-	public void solveGame() { //solve the whole game
-		while (!won || lose) {
-			getHint(-1);			
-			/* 
-			 * TODO	
-			 * System.out.println("sleep");
-				Thread.sleep(600);
-				System.out.println("wake up");
-			 */
-		}
-		
-	}	
+//	@Override
+//	public void solveGame(int treeDepth) { //solve the whole game
+//		try {
+//			while(!(won || lose)) {
+//				if (!isSolving()) {
+//					outToServer.writeObject(new SolveMsg("2048","MiniMax",UserCommand.Solve,null,null)); //first msg is used to set the Solver
+//					//outToServer.flush();
+//					setSolving(true);
+//				}
+//				ExecutorService executor = Executors.newSingleThreadExecutor();
+//				SolveMsg msg = new SolveMsg("2048", "MiniMax", UserCommand.Solve, gameStackPeek(), treeDepth);
+//				Future<SolveMsg> result = executor.submit(new Gameclient(outToServer, inFromServer, msg));
+//				executor.shutdown();
+//				//try {
+//				doMove(result.get().getCmd());
+//				Thread.sleep(100);
+//				//} catch (Exception e) {
+//					
+//				//}
+//				hintsNum--;
+//			}
+//		} catch (Exception e) {
+//			setSolving(false);
+//			System.out.println("[Client]: Lost connection to server.");
+//			setChanged();
+//			notifyObservers("Disconnected");
+//		}	
+//	}	
+	
 	
 	private void doMove(UserCommand cmd) {
 		switch (cmd) {

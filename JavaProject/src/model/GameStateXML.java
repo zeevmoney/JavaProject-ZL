@@ -1,4 +1,4 @@
-package common;
+package model;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,11 +7,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 
+
 //XStream is a simple library to serialize objects to XML and back again.
 //http://xstream.codehaus.org/index.html
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.StaxDriver;
+import common.GameState;
 
+//TODO: remove this class
 
 //This class turns GameState object to XML & XML to GameState object.
 public class GameStateXML {
