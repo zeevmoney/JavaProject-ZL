@@ -8,6 +8,7 @@ import java.util.Observable;
 import java.util.Stack;
 
 import common.GameState;
+import common.ObjectXML;
 import common.SolveMsg;
 import common.UserCommand;
 
@@ -37,9 +38,8 @@ public abstract class AbsModel extends Observable implements Model {
 	@Override
 	public void saveGame(String fileName) {
 		try {
-			GameStateXML gXML = new GameStateXML();
 			getCurrentGame().setGameStack(gameStack); //clone the current game stack
-			gXML.gameStateToXML(getCurrentGame(),fileName); //save to xml
+			ObjectXML.objectToXML(getCurrentGame(),fileName); //save to xml
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -49,8 +49,7 @@ public abstract class AbsModel extends Observable implements Model {
 	public void loadGame(String fileName) {
 		try {
 			newGame(); //used to eliminate some bugs.
-			GameStateXML gXML = new GameStateXML();
-			setCurrentGame(gXML.gameStateFromXML(fileName));
+			setCurrentGame((GameState) ObjectXML.ObjectFromXML(fileName));
 			gameStack = getCurrentGame().getGameStack();
 		} catch (Exception e) {
 			e.printStackTrace();

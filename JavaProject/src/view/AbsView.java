@@ -696,8 +696,8 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		
 		directionLabel = new Label (hintControl,SWT.NONE);
 		directionLabel.setLayoutData(new GridData(SWT.CENTER,  SWT.CENTER, false, false, 1, 1));
-		directionLabel.setText ("<Direction>");
-		//directionLabel.setEnabled(false);
+		//directionLabel.setText ("");
+		directionLabel.setEnabled(false);
 
 		
 	}
