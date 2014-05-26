@@ -5,13 +5,29 @@ import java.io.ObjectOutputStream;
 import java.util.concurrent.Callable;
 import common.SolveMsg;
 
-public class Gameclient implements Callable<SolveMsg> {
+/**
+ * The Class GameClient, this class is used for sending msgs to server.
+ */
+public class GameClient implements Callable<SolveMsg> {
+	
+	/** The output. */
 	private ObjectOutputStream output;
+	
+	/** The input. */
 	private ObjectInputStream input;
+	
+	/** The solve msg. */
 	private SolveMsg solveMsg;
 	
 	
-	public Gameclient(ObjectOutputStream output, ObjectInputStream input, SolveMsg solveMsg ) {
+	/**
+	 * Instantiates a new gameclient.
+	 *
+	 * @param output the output
+	 * @param input the input
+	 * @param solveMsg the solve msg
+	 */
+	public GameClient(ObjectOutputStream output, ObjectInputStream input, SolveMsg solveMsg ) {
 		this.output = output;
 		this.input = input;
 		this.solveMsg = solveMsg;
@@ -19,12 +35,20 @@ public class Gameclient implements Callable<SolveMsg> {
 	
 	
 	
+	/* (non-Javadoc)
+	 * @see java.util.concurrent.Callable#call()
+	 */
 	@Override
 	public SolveMsg call() throws Exception {
 		return getHint();		
 	}
 	
 	
+	/**
+	 * Gets the hint.
+	 * 
+	 * @return the hint
+	 */
 	public SolveMsg getHint() {
 		try {
 		output.writeObject(solveMsg);

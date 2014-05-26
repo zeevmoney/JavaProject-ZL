@@ -7,25 +7,59 @@ import common.ModelElements;
 import common.UserCommand;
 import model.AbsModel;
 
+/**
+ * The Class MazeGameModel.
+ */
 public class MazeGameModel extends AbsModel {
+	
+	/** The current game. */
 	GameState currentGame; //current game state
+	
+	/** The cmd. */
 	UserCommand cmd; //user command ENUM
 	
+	/** The Start. */
 	final int Start = ModelElements.MazeStart.getElement();
+	
+	/** The Wall. */
 	final int Wall = ModelElements.MazeWall.getElement();
+	
+	/** The End. */
 	final int End = ModelElements.MazeEnd.getElement();
+	
+	/** The Empty. */
 	final int Empty = ModelElements.MazeEmpty.getElement();
+	
+	/** The Player. */
 	final int Player = ModelElements.MazePlayer.getElement();
+	
+	/** The Horizontal score. */
 	final int HorizontalScore = ModelElements.MazeHorizontalScore.getElement();
+	
+	/** The Diagonal score. */
 	final int DiagonalScore = ModelElements.MazeDiagonalScore.getElement();
+	
+	/** The rows. */
 	final int rows=16;
+	
+	/** The cols. */
 	final int cols=16;
+	
+	/** The win. */
 	boolean win;
+	
+	/** The lose. */
 	boolean lose;
 		
+	/**
+	 * Instantiates a new maze game model.
+	 */
 	public MazeGameModel() {}
 	
 	//init all values on the game board & set score to 0.
+	/* (non-Javadoc)
+	 * @see model.AbsModel#boardInit()
+	 */
 	public void boardInit() {
 		currentGame = new GameState(rows,cols);
 		win=false;
@@ -46,11 +80,18 @@ public class MazeGameModel extends AbsModel {
 		setChanged();
 		notifyObservers();
 	}	
-	
+		
 
-
-	
-	//main move handling function.
+	/**
+	 * Move hanlde - main move handling function.
+	 * 
+	 * @param moveX
+	 *            the move x
+	 * @param moveY
+	 *            the move y
+	 * @param cmd
+	 *            the cmd
+	 */
 	private void moveHanlde(int moveX, int moveY,UserCommand cmd) {
 			if (win) { return; } //if won? do nothing.
 			//x and y are sent by the move[Direction] functions.
@@ -81,58 +122,91 @@ public class MazeGameModel extends AbsModel {
 	 * "1,-1"	"1,0"	"1,1"
 	 */	
 
+	/* (non-Javadoc)
+	 * @see model.AbsModel#moveUp()
+	 */
 	@Override
 	public void moveUp() {
 		moveHanlde(-1,0, UserCommand.Up);
 	}
 
+	/* (non-Javadoc)
+	 * @see model.AbsModel#moveDown()
+	 */
 	@Override
 	public void moveDown() {
 		moveHanlde(1, 0, UserCommand.Down);
 	}
 
+	/* (non-Javadoc)
+	 * @see model.AbsModel#moveLeft()
+	 */
 	@Override
 	public void moveLeft() {
 		moveHanlde(0, -1, UserCommand.Left);
 	}
 	
+	/* (non-Javadoc)
+	 * @see model.AbsModel#moveRight()
+	 */
 	@Override
 	public void moveRight() {
 		moveHanlde(0, 1, UserCommand.Right);
 	}
 	
+	/* (non-Javadoc)
+	 * @see model.AbsModel#UpRight()
+	 */
 	@Override
 	public void UpRight() {
 		moveHanlde(-1, 1, UserCommand.UpRight);
 	}
 	
+	/* (non-Javadoc)
+	 * @see model.AbsModel#UpLeft()
+	 */
 	@Override
 	public void UpLeft() {
 		moveHanlde(-1, -1, UserCommand.UpLeft);
 	}
 
 
+	/* (non-Javadoc)
+	 * @see model.AbsModel#DownRight()
+	 */
 	@Override
 	public void DownRight() {
 		moveHanlde(1, 1, UserCommand.DownRight);
 	}
 
 
+	/* (non-Javadoc)
+	 * @see model.AbsModel#DownLeft()
+	 */
 	@Override
 	public void DownLeft() {
 		moveHanlde(1, -1, UserCommand.DownLeft);
 	}	
 
 
+	/* (non-Javadoc)
+	 * @see model.AbsModel#getCurrentGame()
+	 */
 	public GameState getCurrentGame() {
 		return currentGame;
 	}
 	
+	/* (non-Javadoc)
+	 * @see model.AbsModel#setCurrentGame(common.GameState)
+	 */
 	@Override
 	public void setCurrentGame(GameState game) {
 		this.currentGame = game;
 	}
 
+	/* (non-Javadoc)
+	 * @see model.AbsModel#solveGame(int)
+	 */
 	@Override
 	public void solveGame(int treeDepth) {
 		// TODO Auto-generated method stub		

@@ -6,11 +6,14 @@ import view.game2048.Game2048View;
 import view.maze.MazeGameView;
 import controller.Presenter;
 
+/**
+ * @author Zeev Manilovich.
+ * @author Lital Gilboa.
+ */
+
 public class Run {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		
 		Game2048Model model2048 = new Game2048Model(4,2048);
 		MazeGameModel modelMaze = new MazeGameModel();
 		Game2048View ui2048 = new Game2048View("2048 Game - Zeev & Lital");
@@ -20,8 +23,7 @@ public class Run {
 		modelMaze.addObserver(p);
 		ui2048.addObserver(p);
 		uiMaze.addObserver(p);
-		new Thread(ui2048).start();
-		
+		new Thread(ui2048).start();		
 	}
 
 }

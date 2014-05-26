@@ -1,16 +1,25 @@
-package model.mazegame;
-
-import java.util.*;
-
-import common.ModelElements;
-
 /*
  * PrimMazeGenerator class: generates a maze using Prim algorithm
  * Copied from here: http://www.jonathanzong.com/blog/2012/11/06/maze-generation-with-prims-algorithm
  */
 
+package model.mazegame;
+
+import java.util.*;
+import common.ModelElements;
+
+/**
+ * The Class PrimMazeGenerator.
+ */
 public class PrimMazeGenerator {
  
+	/**
+	 * Generate maze by prim algo.
+	 *
+	 * @param rows the rows
+	 * @param cols the cols
+	 * @return the int[][]
+	 */
 	public int[][] generateMazeByPrimAlgo(int rows,int cols)
     {
 		// dimensions of generated maze
@@ -107,15 +116,37 @@ public class PrimMazeGenerator {
 		return maze;
     }
     
+    /**
+     * The Class Point.
+     */
     private class Point{
-    	Integer r;
-    	Integer c;
-    	Point parent;
-    	public Point(int x, int y, Point p){
+    	
+	    /** The r. */
+	    Integer r;
+    	
+	    /** The c. */
+	    Integer c;
+    	
+	    /** The parent. */
+	    Point parent;
+    	
+	    /**
+	     * Instantiates a new point.
+	     *
+	     * @param x the x
+	     * @param y the y
+	     * @param p the point
+	     */
+	    public Point(int x, int y, Point p){
     		r=x;c=y;parent=p;
     	}
     	// compute opposite node given that it is in the other direction from the parent
-    	public Point opposite(){
+    	/**
+	     * Opposite.
+	     *
+	     * @return the point
+	     */
+	    public Point opposite(){
     		if(this.r.compareTo(parent.r)!=0)
     			return new Point(this.r+this.r.compareTo(parent.r),this.c,this);
     		if(this.c.compareTo(parent.c)!=0)

@@ -3,17 +3,16 @@ package model.model2048;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-
 import model.AbsModel;
-import model.Gameclient;
+import model.GameClient;
 import common.GameState;
 import common.ModelElements;
 import common.SolveMsg;
 import common.UserCommand;
 
+//TODO: in case lost the game: when clicking no make sure lost is set to false and undo 1 move.
 
-
-/*
+/**
  * 2048GameModel Class, responsible for all the game logic.
  *  
  * setChanged(): Marks this Observable object as having been changed
@@ -22,23 +21,39 @@ import common.UserCommand;
  * then notify all of its observers and then call the clearChanged method to indicate 
  * that this object has no longer changed.
  */
-
-
-//TODO: in case lost the game: when clicking no make sure lost is set to false and undo 1 move.
-
 public class Game2048Model extends AbsModel {
+	
+	/** The current game. */
 	GameState currentGame; //current game state
+	
+	/** The win score. */
 	final int winScore;
+	
+	/** The board size. */
 	final int boardSize;
+	
+	/** The empty cell. */
 	int emptyCell = ModelElements.Game2048Empty.getElement();
+	
+	/** The win. */
 	boolean win;
+	
+	/** The lose. */
 	boolean lose;
-	boolean won; //to make sure the game was only won once.
+	
+	/** The won. - to make sure the game was only won once. */
+	boolean won; 
 	
 	//static final String gameName = new String("2048");
 	
-		
-	//Constructor
+	/**
+	 * Instantiates a new game2048 model.
+	 * 
+	 * @param boardSize
+	 *            the board size
+	 * @param winScore
+	 *            the win score
+	 */
 	public Game2048Model(int boardSize,int winScore) {
 		this.winScore = winScore;
 		this.boardSize=boardSize;
@@ -47,6 +62,9 @@ public class Game2048Model extends AbsModel {
 	
 	
 	//init all values on the game board & set score to 0.
+	/* (non-Javadoc)
+	 * @see model.AbsModel#boardInit()
+	 */
 	public void boardInit() {
 		currentGame = new GameState(this.boardSize,this.boardSize);
 		win=false;
@@ -66,6 +84,9 @@ public class Game2048Model extends AbsModel {
 	
 
 	//adds a number (2 or 4) to a random cell.
+	/**
+	 * Adds the number.
+	 */
 	private void addNumber() {
 		boolean flag = false;
 		while (!flag) {
@@ -85,6 +106,11 @@ public class Game2048Model extends AbsModel {
 	}	
 	
 	//returns True if any movement is available.	
+	/**
+	 * Can move.
+	 * 
+	 * @return true, if successful
+	 */
 	private boolean canMove () {
 		//check if bottom cell equals 
 		for (int i = 0; i < boardSize-1; i++) 
@@ -101,6 +127,11 @@ public class Game2048Model extends AbsModel {
 	}
 	
 	//returns true if board is full
+	/**
+	 * Board is full.
+	 * 
+	 * @return true, if board is full
+	 */
 	private boolean boardIsFull() {
 		for (int i = 0; i < boardSize; i++) {
 			for (int j = 0; j < boardSize; j++) {
@@ -111,7 +142,12 @@ public class Game2048Model extends AbsModel {
 		return true;
 	}
 	
-	//checks if the game was won (the game will continue after 2048 was reached)
+	/**
+	 * Move hanlde - checks if the game was won (the game will continue after 2048 was reached)
+	 * 
+	 * @param change
+	 *            the change
+	 */
 	private void moveHanlde(boolean change) {
 		if (change) { //if there was a change it means that there is an empty space.
 			if (win && !won) { //if 2048 was reached
@@ -138,6 +174,9 @@ public class Game2048Model extends AbsModel {
 	 * Move up + MoveallUp
 	 * ******************* */
 	
+	/* (non-Javadoc)
+	 * @see model.AbsModel#moveUp()
+	 */
 	@Override
 	public void moveUp() {
 		int x=0;
@@ -171,6 +210,11 @@ public class Game2048Model extends AbsModel {
 	
 	
 	//move everything up
+	/**
+	 * Move all up.
+	 * 
+	 * @return true, if successful
+	 */
 	private boolean moveAllUp() {
 		boolean movement=false; //flag to check if there was any movement
 		for (int i = 0; i < boardSize-1; i++) { //i+1 = out of the array
@@ -195,6 +239,9 @@ public class Game2048Model extends AbsModel {
 	 * MoveDown + MoveallDown
 	 * ********************** */
 
+	/* (non-Javadoc)
+	 * @see model.AbsModel#moveDown()
+	 */
 	@Override
 	public void moveDown() {
 		int x=0;
@@ -226,6 +273,11 @@ public class Game2048Model extends AbsModel {
 		moveHanlde(change);
 	}	
 	
+	/**
+	 * Move all down.
+	 * 
+	 * @return true, if successful
+	 */
 	private boolean moveAllDown() {
 		boolean movement=false; //flag to check if there was any movement
 		for (int i = boardSize-1; i > 0; i--) { //i+1 = out of the array
@@ -250,6 +302,9 @@ public class Game2048Model extends AbsModel {
 	 * MoveLeft + MoveallLeft
 	 * ********************** */
 
+	/* (non-Javadoc)
+	 * @see model.AbsModel#moveLeft()
+	 */
 	@Override
 	public void moveLeft() {
 		int x=0;
@@ -283,6 +338,11 @@ public class Game2048Model extends AbsModel {
 	
 	
 	//move everything left
+	/**
+	 * Move all left.
+	 * 
+	 * @return true, if successful
+	 */
 	private boolean moveAllLeft() {
 		boolean movement=false; //flag to check if there was any movement
 		for (int i = 0; i < boardSize; i++) {
@@ -308,6 +368,9 @@ public class Game2048Model extends AbsModel {
 	 * MoveRight + MoveallRight
 	 * ************************* */
 	
+	/* (non-Javadoc)
+	 * @see model.AbsModel#moveRight()
+	 */
 	@Override
 	public void moveRight() {
 		int x=0;
@@ -341,6 +404,11 @@ public class Game2048Model extends AbsModel {
 	
 	
 	//move everything left
+	/**
+	 * Move all right.
+	 * 
+	 * @return true, if successful
+	 */
 	private boolean moveAllRight() {
 		boolean movement=false; //flag to check if there was any movement
 		for (int i = 0; i < boardSize; i++) {
@@ -362,51 +430,63 @@ public class Game2048Model extends AbsModel {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see model.AbsModel#setCurrentGame(common.GameState)
+	 */
 	@Override
 	public void setCurrentGame(GameState game) {
 		this.currentGame = game;
 	}
 	
+	/* (non-Javadoc)
+	 * @see model.AbsModel#getCurrentGame()
+	 */
 	public GameState getCurrentGame() {
 		return currentGame;
 	}	
 
-
+	/* (non-Javadoc)
+	 * @see model.AbsModel#UpRight()
+	 */
 	@Override
 	public void UpRight() {}
 
-
+	/* (non-Javadoc)
+	 * @see model.AbsModel#UpLeft()
+	 */
 	@Override
 	public void UpLeft() {}
 
-
+	/* (non-Javadoc)
+	 * @see model.AbsModel#DownRight()
+	 */
 	@Override
 	public void DownRight() {}
 
 
+	/* (non-Javadoc)
+	 * @see model.AbsModel#DownLeft()
+	 */
 	@Override
 	public void DownLeft() {}
 
-	//TODO make the server check depth.
+	/* (non-Javadoc)
+	 * @see model.AbsModel#getHint(int, int)
+	 */
 	@Override
-	public void getHint(int hintsNum,int treeDepth) { //get single hint
+	public void getHint(int hintsNum,int treeDepth) {
 		try {
 			while(!(won || lose) && hintsNum > 0) {
 				if (!isSolving()) {
 					outToServer.writeObject(new SolveMsg("2048","MiniMax",UserCommand.Solve,null,null)); //first msg is used to set the Solver
-					//outToServer.flush();
 					setSolving(true);
 				}
 				ExecutorService executor = Executors.newSingleThreadExecutor();
 				SolveMsg msg = new SolveMsg("2048", "MiniMax", UserCommand.Solve, gameStackPeek(), treeDepth);
-				Future<SolveMsg> result = executor.submit(new Gameclient(outToServer, inFromServer, msg));
+				Future<SolveMsg> result = executor.submit(new GameClient(outToServer, inFromServer, msg));
 				executor.shutdown();
-				//try {
 				doMove(result.get().getCmd());
 				Thread.sleep(100);
-				//} catch (Exception e) {
-					
-				//}
 				hintsNum--;
 			}
 		} catch (Exception e) {
@@ -416,55 +496,29 @@ public class Game2048Model extends AbsModel {
 			notifyObservers("Disconnected");
 		}		
 	}
-	
-
-//	@Override
-//	public void solveGame(int treeDepth) { //solve the whole game
-//		try {
-//			while(!(won || lose)) {
-//				if (!isSolving()) {
-//					outToServer.writeObject(new SolveMsg("2048","MiniMax",UserCommand.Solve,null,null)); //first msg is used to set the Solver
-//					//outToServer.flush();
-//					setSolving(true);
-//				}
-//				ExecutorService executor = Executors.newSingleThreadExecutor();
-//				SolveMsg msg = new SolveMsg("2048", "MiniMax", UserCommand.Solve, gameStackPeek(), treeDepth);
-//				Future<SolveMsg> result = executor.submit(new Gameclient(outToServer, inFromServer, msg));
-//				executor.shutdown();
-//				//try {
-//				doMove(result.get().getCmd());
-//				Thread.sleep(100);
-//				//} catch (Exception e) {
-//					
-//				//}
-//				hintsNum--;
-//			}
-//		} catch (Exception e) {
-//			setSolving(false);
-//			System.out.println("[Client]: Lost connection to server.");
-//			setChanged();
-//			notifyObservers("Disconnected");
-//		}	
-//	}	
-	
-	
+		
+	/**
+	 * Do move.
+	 * 
+	 * @param cmd - UserCommand cmd
+	 */
 	private void doMove(UserCommand cmd) {
-		switch (cmd) {
-			case Up:
-				moveUp();
-				break;
-			case Down:
-				moveDown();
-				break;
-			case Left:
-				moveLeft();
-				break;
-			case Right:
-				moveRight();
-				break;
-			default:
+			switch (cmd) {
+				case Up:
+					moveUp();
+					break;
+				case Down:
+					moveDown();
+					break;
+				case Left:
+					moveLeft();
+					break;
+				case Right:
+					moveRight();
+					break;
+				default:
+			}
+	
 		}
-
-	}
 
 }

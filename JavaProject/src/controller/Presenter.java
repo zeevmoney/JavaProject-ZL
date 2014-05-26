@@ -1,27 +1,25 @@
 package controller;
+
 import java.util.Observable;
 import java.util.Observer;
-
 import model.Model;
 import view.View;
-
 import common.UserCommand;
 
-/*
- * The presenter acts upon the model and the view. 
+
+/**
+ * @author Zeev Manilovich.
+ * @author Lital Gilboa.
+ * 
+ * The Presenter class acts upon the model and the view. 
  * It retrieves data from repositories (the model), 
  * and formats it for display in the view.
  * Presenter implements Observer in order to observe
  * changes in View and Model Interfaces.
  */
 
-/**
- * @author k
- *
- */
 
 public class Presenter implements Observer {
-	//Both View & Model are injected using strategy pattern.
 	private View ui;
 	private View ui2;
 	private Model model;
@@ -29,13 +27,14 @@ public class Presenter implements Observer {
 	UserCommand cmd;
 	Thread t;
 
-	
 	/**
-	 * @param model
-	 * @param model2
-	 * @param ui
-	 * @param ui2
+	 * @param model - Model interface
+	 * @param model2 - Model interface
+	 * @param ui- View interface
+	 * @param ui2- View interface
+	 * Both View & Model are injected using strategy pattern.
 	 */
+	
 	public Presenter(Model model,Model model2, View ui, View ui2){
 		this.model = model;
 		this.model2 = model2;
@@ -44,12 +43,12 @@ public class Presenter implements Observer {
 		cmd = UserCommand.Default;
 	}
 
-	/*
+	/**
 	 * update method:
 	 * This is invoked upon any change to objects "view" and "model"
 	 * we can actively get the state of this objects.
 	 */
-
+	
 	@Override
 	public void update(Observable arg0, final Object arg1) {
 		if (arg0 == model) {
@@ -141,7 +140,7 @@ public class Presenter implements Observer {
 					case Disconnect:
 						model.disconnectFromServer();
 						break;
-					case Solve: //int [] arr = {hintsNum,treeDepth};
+					case Solve: 
 						if (arg1 != null && arg1 instanceof int[]) {
 							int[] temp = (int[]) arg1;
 							int hintsNum = temp[0];						
@@ -156,7 +155,6 @@ public class Presenter implements Observer {
 			}).start();
 		}
 	}
-
 
 }
 
