@@ -1,6 +1,5 @@
 package view;
 
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -9,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -33,45 +31,84 @@ import org.eclipse.swt.widgets.Text;
 import common.ObjectXML;
 import common.UserCommand;
 
-/*
+
+//TODO: disable hint / solve.
+
+/**
+ * The Class AbsView.
  * Abstract Class AbsView:
  * This class defines the common parts for classes that run a 2D board game.
  */
 
-
-//TODO: disable hint / solve.
-
 public abstract class AbsView extends Observable implements View,Runnable  {
-	UserCommand ui; //user command ENUM
+	
+	/** The ui - user command ENUM */
+	UserCommand ui; 
+	
 	//SWT Components:
+	/** The display. */
 	Display display; 
+	
+	/** The shell. */
 	Shell shell; 
+	
+	/** The menu bar. */
 	Menu menuBar;
+	
+	/** The game buttons. */
 	Group gameButtons;
+	
+	/** The game board. */
 	Group gameBoard;
+	
+	/** The direction label. */
 	Label scoreLabel,directionLabel;
+	
+	/** The server combo. */
 	Combo serverCombo; //server combo box
+	
+	/** The server list. */
 	ArrayList<String> serverList; //server list after import
+	
+	/** The game name. */
 	String gameName; //game name String.
+	
+	/** The socket address. */
 	InetSocketAddress socketAddress; //to hold the server address
+	
+	/** The connect button. */
 	Button connectButton; //connect to server
+	
+	/** The get hint button. */
 	Button getHintButton; //get hint from server
+	
+	/** The moves number. */
 	Text movesNumber;
+	
+	/** The tree size. */
 	Text treeSize;
+	
+	/** The new game. */
 	boolean newGame=false; //used to init some vars in maze game.
+	
+	/** The kill thread. */
 	boolean killThread=false; //used to kill the current running gui thread (for switching games)
 	
-	/*
-	 * AbsView constructor:
+	/**
+	 * Instantiates a new abs view.
 	 * init upper bar
 	 * init game buttons
 	 * init the group which holds the game board.
+	 * @param gameName - the gameName
 	 */
-	public AbsView(String string) {
-		gameName = string;
-		serverList = new ArrayList<String>();
+	public AbsView(String gameName) {
+		this.gameName = gameName;
+		this.serverList = new ArrayList<String>();
 	}
 	
+	/**
+	 * Inits the components.
+	 */
 	public void initComponents () { //init everything
 		killThread = false;
 		display=new Display();
@@ -90,59 +127,129 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * Setters & Getters:
 	 * ************************/
 
+	/**
+	 * Gets the ui.
+	 *
+	 * @return the ui
+	 */
 	public UserCommand getUi() {
 		return ui;
 	}
 
+	/**
+	 * Sets the ui.
+	 *
+	 * @param ui the new ui
+	 */
 	public void setUi(UserCommand ui) {
 		this.ui = ui;
 	}
 
+	/**
+	 * Gets the display.
+	 *
+	 * @return the display
+	 */
 	public Display getDisplay() {
 		return display;
 	}
 
+	/**
+	 * Sets the display.
+	 *
+	 * @param display the new display
+	 */
 	public void setDisplay(Display display) {
 		this.display = display;
 	}
 
+	/**
+	 * Gets the shell.
+	 *
+	 * @return the shell
+	 */
 	public Shell getShell() {
 		return shell;
 	}
 
+	/**
+	 * Sets the shell.
+	 *
+	 * @param shell the new shell
+	 */
 	public void setShell(Shell shell) {
 		this.shell = shell;
 	}
 
+	/**
+	 * Gets the menu bar.
+	 *
+	 * @return the menu bar
+	 */
 	public Menu getMenuBar() {
 		return menuBar;
 	}
 
+	/**
+	 * Sets the menu bar.
+	 *
+	 * @param menuBar the new menu bar
+	 */
 	public void setMenuBar(Menu menuBar) {
 		this.menuBar = menuBar;
 	}
 
 
+	/**
+	 * Gets the score label.
+	 *
+	 * @return the score label
+	 */
 	public Label getScoreLabel() {
 		return scoreLabel;
 	}
 
+	/**
+	 * Sets the score label.
+	 *
+	 * @param scoreLabel the new score label
+	 */
 	public void setScoreLabel(Label scoreLabel) {
 		this.scoreLabel = scoreLabel;
 	}
 	
+	/**
+	 * Gets the game board.
+	 *
+	 * @return the game board
+	 */
 	public Group getGameBoard() {
 		return gameBoard;
 	}
 
+	/**
+	 * Sets the game board.
+	 *
+	 * @param gameBoard the new game board
+	 */
 	public void setGameBoard(Group gameBoard) {
 		this.gameBoard = gameBoard;
 	}
 	
+	/**
+	 * Checks if is new game.
+	 *
+	 * @return true, if is new game
+	 */
 	public boolean isNewGame() {
 		return newGame;
 	}
 
+	/**
+	 * Sets the new game.
+	 *
+	 * @param newGame the new new game
+	 */
 	public void setNewGame(boolean newGame) {
 		this.newGame = newGame;
 	}
@@ -152,6 +259,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * ************************/		
 	
 	//Menu bar (upper menu):
+	/**
+	 * Sets the menu tools bar.
+	 */
 	private void setMenuToolsBar() {
 		//create the menu bar and add file and edit
 		this.menuBar=new Menu(shell, SWT.BAR);
@@ -161,6 +271,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 
 	//File drop down menu
+	/**
+	 * Sets the file.
+	 */
 	private void setFile() {	
 		MenuItem aFileMenu = new MenuItem(menuBar, SWT.CASCADE);
         aFileMenu.setText("File"); 
@@ -177,6 +290,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 
 
 	//Edit drop down menu.
+	/**
+	 * Sets the edit.
+	 */
 	private void setEdit() {
 		MenuItem aEditMenu = new MenuItem(menuBar, SWT.CASCADE);
 		aEditMenu.setText("Edit");
@@ -190,6 +306,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * File drop down menu:
 	 * ************************/		
 	
+	/**
+	 * New game.
+	 *
+	 * @param fileMenu the file menu
+	 */
 	private void newGame(Menu fileMenu) {
 		MenuItem newGame = new MenuItem(fileMenu, SWT.CASCADE);
 		newGame.setText("New Game");
@@ -199,6 +320,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
         newMazeGame(newGameSubMenu);
 	}	
 	
+	/**
+	 * New2048 game.
+	 *
+	 * @param menu the menu
+	 */
 	private void new2048Game(Menu menu) {
 		MenuItem new2048Game = new MenuItem(menu, SWT.NONE);
 		new2048Game.setText("2048");
@@ -219,6 +345,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 	
 	
+	/**
+	 * New maze game.
+	 *
+	 * @param menu the menu
+	 */
 	private void newMazeGame(Menu menu) {
 		MenuItem new2048Game = new MenuItem(menu, SWT.NONE);
 		new2048Game.setText("Maze");
@@ -239,6 +370,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}	
 	
 	//Save game (under the File drop down menu)
+	/**
+	 * Save game.
+	 *
+	 * @param fileMenu the file menu
+	 */
 	private void saveGame(Menu fileMenu) {
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
 	    newItem.setText("Save game");	    
@@ -251,6 +387,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	    });			
 	}
 	
+	/**
+	 * Save game.
+	 */
 	private void saveGame() { //save game function
 		FileDialog fd = new FileDialog(shell, SWT.SAVE);
 		fd.setText("Save Game");
@@ -266,6 +405,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 
 	//Load game (under the File drop down menu)
+	/**
+	 * Load game.
+	 *
+	 * @param fileMenu the file menu
+	 */
 	private void loadGame(Menu fileMenu) {
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
 	    newItem.setText("Load game");	
@@ -278,6 +422,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	    });		
 	}
 	
+	/**
+	 * Load game.
+	 */
 	private void loadGame () { //load game function
 		FileDialog fd = new FileDialog(shell, SWT.OPEN);
 		fd.setText("Load Game");
@@ -294,6 +441,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 
 	//Save & Exit (under the File drop down menu)
+	/**
+	 * Save and exit game option.
+	 *
+	 * @param fileMenu the file menu
+	 */
 	private void saveAndExitGameOption(Menu fileMenu) {
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
         newItem.setText("Save and Exit");
@@ -310,6 +462,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 	
 	//Exit Game (under the File drop down menu)
+	/**
+	 * Exit game option.
+	 *
+	 * @param fileMenu the file menu
+	 */
 	private void exitGameOption(Menu fileMenu) {
 	 MenuItem exitItem = new MenuItem(fileMenu, SWT.PUSH);
         exitItem.setText("Exit game");
@@ -329,6 +486,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * ************************/	
 	
 	//Restart Game (under the Edit drop down menu)
+	/**
+	 * Restart game drop menu.
+	 *
+	 * @param fileMenu the file menu
+	 */
 	private void restartGameDropMenu(Menu fileMenu) {
 	
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
@@ -342,6 +504,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	    });
 	 }
 	
+	/**
+	 * Restart game.
+	 */
 	private void restartGame() { //restart game main function
 		newGame=true;
     	ui = UserCommand.RestartGame;
@@ -349,8 +514,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		notifyObservers();
 	}
 	
-
-	//Undo Move (under the Edit drop down menu)
+	/**
+	 * Undo move drop down (under the Edit drop down menu)
+	 *
+	 * @param fileMenu the file menu
+	 */
 	private void undoMoveDropDown(Menu fileMenu) {
 	
 		MenuItem newItem = new MenuItem(fileMenu, SWT.PUSH);
@@ -365,6 +533,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 			
 	}
 	
+	/**
+	 * Undo move.
+	 */
 	private void undoMove() { //undoMove main function
 		newGame=true;
     	ui = UserCommand.UndoMove;
@@ -376,6 +547,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * Game buttons group
 	 * ************************/	
 	
+	/**
+	 * Game buttons menu.
+	 */
 	protected void gameButtonsMenu() {
 		
 		//game buttons group
@@ -395,11 +569,12 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		menuLoadGameButton();
 		menuSaveGameButton();	
 		menuGameServer();
-		menuHint();
+		hintControlGruop();
 	}
 	
-	
-	//Undo button (under buttons menu)
+	/**
+	 * Menu undo move button (under buttons menu)
+	 */
 	private void menuUndoMoveButton() {
 		Button undoMove = new Button(gameButtons, SWT.PUSH);
 		undoMove.setText("Undo Move");
@@ -417,7 +592,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		});
 	}
 	
-	//Restart button (under buttons menu)
+	/**
+	 * Menu restart button (under buttons menu)
+	 */
 	private void menuRestartButton() {
 		Button restartGame = new Button(gameButtons, SWT.PUSH);
 		restartGame.setText("Restart Game");
@@ -434,8 +611,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		});
 	}
 	
-	
-	//Save Game button (under buttons menu)
+	/**
+	 * Menu save game button (under buttons menu)
+	 */
 	private void menuSaveGameButton() {		
 		Button saveGame = new Button(gameButtons, SWT.PUSH);
 		saveGame.setText("Save Game");
@@ -452,7 +630,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		});		
 	}
 
-	//Load Game button (under buttons menu)
+	/**
+	 * Menu load game button (under buttons menu)
+	 */
 	private void menuLoadGameButton() {
 		Button loadGame = new Button(gameButtons, SWT.PUSH);
 		loadGame.setText("Load Game");
@@ -475,6 +655,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * Game board group
 	 * ************************/
 	
+	/**
+	 * Game board group.
+	 */
 	private void gameBoardGroup () { 
 		gameBoard = new Group(shell, SWT.SHADOW_OUT);		
 		gameBoard.setLayout(new GridLayout(1, true));
@@ -483,9 +666,12 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	
 	/* ************************
-	 * Server Control
+	 * Server Control Widgets
 	 * ************************/
 	
+	/**
+	 * Menu game server.
+	 */
 	@SuppressWarnings("unchecked")
 	private void menuGameServer() {
 		
@@ -558,7 +744,12 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	}
 	
-	//add a new server to file + combo.
+	/**
+	 * Addserver - add a new server to file + combo.
+	 *
+	 * @param newServer the new server
+	 * @return the string
+	 */
 	private String addserver (String newServer) { 
 		if ((newServer = isValidIP(newServer)) != null) { //if a valid server:port were entered
 			if (serverList.contains(newServer)) {
@@ -578,6 +769,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		return null;
 	}
 	
+	/* (non-Javadoc)
+	 * @see view.View#connected(java.lang.Boolean)
+	 */
 	@Override
 	public void connected(final Boolean flag) {
 		getDisplay().syncExec(new Runnable() {
@@ -600,7 +794,10 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 	
 	
-	private void menuHint() {
+	/**
+	 * Hint control group & widgets.
+	 */
+	private void hintControlGruop() {
 		
 		Group hintControl = new Group(gameButtons, SWT.NONE);
 		hintControl.setText ("Hint Server Control:");
@@ -623,7 +820,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 					if (getHintButton.getText().equals("Get Hint")) { //single / multiple hints.
 						hintsNum = Integer.parseInt(movesNumber.getText());
 					} else {
-						hintsNum = 2000;
+						hintsNum = 2000; //solve the whole game.
 					}
 					int [] arr = {hintsNum,treeDepth};
 					setChanged();
@@ -631,14 +828,12 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 				} catch (NumberFormatException e) {
 						errorBox("Invalid Input, TreeSize & Moves must be numeric.");
 				}
-				//getShell().forceFocus();
 			}
 
 			@Override
 			public void widgetDefaultSelected(SelectionEvent arg0) {}
 		});
 	
-		
 		Button solveGameRbox = new Button(hintControl, SWT.RADIO);
 		solveGameRbox.setText("Solve The Game");
 		solveGameRbox.setLayoutData(new GridData(SWT.FILL,  SWT.TOP, false, false, 2, 1));
@@ -709,6 +904,12 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	 * ************************/
 	
 	//Resolve dns + a regex to make that the string is a valid ip.
+	/**
+	 * Checks if is valid ip.
+	 *
+	 * @param in the ip:port
+	 * @return valid ip:port, else null.
+	 */
 	private String isValidIP(String in) {
 		String[] temp = in.split(":");
 		try {
@@ -730,9 +931,11 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		  return null;
 	}
 	
-	
-	
-	
+	/**
+	 * Error box - general error box.
+	 *
+	 * @param string the string do display inside.
+	 */
 	public void errorBox(String string) {
 		MessageBox errorBox = new MessageBox(shell, SWT.ICON_ERROR | SWT.OK | SWT.CANCEL);
 		errorBox.setText("Error!");
@@ -741,6 +944,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see view.View#setLose()
+	 */
 	@Override
 	public void setLose() {
 		getDisplay().asyncExec(new Runnable() {
@@ -760,6 +966,9 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 
 	}
 
+	/* (non-Javadoc)
+	 * @see view.View#setWin()
+	 */
 	@Override
 	public void setWin() {
 		getDisplay().asyncExec(new Runnable() {
@@ -778,15 +987,27 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	
 	}	
 	
+	/* (non-Javadoc)
+	 * @see view.View#displayBoard(int[][])
+	 */
 	@Override
 	public abstract void displayBoard(int[][] data);
 
+	/* (non-Javadoc)
+	 * @see view.View#getUserCommand()
+	 */
 	@Override
 	public abstract UserCommand getUserCommand();
 	
+	/* (non-Javadoc)
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public abstract void run(); //the run is inside the concrete implementation
 
+	/* (non-Javadoc)
+	 * @see view.View#displayScore(int)
+	 */
 	@Override
 	public void displayScore(final int score) {
 		getDisplay().asyncExec(new Runnable() {
@@ -799,61 +1020,40 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see view.View#killThread()
+	 */
 	@Override
 	public void killThread() {
 		killThread = true;
 	}
 	
+	/**
+	 * Checks if is kill thread.
+	 *
+	 * @return true, if is kill thread
+	 */
 	public boolean isKillThread() {
 		return killThread;
 	}
 	
 	
+	/**
+	 * Sets the kill thread.
+	 *
+	 * @param flag the new kill thread
+	 */
 	public void setKillThread(boolean flag) {
 		killThread = flag;
 	}
 
+	/**
+	 * Sets the direction label.
+	 *
+	 * @param str the new direction label
+	 */
 	public void setDirectionLabel(String str) {
 		this.directionLabel.setText(str);
 	}
 	
 }
-
-
-/*
- * GridLayout
-	
-	public GridLayout(int numColumns, boolean makeColumnsEqualWidth)
-	Constructs a new instance of this class given the number of columns, and whether or not 
-	the columns should be forced to have the same width. If numColumns has a value less than 1, 
-	the layout will not set the size and position of any controls.
-	Parameters:
-	numColumns - the number of columns in the grid
-	makeColumnsEqualWidth - whether or not the columns will have equal width
-	Since:
-	2.0
- */
-
-
-/* 
- * public GridData(int horizontalAlignment,
-            int verticalAlignment,
-            boolean grabExcessHorizontalSpace,
-            boolean grabExcessVerticalSpace,
-            int horizontalSpan,
-            int verticalSpan)
-	Constructs a new instance of GridData according to the parameters.
-	Parameters:
-	horizontalAlignment - how control will be positioned horizontally within a cell, one of: 
-	SWT.BEGINNING (or SWT.LEFT), SWT.CENTER, SWT.END (or SWT.RIGHT), or SWT.FILL
-	verticalAlignment - how control will be positioned vertically within a cell, 
-	one of: SWT.BEGINNING (or SWT.TOP), SWT.CENTER, SWT.END (or SWT.BOTTOM), or SWT.FILL
-	grabExcessHorizontalSpace - whether cell will be made wide enough to fit the remaining horizontal space
-	grabExcessVerticalSpace - whether cell will be made high enough to fit the remaining vertical space
-	horizontalSpan - the number of column cells that the control will take up
-	verticalSpan - the number of row cells that the control will take up
-	Since:
-	3.0
- */
-
-

@@ -11,54 +11,41 @@ import common.SolveMsg;
 public class GameClient implements Callable<SolveMsg> {
 	
 	/** The output. */
-	private ObjectOutputStream output;
+	private ObjectOutputStream OutToServer;
 	
 	/** The input. */
-	private ObjectInputStream input;
+	private ObjectInputStream inFromServer;
 	
 	/** The solve msg. */
 	private SolveMsg solveMsg;
 	
-	
+
 	/**
-	 * Instantiates a new gameclient.
+	 * Instantiates a new game client.
 	 *
-	 * @param output the output
-	 * @param input the input
+	 * @param OutToServer the out to server
+	 * @param inFromServer the in from server
 	 * @param solveMsg the solve msg
 	 */
-	public GameClient(ObjectOutputStream output, ObjectInputStream input, SolveMsg solveMsg ) {
-		this.output = output;
-		this.input = input;
+	public GameClient(ObjectOutputStream OutToServer, ObjectInputStream inFromServer, SolveMsg solveMsg ) {
+		this.OutToServer = OutToServer;
+		this.inFromServer = inFromServer;
 		this.solveMsg = solveMsg;
 	}
-	
-	
 	
 	/* (non-Javadoc)
 	 * @see java.util.concurrent.Callable#call()
 	 */
 	@Override
 	public SolveMsg call() throws Exception {
-		return getHint();		
-	}
-	
-	
-	/**
-	 * Gets the hint.
-	 * 
-	 * @return the hint
-	 */
-	public SolveMsg getHint() {
 		try {
-		output.writeObject(solveMsg);
-		output.flush();
-		return (SolveMsg) input.readObject();
+			OutToServer.writeObject(solveMsg);
+			OutToServer.flush();
+			return (SolveMsg) inFromServer.readObject();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return null;
+		return null;		
 	}
-
 	
 }

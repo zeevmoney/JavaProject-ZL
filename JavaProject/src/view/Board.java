@@ -6,19 +6,29 @@ import org.eclipse.swt.layout.GridLayout;
 import view.Tile;
 
 
-/*
+/**
+ * The Class Board.
  * This class holds the game board. Can be used for any 2D array game
  */
-
-
-//TODO: check if this class needs a paint listener
 public class Board extends Composite{
+	
+	/** The rows. */
 	int rows;
+	
+	/** The colums. */
 	int colums;
+	
+	/** The tiles. */
 	Tile[][] tiles;
 	
 	
-	//Board Constructor
+	/**
+	 * Instantiates a new board.
+	 *
+	 * @param parent the parent
+	 * @param style the style
+	 * @param data the data
+	 */
 	public Board(Composite parent, int style, int[][] data) {
 		super(parent, style); //Composite constructor
 	 	rows=data.length; //number of rows
@@ -34,17 +44,17 @@ public class Board extends Composite{
 		
 	}
 
+	/**
+	 * Update board.
+	 *
+	 * @param data the data
+	 */
 	public void updateBoard(int[][] data){
 		 for (int i = 0; i < rows; i++) {
 				for (int j = 0; j < colums; j++) {
 					tiles[i][j].setValue(data[i][j]);	
 				}
 		 }
-	 }
-	 
+	 } 
 	
-}
-
-
-
-	 	
+}	 	

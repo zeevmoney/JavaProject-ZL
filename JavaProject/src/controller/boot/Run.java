@@ -7,8 +7,8 @@ import view.maze.MazeGameView;
 import controller.Presenter;
 
 /**
- * @author Zeev Manilovich.
- * @author Lital Gilboa.
+ * @author Zeev Manilovich
+ * @author Lital Gilboa
  */
 
 public class Run {

@@ -153,7 +153,6 @@ public class PrimMazeGenerator {
     			return new Point(this.r,this.c+this.c.compareTo(parent.c),this);
     		return null;
     	}
-    }    
-
+    } 
 	 
 }

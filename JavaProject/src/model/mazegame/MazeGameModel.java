@@ -12,11 +12,11 @@ import model.AbsModel;
  */
 public class MazeGameModel extends AbsModel {
 	
-	/** The current game. */
-	GameState currentGame; //current game state
+	/** The current game state */
+	GameState currentGame; 
 	
-	/** The cmd. */
-	UserCommand cmd; //user command ENUM
+	/** The cmd - user command ENUM */
+	UserCommand cmd;
 	
 	/** The Start. */
 	final int Start = ModelElements.MazeStart.getElement();
@@ -60,7 +60,7 @@ public class MazeGameModel extends AbsModel {
 	/* (non-Javadoc)
 	 * @see model.AbsModel#boardInit()
 	 */
-	public void boardInit() {
+	public void boardInit() { 
 		currentGame = new GameState(rows,cols);
 		win=false;
 		lose=false;
@@ -210,17 +210,6 @@ public class MazeGameModel extends AbsModel {
 	@Override
 	public void solveGame(int treeDepth) {
 		// TODO Auto-generated method stub		
-	}
-
-
-
-
-
-
-
-	
+	}	
 		
 }
-
-
-

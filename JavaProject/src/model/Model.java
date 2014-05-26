@@ -1,14 +1,14 @@
-/*
+package model;
+
+/**
+ * The Interface Model.
+ * 
  * The model is an interface defining the data to be displayed.
  * or otherwise acted upon in the user interface.
  * 
  * Every concrete class that implements model must also extend Observable in order
  * to notify the Presenter that something has changed.   
- */
-package model;
-
-/**
- * The Interface Model.
+ *
  */
 public interface Model {
 	
@@ -59,13 +59,14 @@ public interface Model {
 	public void getHint(int hintsNum, int treeDepth);
 	
 	/**
-	 * Solve game.
+	 * Solve game -solve whole the game
 	 *
 	 * @param treeDepth the tree depth
 	 */
-	public void solveGame(int treeDepth); //solve the game
+	public void solveGame(int treeDepth); 
 	
 	//Movement functions: will change the state on game board.
+	
 	/**
 	 * Move up.
 	 */
@@ -106,23 +107,19 @@ public interface Model {
 	 */
 	public void DownLeft();
 	
-	//returns the current 2D array as represented in the Model.
 	/**
 	 * Gets the board.
 	 *
-	 * @return the board
+	 * @return the current 2D array as represented in the Model.
 	 */
 	public int[][] getBoard();
 	
-	//returns the current user score.
 	/**
 	 * Gets the score.
 	 *
-	 * @return the score
+	 * @return the current user score.
 	 */
 	public int getScore();
-	
-	
 
 
 }

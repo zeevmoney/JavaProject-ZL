@@ -1,0 +1,8 @@
+controller
+controller.boot
+model
+model.mazegame
+model.model2048
+view
+view.game2048
+view.maze

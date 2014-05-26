@@ -1,6 +1,3 @@
-/*
- * The common model for all Model interfaces.
- */
 package model;
 
 import java.io.ObjectInputStream;
@@ -15,7 +12,7 @@ import common.SolveMsg;
 import common.UserCommand;
 
 /**
- * The Class AbsModel.
+ * The Class AbsModel - The common model for all Model interfaces.
  */
 
 public abstract class AbsModel extends Observable implements Model {

@@ -1,28 +1,39 @@
 package view.game2048;
 
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-
 import common.UserCommand;
-
 import view.AbsView;
 import view.Board;
 import view.Tile;
 
-
+/**
+ * The Class Game2048View.
+ */
 public class Game2048View extends AbsView {
+	
+	/** The board. */
 	Board board;
+	
+	/** The data. */
 	int [][] data;
 	
+	/**
+	 * Instantiates a new game2048 view.
+	 *
+	 * @param string the string
+	 */
 	public Game2048View(String string) {
 		super(string);
 	}
 		
 	//display the board
+	/* (non-Javadoc)
+	 * @see view.AbsView#displayBoard(int[][])
+	 */
 	@Override
 	public void displayBoard(int[][] nData) {
 		data = nData;
@@ -47,6 +58,9 @@ public class Game2048View extends AbsView {
 	}
 	
 
+	/**
+	 * Inits the input from user.
+	 */
 	public void InitInput () {		
 		getDisplay().addFilter(SWT.KeyUp, new Listener() {		
 			@Override
@@ -118,12 +132,18 @@ public class Game2048View extends AbsView {
 	}
 	
 	
+	/* (non-Javadoc)
+	 * @see view.AbsView#getUserCommand()
+	 */
 	@Override
 	public UserCommand getUserCommand() {
 		return getUi();
 	}
 
 	//the GUI and main loop thread should be in the same THREAD.
+	/* (non-Javadoc)
+	 * @see view.AbsView#run()
+	 */
 	@Override
 	public void run() {
 		initComponents(); //init the game board using the main GUI thread (the function is in the AbsView Class)
@@ -148,7 +168,6 @@ public class Game2048View extends AbsView {
 		//if shell dies -> display dies.
 		getDisplay().dispose();
 	}
-	
 
 	
 }

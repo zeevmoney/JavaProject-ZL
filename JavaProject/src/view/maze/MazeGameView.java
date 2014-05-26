@@ -6,27 +6,50 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
-import common.UserCommand;
-
 import view.AbsView;
 import view.Board;
 import view.Tile;
 
+import common.UserCommand;
 
+/**
+ * The Class MazeGameView.
+ */
 public class MazeGameView extends AbsView implements Runnable {
-	Board board;
-	private int vertical; // -1 for up, 0 for nothing, 1 for down  
-	private int horizontal; // -1 for left, 0 for nothing, 1 for right 
-	private int pressedCount;
-	private boolean change;
-	private int[][] data;
-	boolean keyUp = false; //used to control a keyUP event in order to know if an arrow key was pressed.
-
 	
+	/** The board. */
+	Board board;
+	
+	/** The vertical. - -1 for up, 0 for nothing, 1 for down   */
+	private int vertical;
+	
+	/** The horizontal. - -1 for left, 0 for nothing, 1 for right  */
+	private int horizontal;
+	
+	/** The pressed count. */
+	private int pressedCount;
+	
+	/** The change. */
+	private boolean change;
+	
+	/** The data. */
+	private int[][] data;
+	
+	/** The key up. - used to control a keyUP event in order to know if an arrow key was pressed. */
+	boolean keyUp = false;
+
+	/**
+	 * Instantiates a new maze game view.
+	 *
+	 * @param string the string
+	 */
 	public MazeGameView(String string) {
 		super(string);
 	}
 	
+	/**
+	 * Inits the vars.
+	 */
 	public void InitVars () {
 		vertical=0;
 		horizontal=0;
@@ -35,6 +58,9 @@ public class MazeGameView extends AbsView implements Runnable {
 	}
 	
 	//display the board
+	/* (non-Javadoc)
+	 * @see view.AbsView#displayBoard(int[][])
+	 */
 	@Override
 	public void displayBoard(int[][] nData) {
 		data = nData;
@@ -61,10 +87,11 @@ public class MazeGameView extends AbsView implements Runnable {
 				}				
 			}
 		});
-
 	}
 			
-	
+	/**
+	 * Inits the input from user.
+	 */
 	public void InitInput () { //init all key listeners and mouse listeners.
 		
 		getDisplay().addFilter(SWT.KeyUp, new Listener()
@@ -216,19 +243,19 @@ public class MazeGameView extends AbsView implements Runnable {
 		});
 	}
 
-
-//	//update score 
-//	@Override
-//	public void displayScore(int score) {
-//		 getScoreLabel().setText("Score: "+score);		
-//	}
-		
+	
+	/* (non-Javadoc)
+	 * @see view.AbsView#getUserCommand()
+	 */
 	@Override
 	public UserCommand getUserCommand() {
 		return getUi();
 	}	
 
 	//the GUI and main loop thread should be in the same THREAD.
+	/* (non-Javadoc)
+	 * @see view.AbsView#run()
+	 */
 	@Override
 	public void run() {
 		initComponents(); //init the game board using the main GUI thread (the function is in the AbsView Class)		

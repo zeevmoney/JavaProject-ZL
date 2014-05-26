@@ -9,19 +9,24 @@ import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
-/*
- * Tile class is used to represent a tile on the game board.
+//TODO: auto change for the font size.
+
+/**
+ * The Class Tile - used to represent a tile on the game board.
  * Both boards: 2048 + MazeGame
  */
 
-
-//TODO: auto change for the font size.
-
 public class Tile extends Canvas{
   	
-	private int value; //tile value 
+	/** The value. */
+	private int value; 
 	    
-	//Constructor
+	/**
+	 * Instantiates a new tile.
+	 *
+	 * @param parent the parent
+	 * @param style the style
+	 */
 	public Tile(Composite parent, int style){
 		super(parent,style);
 		value=0; 
@@ -43,7 +48,11 @@ public class Tile extends Canvas{
    }
    
    
-	//value & color setter.
+	/**
+	 * Sets the value.
+	 *
+	 * @param value the new value
+	 */
 	public void setValue(int value) {
 		this.value=value;
 		changeBackgroundColor(); 
@@ -51,9 +60,9 @@ public class Tile extends Canvas{
 	}
 	
 
-	
-
-	//change the tile background color
+	/**
+	 * Change background color.
+	 */
 	private void changeBackgroundColor(){
 		Color tileColor;
 		switch (value) {
