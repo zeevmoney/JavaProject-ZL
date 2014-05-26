@@ -428,7 +428,7 @@ public abstract class AbsView extends Observable implements View,Runnable  {
 	private void loadGame () { //load game function
 		FileDialog fd = new FileDialog(shell, SWT.OPEN);
 		fd.setText("Load Game");
-		fd.setFilterPath("resouces\\");
+		fd.setFilterPath("resources\\");
 		String[] filterExt = { "*.xml" };
 		fd.setFilterExtensions(filterExt);
 		String fileName = fd.open();
