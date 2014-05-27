@@ -479,7 +479,7 @@ public class Game2048Model extends AbsModel {
 			while(!(won || lose) && hintsNum > 0) {
 				if (!isSolving()) {
 					outToServer.writeObject(new SolveMsg("2048","MiniMax",UserCommand.Solve,null,null)); //first msg is used to set the Solver
-					setSolving(true);
+					setSolving(true);					
 				}
 				ExecutorService executor = Executors.newSingleThreadExecutor();
 				SolveMsg msg = new SolveMsg("2048", "MiniMax", UserCommand.Solve, gameStackPeek(), treeDepth);

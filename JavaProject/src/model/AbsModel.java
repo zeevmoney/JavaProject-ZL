@@ -135,8 +135,10 @@ public abstract class AbsModel extends Observable implements Model {
 	@Override
 	public void disconnectFromServer() {
 		try {
-			outToServer.writeObject(new SolveMsg(null,null,UserCommand.StopSolving,null,null));
-			outToServer.writeObject(UserCommand.Disconnect);
+			if (isSolving()) 
+				outToServer.writeObject(new SolveMsg(null,null,UserCommand.StopSolving,null,null));
+			else 
+				outToServer.writeObject(new SolveMsg(null,null,UserCommand.Disconnect,null,null));
 			outToServer.flush();
 			outToServer.close();
 			inFromServer.close();

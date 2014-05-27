@@ -43,7 +43,7 @@ public class GameClient implements Callable<SolveMsg> {
 			OutToServer.flush();
 			return (SolveMsg) inFromServer.readObject();
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("[Client]: Lost connection to server");
 		}
 		return null;		
 	}
